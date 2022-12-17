@@ -11,6 +11,8 @@ services:
       POSTGRES_PASSWORD: postgres
     networks:
       - default
+    volumes:
+      - §{PWD}/docker-sql-init.sql:/docker-entrypoint-initdb.d/init.sql
   poke-guesser-bot:
     build:
       context: ../.
@@ -28,5 +30,7 @@ services:
       - db
     networks:
       - default
+volumes:
+  database:
 networks:
   default:
