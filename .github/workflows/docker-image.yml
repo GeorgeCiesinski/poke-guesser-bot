@@ -16,9 +16,7 @@ jobs:
       id: checkout
       uses: actions/checkout@v3
     - name: Build the Docker image
-      if: steps.checkout.outcome == 'success'
       run: docker-compose build
     - name: Test the Docker image
-      if: steps.checkout.outcome == 'success'
       run: docker-compose up --abort-on-container-exit
       timeout-minutes: 30
