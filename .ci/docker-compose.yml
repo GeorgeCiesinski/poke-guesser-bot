@@ -11,8 +11,6 @@ services:
       POSTGRES_PASSWORD: postgres
     networks:
       - default
-    volumes:
-      - database:/var/lib/postgresql/data
   poke-guesser-bot:
     build:
       context: ../.
@@ -30,7 +28,5 @@ services:
       - db
     networks:
       - default
-volumes:
-  database:
 networks:
   default:
