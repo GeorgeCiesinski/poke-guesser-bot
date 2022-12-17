@@ -13,10 +13,9 @@ jobs:
       COMPOSE_FILE: .ci/docker-compose.yml
     steps:
     - name: Checkout Code
-      id: checkout
       uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker-compose build
+      run: docker-compose build --no-cache
     - name: Test the Docker image
       run: docker-compose up --abort-on-container-exit
       timeout-minutes: 30
