@@ -9,7 +9,7 @@ services:
     networks:
       - default
     volumes:
-      - ./docker-sql-init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${PWD}/docker-sql-init.sql:/docker-entrypoint-initdb.d/init.sql
       - database:/var/lib/postgresql/data
   poke-guesser-bot:
     build:
