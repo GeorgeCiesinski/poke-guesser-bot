@@ -63,7 +63,7 @@ export default class Help {
                                 `\`/score show [<user>]\` - ${lang.obj['help_score_show']}\n`;
                 break;
         }
-        Util.editReply(interaction, title, description);
+        Util.editReply(interaction, title, description, lang);
     }
 
     static getRegisterObject() {

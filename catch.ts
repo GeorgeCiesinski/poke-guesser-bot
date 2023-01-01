@@ -37,7 +37,7 @@ export default class Catch {
                     else
                         title = lang.obj['catch_caught_other_language_title'].replace('<englishPokemon>', Util.capitalize(encounter[englishIndex].getDataValue('name'))).replace('<guessedPokemon>', Util.capitalize(encounter[i].getDataValue('name')));
                     console.log(`catch.js-artwork: ${artwork}`);
-                    let returnedEmbed: {embed: EmbedBuilder, attachment: AttachmentBuilder} = Util.returnEmbed(title, lang.obj['catch_caught_description'].replace('<guesser>', `<@${btnInteraction.user.id}>`), 0x00AE86, artwork) as {embed: EmbedBuilder, attachment: AttachmentBuilder};
+                    let returnedEmbed: {embed: EmbedBuilder, attachment: AttachmentBuilder} = Util.returnEmbed(title, lang.obj['catch_caught_description'].replace('<guesser>', `<@${btnInteraction.user.id}>`), lang, 0x00AE86, artwork) as {embed: EmbedBuilder, attachment: AttachmentBuilder};
                     // returnEmbed(title, message, image=null)
                     await btnInteraction.followUp({
                         embeds: [
@@ -58,7 +58,7 @@ export default class Catch {
             if (!guessed) {
                 await btnInteraction.followUp({
                     embeds: [
-                        Util.returnEmbed(lang.obj['catch_guess_incorrect_title'], lang.obj['catch_guess_incorrect_description']) as EmbedBuilder
+                        Util.returnEmbed(lang.obj['catch_guess_incorrect_title'], lang.obj['catch_guess_incorrect_description'], lang) as EmbedBuilder
                     ],
                     ephemeral: true
                 });
@@ -67,7 +67,7 @@ export default class Catch {
             // returnEmbed(title, message, image=null)
             await btnInteraction.followUp({
                 embeds: [
-                    Util.returnEmbed(lang.obj['catch_no_encounter_title'], lang.obj['catch_no_encounter_description']) as EmbedBuilder
+                    Util.returnEmbed(lang.obj['catch_no_encounter_title'], lang.obj['catch_no_encounter_description'], lang) as EmbedBuilder
                 ],
                 ephemeral: true
             });

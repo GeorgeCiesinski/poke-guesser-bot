@@ -27,13 +27,13 @@ export default class Championship {
             case 'new':
                 try {
                     await Championship.newChampionship(interaction.guildId);
-                    await Util.editReply(interaction, lang.obj['mod_championship_new_title_success'], lang.obj['mod_championship_new_description_success']);
+                    await Util.editReply(interaction, lang.obj['mod_championship_new_title_success'], lang.obj['mod_championship_new_description_success'], lang);
                 } catch (err) {
-                    await Util.editReply(interaction, lang.obj['mod_championship_new_title_failed'], lang.obj['mod_championship_new_description_failed']);
+                    await Util.editReply(interaction, lang.obj['mod_championship_new_title_failed'], lang.obj['mod_championship_new_description_failed'], lang);
                 }
                 break;
             default:
-                    await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /championship subcommand (${subcommand}`);
+                    await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /championship subcommand (${subcommand}`, lang);
         }
     }
 

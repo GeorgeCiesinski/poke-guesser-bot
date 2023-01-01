@@ -1,4 +1,5 @@
-import { EmbedBuilder, AttachmentBuilder, Message, GuildMember, Collection, PermissionsBitField, User, APIGuildMember, Role, APIRole, ChatInputCommandInteraction } from 'discord.js';
+import { EmbedBuilder, AttachmentBuilder, Message, GuildMember, PermissionsBitField, User, APIGuildMember, Role, APIRole, ChatInputCommandInteraction, BaseInteraction } from 'discord.js';
+import Language from './language';
 
 type FetchSpriteType = {
     back_default: string,
@@ -29,20 +30,20 @@ type FetchSpriteType = {
 export default class Util {
     
     // Wraps reply in poke-guesser themed embed
-    static returnEmbed(title: string, message: string, color: number = 0x00AE86, image: string | null = null): EmbedBuilder | {embed: EmbedBuilder, attachment: AttachmentBuilder} {
+    static returnEmbed(title: string, description: string, language: {code: string, obj: { [key: string]: string }}, color: number = 0x00AE86, image: string | null = null): EmbedBuilder | {embed: EmbedBuilder, attachment: AttachmentBuilder} {
         // Creates new embedded message
         let embed = new EmbedBuilder()
             .setTitle(title)
             .setAuthor({
-                name: 'POKÉ-GUESSER BOT',
-                url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png',
-                iconURL: 'https://github.com/GeorgeCiesinski/poke-guesser-bot'
+                name: language.obj['embed_author_name'],
+                iconURL: language.obj['embed_author_icon_url'],
+                url: language.obj['embed_author_url']
             }).setColor(color)
-            .setDescription(message)
-            .setThumbnail('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png')
+            .setDescription(description)
+            .setThumbnail(language.obj['embed_thumbnail'])
             .setFooter({
-                text: 'By borreLore, Wissididom and Valley Orion',
-                iconURL: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png'
+                text: language.obj['credits_text'],
+                iconURL: language.obj['credits_icon_url']
             });
         // Adds image (if applicable) and returns both (if applicable)
         if (image) {
@@ -63,30 +64,20 @@ export default class Util {
     }
 
     // Finds the GuildMember by User-IDs (either string or array)
-    static async  findMember(message: Message, ids: string | string[]): Promise<Collection<string, GuildMember> | undefined> {
+    static async  findMember(interaction: BaseInteraction, id: string): Promise<GuildMember | undefined> {
         // Return member or undefined if not found (force specifies if cache should be checked)
         // I could have omitted the force property, but i have put it there to make it clear
-        return await message.guild?.members.fetch({ user: ids, force: false});
+        return await interaction.guild?.members?.fetch({ user: id, force: false});
     }
 
     // Finds the User by User-ID
-    static async findUser(message: Message, ids: string | string[]): Promise<User | User[] | undefined> {
-        let member = await this.findMember(message, ids);
-        if (Array.isArray(ids)) {
-            if (!member) {
-                console.log(`WARNING: User IDs ${ids.join(', ')} not found in guild.`);
-                return member;
-            }
-            return member.map((member) => {
-                return member.user;
-            });
-        } else {
-            if (!member) {
-                console.log(`WARNING: User ID ${ids} not found in guild.`);
-                return member;
-            }
-            return member.get(ids)?.user;
+    static async findUser(interaction: BaseInteraction, id: string): Promise<User | undefined> {
+        let member = await this.findMember(interaction, id);
+        if (!member) {
+            console.log(`WARNING: User ID ${id} not found in guild.`);
+            return member;
         }
+        return member.user;
     }
 
     static isAdmin(member: GuildMember): boolean {
@@ -159,10 +150,10 @@ export default class Util {
         }
     }
 
-    static async editReply(interaction: ChatInputCommandInteraction, title: string, description: string): Promise<Message<boolean>> {
+    static async editReply(interaction: ChatInputCommandInteraction, title: string, description: string, language: {code: string, obj: { [key: string]: string }}): Promise<Message<boolean>> {
         return await interaction.editReply({
             embeds: [
-                Util.returnEmbed(title, description) as EmbedBuilder
+                Util.returnEmbed(title, description, language) as EmbedBuilder
             ]
         });
     }

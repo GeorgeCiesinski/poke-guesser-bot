@@ -11,7 +11,8 @@
 		"strictNullChecks": true,
 		"allowJs": true,
 		"checkJs": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"resolveJsonModule": true
 	},
 	"exclude": [
 		"build/",

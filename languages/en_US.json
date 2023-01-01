@@ -152,5 +152,21 @@
 	"catch_caught_other_language_title": "<englishPokemon> (<guessedPokemon>) has been caught!",
 	"catch_caught_description": "1 point added to <guesser>'s score.\n\nUse `/score show` to see your score\nUse `/leaderboard` to see the updated leaderboard",
 	"catch_guess_incorrect_title": "Incorrect",
-	"catch_guess_incorrect_description": "Your guess was not correct!"
+	"catch_guess_incorrect_description": "Your guess was not correct!",
+	"leaderboard_title": "Pokémaster Leaderboard",
+	"leaderboard_description": "Top 20 Pokémasters in this channel.",
+	"embed_author_name": "POKé-GUESSER BOT",
+	"embed_author_icon_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+	"embed_author_url": "https://github.com/GeorgeCiesinski/poke-guesser-bot",
+	"embed_thumbnail": "https://raw.githubusercontent.com/GeorgeCiesinski/poke-guesser-bot/master/images/pokemon-trophy.png",
+	"credits_text": "By borreLore, Wissididom and Valley Orion",
+	"credits_icon_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+	"leaderboard_champion": "---------- CHAMPION ----------",
+	"leaderboard_all_hail": "All hail:",
+	"leaderboard_score_name": "<placement>. <username>",
+	"leaderboard_score_value": "<score> pokémon caught.",
+	"leaderboard_position_not_claimed": "Position not claimed",
+	"leaderboard_elite_four": "--------- ELITE FOUR ---------",
+	"leaderboard_next_runnerups": "The next runnerups are:",
+	"leaderboard_runnerups": "--------- RUNNERUPS ---------"
 }

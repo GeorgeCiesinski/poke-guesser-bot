@@ -39,7 +39,7 @@ export default class Score {
                 break;
         }
         // returnEmbed(title, message, image=null)
-        await Util.editReply(interaction, title, description);
+        await Util.editReply(interaction, title, description, lang);
     }
 
     static getRegisterObject() {

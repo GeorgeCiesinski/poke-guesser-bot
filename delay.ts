@@ -33,10 +33,10 @@ export default class Delay {
                     let user = interaction.options.getUser('user');
                     if (user) {
                         await Delay.setDelay(interaction.guildId, user.id, d, h, m, s);
-                        await Util.editReply(interaction, lang.obj['mod_delay_set_title_success'], lang.obj['mod_delay_set_description_success']);
+                        await Util.editReply(interaction, lang.obj['mod_delay_set_title_success'], lang.obj['mod_delay_set_description_success'], lang);
                     }
                 } catch (err) {
-                    Util.editReply(interaction, lang.obj['mod_delay_set_title_failed'], `${lang.obj['mod_delay_set_description_failed']}${err}`);
+                    Util.editReply(interaction, lang.obj['mod_delay_set_title_failed'], `${lang.obj['mod_delay_set_description_failed']}${err}`, lang);
                 }
                 break;
             case 'unset':
@@ -44,10 +44,10 @@ export default class Delay {
                     let user = interaction.options.getUser('user');
                     if (user) {
                         await Delay.unsetDelay(interaction.guildId, user.id);
-                        await Util.editReply(interaction, lang.obj['mod_delay_unset_title_success'], lang.obj['mod_delay_unset_description_success']);
+                        await Util.editReply(interaction, lang.obj['mod_delay_unset_title_success'], lang.obj['mod_delay_unset_description_success'], lang);
                     }
                 } catch (err) {
-                    await Util.editReply(interaction, lang.obj['mod_delay_unset_title_failed'], `${lang.obj['mod_delay_unset_description_failed']}${err}`);
+                    await Util.editReply(interaction, lang.obj['mod_delay_unset_title_failed'], `${lang.obj['mod_delay_unset_description_failed']}${err}`, lang);
                 }
                 break;
             case 'show':
@@ -55,14 +55,14 @@ export default class Delay {
                     let user = interaction.options.getUser('user');
                     if (user) {
                         await Delay.showDelay(interaction.guildId, user.id);
-                        await Util.editReply(interaction, lang.obj['mod_delay_show_title_success'], lang.obj['mod_delay_show_description_success']);
+                        await Util.editReply(interaction, lang.obj['mod_delay_show_title_success'], lang.obj['mod_delay_show_description_success'], lang);
                     }
                 } catch (err) {
-                    await Util.editReply(interaction, lang.obj['mod_delay_show_title_failed'], `${lang.obj['mod_delay_show_description_failed']}${err}`);
+                    await Util.editReply(interaction, lang.obj['mod_delay_show_title_failed'], `${lang.obj['mod_delay_show_description_failed']}${err}`, lang);
                 }
                 break;
             default:
-                await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /delay subcommand (${subcommand}`);
+                await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /delay subcommand (${subcommand}`, lang);
         }
         // returnEmbed(title, message, image=null)
     }

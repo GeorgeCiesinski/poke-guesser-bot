@@ -46,15 +46,15 @@ export default class Reveal {
                 }
                 console.log(`Mod requested reveal: ${encounter[englishIndex].name} (${inBrackets})`);
                 // returnEmbed(title, message, image=null)
-                await Util.editReply(interaction, lang.obj['reveal_pokemon_escaped_title'], lang.obj['reveal_pokemon_escaped_description'].replace('<englishPokemon>', Util.capitalize(encounter[englishIndex].name)).replace('<inBrackets>', inBrackets));
+                await Util.editReply(interaction, lang.obj['reveal_pokemon_escaped_title'], lang.obj['reveal_pokemon_escaped_description'].replace('<englishPokemon>', Util.capitalize(encounter[englishIndex].name)).replace('<inBrackets>', inBrackets), lang);
                 await db.clearEncounters(interaction.guildId, interaction.channelId);
             } else {
                 // returnEmbed(title, message, image=null)
-                await Util.editReply(interaction, lang.obj['reveal_no_encounter_title'], lang.obj['reveal_no_encounter_description']);
+                await Util.editReply(interaction, lang.obj['reveal_no_encounter_title'], lang.obj['reveal_no_encounter_description'], lang);
             }
         } else {
             // returnEmbed(title, message, image=null)
-            await Util.editReply(interaction, lang.obj['reveal_no_mod_title'], lang.obj['reveal_no_mod_description']);
+            await Util.editReply(interaction, lang.obj['reveal_no_mod_title'], lang.obj['reveal_no_mod_description'], lang);
         }
     }
 

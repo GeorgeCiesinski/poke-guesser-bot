@@ -66,7 +66,7 @@ export default class Explore {
             console.log(spriteUrl);
             console.log(officialArtUrl);
             await db.setArtwork(interaction.guildId, interaction.channelId, officialArtUrl);
-            let returnedEmbed: {embed: EmbedBuilder, attachment: AttachmentBuilder} = Util.returnEmbed(lang.obj['explore_wild_pokemon_appeared_title'], lang.obj['explore_wild_pokemon_appeared_description'], 0x00AE86, spriteUrl) as {embed: EmbedBuilder, attachment: AttachmentBuilder};
+            let returnedEmbed: {embed: EmbedBuilder, attachment: AttachmentBuilder} = Util.returnEmbed(lang.obj['explore_wild_pokemon_appeared_title'], lang.obj['explore_wild_pokemon_appeared_description'], lang, 0x00AE86, spriteUrl) as {embed: EmbedBuilder, attachment: AttachmentBuilder};
             // returnEmbed(title, message, image=null)
             interaction.editReply({
                 embeds: [
@@ -82,7 +82,7 @@ export default class Explore {
             await db.setLastExplore(interaction.guildId, interaction.channelId, Date.now());
         } else {
             // returnEmbed(title, message, image=null)
-            Util.editReply(interaction, lang.obj['explore_no_mod_title'], lang.obj['explore_no_mod_description']);
+            Util.editReply(interaction, lang.obj['explore_no_mod_title'], lang.obj['explore_no_mod_description'], lang);
         }
     }
 

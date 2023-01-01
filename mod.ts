@@ -58,9 +58,9 @@ export default class Mod {
                                             await db.setScore(interaction.guildId, user.id, 0);
                                     }
                                 }
-                                Util.editReply(interaction, lang.obj['mod_score_add_title_success'], lang.obj['mod_score_add_description_success']);
+                                Util.editReply(interaction, lang.obj['mod_score_add_title_success'], lang.obj['mod_score_add_description_success'], lang);
                             } catch (err) {
-                                Util.editReply(interaction, lang.obj['mod_score_add_title_failed'], `${lang.obj['mod_score_add_description_failed']}${err}`);
+                                Util.editReply(interaction, lang.obj['mod_score_add_title_failed'], `${lang.obj['mod_score_add_description_failed']}${err}`, lang);
                             }
                             break;
                         case 'remove':
@@ -73,10 +73,10 @@ export default class Mod {
                                     } else {
                                         await db.unsetScore(interaction.guildId, user.id);
                                     }
-                                    Util.editReply(interaction, lang.obj['mod_score_remove_title_success'], lang.obj['mod_score_remove_description_success']);
+                                    Util.editReply(interaction, lang.obj['mod_score_remove_title_success'], lang.obj['mod_score_remove_description_success'], lang);
                                 }
                             } catch (err) {
-                                Util.editReply(interaction, lang.obj['mod_score_remove_title_failed'], `${lang.obj['mod_score_remove_description_failed']}${err}`);
+                                Util.editReply(interaction, lang.obj['mod_score_remove_title_failed'], `${lang.obj['mod_score_remove_description_failed']}${err}`, lang);
                             }
                             break;
                         case 'set':
@@ -91,14 +91,14 @@ export default class Mod {
                                         if (!dbScore)
                                             await db.setScore(interaction.guildId, user.id, 0);
                                     }
-                                    Util.editReply(interaction, lang.obj['mod_score_set_title_success'], lang.obj['mod_score_set_description_success']);
+                                    Util.editReply(interaction, lang.obj['mod_score_set_title_success'], lang.obj['mod_score_set_description_success'], lang);
                                 }
                             } catch (err) {
-                                Util.editReply(interaction, lang.obj['mod_score_set_title_failed'], `${lang.obj['mod_score_set_description_failed']}${err}`);
+                                Util.editReply(interaction, lang.obj['mod_score_set_title_failed'], `${lang.obj['mod_score_set_description_failed']}${err}`, lang);
                             }
                             break;
                         default:
-                            await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /mod score subcommand (${subcommand}`);
+                            await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /mod score subcommand (${subcommand}`, lang);
                     }
                     break;
                 case 'delay': // /mod delay ?
@@ -111,10 +111,10 @@ export default class Mod {
                     await Championship.championship(interaction, db);
                     break;
                 default:
-                    await Util.editReply(interaction, 'Invalid subcommand group', `You used an invalid /mod championship subcommand group (${subcommandgroup}`);
+                    await Util.editReply(interaction, 'Invalid subcommand group', `You used an invalid /mod championship subcommand group (${subcommandgroup}`, lang);
             }
         } else {
-            Util.editReply(interaction, lang.obj['mod_no_mod_title'], lang.obj['mod_no_mod_description']);
+            Util.editReply(interaction, lang.obj['mod_no_mod_title'], lang.obj['mod_no_mod_description'], lang);
         }
         // returnEmbed(title, message, image=null)
     }

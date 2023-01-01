@@ -11,6 +11,7 @@ const mySecret = process.env['TOKEN']; // Discord Token
 
 const client = new Client({intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.MessageContent
@@ -61,7 +62,7 @@ client.on("interactionCreate", async (interaction) => {
                 const lang = await Language.getLanguage(interaction.guildId, db);
                 interaction.reply({
                     embeds: [
-                        Util.returnEmbed(lang.obj['channel_forbidden_error_title'], lang.obj['channel_forbidden_error_description']) as EmbedBuilder
+                        Util.returnEmbed(lang.obj['channel_forbidden_error_title'], lang.obj['channel_forbidden_error_description'], lang) as EmbedBuilder
                     ],
                     ephemeral: true
                 });
