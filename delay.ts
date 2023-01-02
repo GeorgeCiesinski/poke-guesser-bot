@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandSubcommandGroupBuilder } from "discord.js";
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from './util';
@@ -78,76 +78,128 @@ export default class Delay {
         // TODO: Execute Delay Actions
     }
 
-    static getRegisterObject() {
-        return {
-            name: 'delay',
-            description: 'Manage the delay of someone',
-            type: ApplicationCommandOptionType.SubcommandGroup,
-            options: [
-                {
-                    name: 'set',
-                    description: 'Sets a users delay',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'user',
-                            description: 'The user whose delay you want to set',
-                            required: true,
-                            type: ApplicationCommandOptionType.User
-                        },
-                        {
-                            name: 'days',
-                            description: 'The time you want to set the delay to',
-                            required: false,
-                            type: ApplicationCommandOptionType.Integer
-                        },
-                        {
-                            name: 'hours',
-                            description: 'The time you want to set the delay to',
-                            required: false,
-                            type: ApplicationCommandOptionType.Integer
-                        },
-                        {
-                            name: 'minutes',
-                            description: 'The time you want to set the delay to',
-                            required: false,
-                            type: ApplicationCommandOptionType.Integer
-                        },
-                        {
-                            name: 'seconds',
-                            description: 'The time you want to set the delay to',
-                            required: false,
-                            type: ApplicationCommandOptionType.Integer
-                        }
-                    ]
-                },
-                {
-                    name: 'unset',
-                    description: 'Unsets a users delay',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'user',
-                            description: 'The user whose delay you want to unset',
-                            required: true,
-                            type: ApplicationCommandOptionType.User
-                        }
-                    ]
-                },
-                {
-                    name: 'show',
-                    description: 'Shows a users delay',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'user',
-                            description: 'The user whose score you want to show',
-                            required: true,
-                            type: ApplicationCommandOptionType.User
-                        }
-                    ]
-                }
-            ]
-        };
+    static getRegisterObject(subcommandgroup: SlashCommandSubcommandGroupBuilder): SlashCommandSubcommandGroupBuilder {
+        return subcommandgroup
+        .setName('delay')
+        .setNameLocalizations({
+            'de': 'verzoegerung'
+        })
+        .setDescription('Manage the delay of a user')
+        .setDescriptionLocalizations({
+            'de': 'Die Verzögerung eines Benutzers verwalten'
+        })
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('set')
+            .setNameLocalizations({
+                'de': 'setzen'
+            })
+            .setDescription('Sets a users delay')
+            .setDescriptionLocalizations({
+                'de': 'Setzt eine Verzögerung eines Benutzers'
+            })
+            .addUserOption(option =>
+                option
+                .setName('user')
+                .setNameLocalizations({
+                    'de': 'benutzer'
+                })
+                .setDescription('The user whose delay you want to set')
+                .setDescriptionLocalizations({
+                    'de': 'Der Benutzer dessen Verzögerung gesetzt werden soll'
+                })
+                .setRequired(true)
+            )
+            .addIntegerOption(option =>
+                option
+                .setName('days')
+                .setNameLocalizations({
+                    'de': 'tage'
+                })
+                .setDescription('The duration you want to set the delay to')
+                .setDescriptionLocalizations({
+                    'de': 'Die Dauer, auf die du die Verzögerung setzen willst'
+                })
+            )
+            .addIntegerOption(option =>
+                option
+                .setName('hours')
+                .setNameLocalizations({
+                    'de': 'stunden'
+                })
+                .setDescription('The duration you want to set the delay to')
+                .setDescriptionLocalizations({
+                    'de': 'Die Dauer, auf die du die Verzögerung setzen willst'
+                })
+            )
+            .addIntegerOption(option =>
+                option
+                .setName('minutes')
+                .setNameLocalizations({
+                    'de': 'minuten'
+                })
+                .setDescription('The duration you want to set the delay to')
+                .setDescriptionLocalizations({
+                    'de': 'Die Dauer, auf die du die Verzögerung setzen willst'
+                })
+            )
+            .addIntegerOption(option =>
+                option
+                .setName('seconds')
+                .setNameLocalizations({
+                    'de': 'sekunden'
+                })
+                .setDescription('The duration you want to set the delay to')
+                .setDescriptionLocalizations({
+                    'de': 'Die Dauer, auf die du die Verzögerung setzen willst'
+                })
+            )
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('unset')
+            .setNameLocalizations({
+                'de': 'entfernen'
+            })
+            .setDescription('Unsets a users delay')
+            .setDescriptionLocalizations({
+                'de': 'Entfernt die Verzögerung eines Benutzers'
+            })
+            .addUserOption(option =>
+                option
+                .setName('user')
+                .setNameLocalizations({
+                    'de': 'benutzer'
+                })
+                .setDescription('The user whose delay you want to unset')
+                .setDescriptionLocalizations({
+                    'de': 'Der Benutzer dessen Verzögerung entfernt werden soll'
+                })
+                .setRequired(true)
+            )
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('show')
+            .setNameLocalizations({
+                'de': 'anzeigen'
+            })
+            .setDescription('Shows a users delay')
+            .setDescriptionLocalizations({
+                'de': 'Zeigt die Deuer der Verzögerung eines Benutzers an'
+            })
+            .addUserOption(option =>
+                option
+                .setName('user')
+                .setNameLocalizations({
+                    'de': 'benutzer'
+                })
+                .setDescription('The user whose delay you want to see')
+                .setDescriptionLocalizations({
+                    'de': 'Der Benutzer dessen Verzögerung du sehen willst'
+                })
+                .setRequired(true)
+            )
+        );
     }
 }

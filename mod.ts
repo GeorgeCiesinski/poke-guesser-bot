@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
 import Language from './language';
 import Util from './util';
 import Delay from "./delay";
@@ -119,77 +119,130 @@ export default class Mod {
     }
 
     static getRegisterObject() {
-        return {
-            name: 'mod',
-            description: 'Manage delay, timeout and score',
-            type: ApplicationCommandType.ChatInput,
-            options: [
-                {
-                    name: 'score',
-                    description: 'Manage the score of someone',
-                    type: ApplicationCommandOptionType.SubcommandGroup,
-                    options: [
-                        {
-                            name: 'add',
-                            description: 'Add a score to a user',
-                            type: ApplicationCommandOptionType.Subcommand,
-                            options: [
-                                {
-                                    name: 'user',
-                                    description: 'The user whose score you want to update',
-                                    required: true,
-                                    type: ApplicationCommandOptionType.User
-                                },
-                                {
-                                    name: 'score',
-                                    description: 'The amount of points you want to add to the score',
-                                    required: false,
-                                    type: ApplicationCommandOptionType.Integer
-                                }
-                            ]
-                        },
-                        {
-                            name: 'remove',
-                            description: 'Remove a score from a user',
-                            type: ApplicationCommandOptionType.Subcommand,
-                            options: [
-                                {
-                                    name: 'user',
-                                    description: 'The user whose score you want to update',
-                                    required: true,
-                                    type: ApplicationCommandOptionType.User
-                                },
-                                {
-                                    name: 'score',
-                                    description: 'The amount of points you want to remove from the score',
-                                    required: false,
-                                    type: ApplicationCommandOptionType.Integer
-                                }
-                            ]
-                        },
-                        {
-                            name: 'set',
-                            description: 'Set the score of a user',
-                            type: ApplicationCommandOptionType.Subcommand,
-                            options: [
-                                {
-                                    name: 'user',
-                                    description: 'The user whose score you want to update',
-                                    required: true,
-                                    type: ApplicationCommandOptionType.User
-                                },
-                                {
-                                    name: 'score',
-                                    description: 'The amount of points you want to set the score',
-                                    required: false,
-                                    type: ApplicationCommandOptionType.Integer
-                                }
-                            ]
-                        }
-                    ]
-                },
-                Delay.getRegisterObject(), Timeout.getRegisterObject(), Championship.getRegisterObject()
-            ]
-        }
+        return new SlashCommandBuilder()
+        .setName('mod')
+        .setNameLocalizations({
+            'de': 'mod'
+        })
+        .setDescription('Manage delay, timeout and score')
+        .setDescriptionLocalizations({
+            'de': 'Verzögerung, Auszeit und Punktzahl verwalten'
+        })
+        .addSubcommandGroup(subcommandgroup =>
+            subcommandgroup
+            .setName('score')
+            .setNameLocalizations({
+                'de': 'punktzahl'
+            })
+            .setDescription('Manage the score of someone')
+            .setDescriptionLocalizations({
+                'de': 'Die Punktzahl eines Benutzers verwalten'
+            })
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('add')
+                .setNameLocalizations({
+                    'de': 'hinzufügen'
+                })
+                .setDescription('Add a score to a user')
+                .setDescriptionLocalizations({
+                    'de': 'Punktzahl zu einem Benutzer hinzufügen'
+                })
+                .addUserOption(option =>
+                    option
+                    .setName('user')
+                    .setNameLocalizations({
+                        'de': 'benutzer'
+                    })
+                    .setDescription('The user whose score you want to update')
+                    .setDescriptionLocalizations({
+                        'de': 'Der Benutzer dessen Punktzahl du anpassen willst'
+                    })
+                    .setRequired(true)
+                )
+                .addIntegerOption(option =>
+                    option
+                    .setName('score')
+                    .setNameLocalizations({
+                        'de': 'punktzahl'
+                    })
+                    .setDescription('The amount of points you want to add to the score of the user')
+                    .setDescriptionLocalizations({
+                        'de': 'Die Anzahl der Punkte, die du der Punktzahl des Benutzers hinzufügen willst'
+                    })
+                )
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('remove')
+                .setNameLocalizations({
+                    'de': 'entfernen'
+                })
+                .setDescription('Remove a score from a user')
+                .setDescriptionLocalizations({
+                    'de': 'Punktzahl eines Benutzers entfernen/verringern'
+                })
+                .addUserOption(option =>
+                    option
+                    .setName('user')
+                    .setNameLocalizations({
+                        'de': 'benutzer'
+                    })
+                    .setDescription('The user whose score you want to update')
+                    .setDescriptionLocalizations({
+                        'de': 'Der Benutzer dessen Punktzahl du anpassen willst'
+                    })
+                    .setRequired(true)
+                )
+                .addIntegerOption(option =>
+                    option
+                    .setName('score')
+                    .setNameLocalizations({
+                        'de': 'punktzahl'
+                    })
+                    .setDescription('The amount of points you want to remove from the user\'s score')
+                    .setDescriptionLocalizations({
+                        'de': 'Die Anzahl der Punkte, die du der Punktzahl des Benutzers entfernen willst'
+                    })
+                )
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('set')
+                .setNameLocalizations({
+                    'de': 'setzen'
+                })
+                .setDescription('Set the score of a user')
+                .setDescriptionLocalizations({
+                    'de': 'Punktzahl eines Benutzers setzen'
+                })
+                .addUserOption(option =>
+                    option
+                    .setName('user')
+                    .setNameLocalizations({
+                        'de': 'benutzer'
+                    })
+                    .setDescription('The user whose score you want to update')
+                    .setDescriptionLocalizations({
+                        'de': 'Der Benutzer dessen Punktzahl du anpassen willst'
+                    })
+                    .setRequired(true)
+                )
+                .addIntegerOption(option =>
+                    option
+                    .setName('score')
+                    .setNameLocalizations({
+                        'de': 'punktzahl'
+                    })
+                    .setDescription('The amount of points you want to set as score of the user')
+                    .setDescriptionLocalizations({
+                        'de': 'Die Punktzahl, die du beim Benutzers setzen willst'
+                    })
+                )
+            )
+        )
+        .addSubcommandGroup(subcommandgroup => Delay.getRegisterObject(subcommandgroup))
+        .addSubcommandGroup(subcommandgroup => Timeout.getRegisterObject(subcommandgroup))
+        .addSubcommandGroup(subcommandgroup => Championship.getRegisterObject(subcommandgroup));
     }
 }

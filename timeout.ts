@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction, SlashCommandSubcommandGroupBuilder } from "discord.js";
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from './util';
@@ -81,76 +81,128 @@ export default class Timeout {
         // TODO: Execute Mod Actions
     }
 
-    static getRegisterObject() {
-        return {
-            name: 'timeout',
-            description: 'Manage the timeout of a user',
-            type: ApplicationCommandOptionType.SubcommandGroup,
-            options: [
-                {
-                    name: 'set',
-                    description: 'Sets a users timeout',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'user',
-                            description: 'The user whose timeout you want to set',
-                            required: true,
-                            type: ApplicationCommandOptionType.User
-                        },
-                        {
-                            name: 'days',
-                            description: 'The time you want to set the timeout to',
-                            required: false,
-                            type: ApplicationCommandOptionType.Integer
-                        },
-                        {
-                            name: 'hours',
-                            description: 'The time you want to set the timeout to',
-                            required: false,
-                            type: ApplicationCommandOptionType.Integer
-                        },
-                        {
-                            name: 'minutes',
-                            description: 'The time you want to set the timeout to',
-                            required: false,
-                            type: ApplicationCommandOptionType.Integer
-                        },
-                        {
-                            name: 'seconds',
-                            description: 'The time you want to set the timeout to',
-                            required: false,
-                            type: ApplicationCommandOptionType.Integer
-                        }
-                    ]
-                },
-                {
-                    name: 'unset',
-                    description: 'Unsets a users timeout',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'user',
-                            description: 'The user whose timeout you want to unset',
-                            required: true,
-                            type: ApplicationCommandOptionType.User
-                        }
-                    ]
-                },
-                {
-                    name: 'show',
-                    description: 'Shows a users timeout',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'user',
-                            description: 'The user whose score you want to show',
-                            required: true,
-                            type: ApplicationCommandOptionType.User
-                        }
-                    ]
-                }
-            ]
-        }
+    static getRegisterObject(subcommandgroup: SlashCommandSubcommandGroupBuilder): SlashCommandSubcommandGroupBuilder {
+        return subcommandgroup
+        .setName('timeout')
+        .setNameLocalizations({
+            'de': 'auszeit'
+        })
+        .setDescription('Manage the timeout of a user')
+        .setDescriptionLocalizations({
+            'de': 'Die Auszeit eines Benutzers verwalten'
+        })
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('set')
+            .setNameLocalizations({
+                'de': 'setzen'
+            })
+            .setDescription('Sets a users timeout')
+            .setDescriptionLocalizations({
+                'de': 'Setzt eine Auszeit eines Benutzers'
+            })
+            .addUserOption(option =>
+                option
+                .setName('user')
+                .setNameLocalizations({
+                    'de': 'benutzer'
+                })
+                .setDescription('The user whose timeout you want to set')
+                .setDescriptionLocalizations({
+                    'de': 'Der Benutzer dessen Auszeit gesetzt werden soll'
+                })
+                .setRequired(true)
+            )
+            .addIntegerOption(option =>
+                option
+                .setName('days')
+                .setNameLocalizations({
+                    'de': 'tage'
+                })
+                .setDescription('The duration you want to set the timeout to')
+                .setDescriptionLocalizations({
+                    'de': 'Die Dauer, auf die du die Auszeit setzen willst'
+                })
+            )
+            .addIntegerOption(option =>
+                option
+                .setName('hours')
+                .setNameLocalizations({
+                    'de': 'stunden'
+                })
+                .setDescription('The duration you want to set the timeout to')
+                .setDescriptionLocalizations({
+                    'de': 'Die Dauer, auf die du die Auszeit setzen willst'
+                })
+            )
+            .addIntegerOption(option =>
+                option
+                .setName('minutes')
+                .setNameLocalizations({
+                    'de': 'minuten'
+                })
+                .setDescription('The duration you want to set the timeout to')
+                .setDescriptionLocalizations({
+                    'de': 'Die Dauer, auf die du die Auszeit setzen willst'
+                })
+            )
+            .addIntegerOption(option =>
+                option
+                .setName('seconds')
+                .setNameLocalizations({
+                    'de': 'sekunden'
+                })
+                .setDescription('The duration you want to set the timeout to')
+                .setDescriptionLocalizations({
+                    'de': 'Die Dauer, auf die du die Auszeit setzen willst'
+                })
+            )
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('unset')
+            .setNameLocalizations({
+                'de': 'entfernen'
+            })
+            .setDescription('Unsets a users timeout')
+            .setDescriptionLocalizations({
+                'de': 'Entfernt die Auszeit eines Benutzers'
+            })
+            .addUserOption(option =>
+                option
+                .setName('user')
+                .setNameLocalizations({
+                    'de': 'benutzer'
+                })
+                .setDescription('The user whose timeout you want to unset')
+                .setDescriptionLocalizations({
+                    'de': 'Der Benutzer dessen Auszeit entfernt werden soll'
+                })
+                .setRequired(true)
+            )
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('show')
+            .setNameLocalizations({
+                'de': 'anzeigen'
+            })
+            .setDescription('Shows a users timeout')
+            .setDescriptionLocalizations({
+                'de': 'Zeigt die Deuer der Auszeit eines Benutzers an'
+            })
+            .addUserOption(option =>
+                option
+                .setName('user')
+                .setNameLocalizations({
+                    'de': 'benutzer'
+                })
+                .setDescription('The user whose timeout you want to see')
+                .setDescriptionLocalizations({
+                    'de': 'Der Benutzer dessen Auszeit du sehen willst'
+                })
+                .setRequired(true)
+            )
+        );
     }
 }

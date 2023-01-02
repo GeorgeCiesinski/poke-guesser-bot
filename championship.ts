@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder } from 'discord.js';
 import Database from './data/postgres';
 import Language from './language';
 import Util from './util';
@@ -41,8 +41,8 @@ export default class Championship {
         // TODO: Execute newChampionship Actions
     }
 
-    static getRegisterObject() {
-        return new SlashCommandBuilder()
+    static getRegisterObject(subcommandgroup: SlashCommandSubcommandGroupBuilder): SlashCommandSubcommandGroupBuilder {
+        return subcommandgroup
         .setName('championship')
         .setNameLocalizations({
             'de': 'meisterschaft'
