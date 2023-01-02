@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, GuildMember, EmbedBuilder, AttachmentBuilder } from "discord.js";
+import { ApplicationCommandType, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, GuildMember, EmbedBuilder, AttachmentBuilder, SlashCommandBuilder } from "discord.js";
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";
@@ -96,10 +96,16 @@ export default class Explore {
     }
 
     static getRegisterObject() {
-        return {
-            name: 'explore',
-            description: 'Generate a new pokemon',
-            type: ApplicationCommandType.ChatInput
-        }
+        return new SlashCommandBuilder()
+        .setName('explore')
+        .setNameLocalizations({
+            'en-US': 'explore',
+            'de': 'erforschen'
+        })
+        .setDescription('Generate a new pokemon')
+        .setDescriptionLocalizations({
+            'en-US': 'Generate a new pokemon',
+            'de': 'Neues Pokémon generieren'
+        });
     }
 }
