@@ -85,8 +85,6 @@ export default class Timeout {
             default:
                 await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommand), lang);
         }
-        // returnEmbed(title, message, image=null)
-        return {title: 'Error', description: 'timeout.ts -> Should never happen'};
     }
 
     private static async setTimeout(serverId: string, userId: string, days: number = 0, hours: number = 0, minutes: number = 0, seconds: number = 0) {
