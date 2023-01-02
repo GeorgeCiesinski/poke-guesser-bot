@@ -116,7 +116,6 @@ export default class Mod {
         } else {
             Util.editReply(interaction, lang.obj['mod_no_mod_title'], lang.obj['mod_no_mod_description'], lang);
         }
-        // returnEmbed(title, message, image=null)
     }
 
     static getRegisterObject() {
