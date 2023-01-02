@@ -99,12 +99,10 @@ export default class Explore {
         return new SlashCommandBuilder()
         .setName('explore')
         .setNameLocalizations({
-            'en-US': 'explore',
             'de': 'erforschen'
         })
         .setDescription('Generate a new pokemon')
         .setDescriptionLocalizations({
-            'en-US': 'Generate a new pokemon',
             'de': 'Neues Pokémon generieren'
         });
     }

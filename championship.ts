@@ -45,23 +45,19 @@ export default class Championship {
         return new SlashCommandBuilder()
         .setName('championship')
         .setNameLocalizations({
-            'en-US': 'championship',
             'de': 'meisterschaft'
         })
         .setDescription('Manages the championship')
         .setDescriptionLocalizations({
-            'en-US': 'Manages the championship',
             'de': 'Meisterschaft verwalten'
         }).addSubcommand(subcommand =>
             subcommand
             .setName('new')
             .setNameLocalizations({
-                'en-US': 'new',
                 'de': 'neu'
             })
             .setDescription('Outputs the leaderboard one last time, reveals winner and clears the leaderboard')
             .setDescriptionLocalizations({
-                'en-US': 'Outputs the leaderboard one last time, reveals winner and clears the leaderboard',
                 'de': 'Gibt die Bestenliste ein letztes Mal aus, verkündet den Gewinner und leert die Bestenliste'
             })
         );
