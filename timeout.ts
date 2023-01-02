@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, SlashCommandSubcommandGroupBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandSubcommandGroupBuilder } from "discord.js";
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from './util';

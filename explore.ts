@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, GuildMember, EmbedBuilder, AttachmentBuilder, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, GuildMember, EmbedBuilder, AttachmentBuilder, SlashCommandBuilder } from "discord.js";
 import Database from "./data/postgres";
 import Language from "./language";
 import Util from "./util";

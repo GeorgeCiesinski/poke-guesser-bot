@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, GuildMember } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
 import Database from './data/postgres';
 import Language from './language';
 import Util from './util';
@@ -59,10 +59,14 @@ export default class Reveal {
     }
 
     static getRegisterObject() {
-        return {
-            name: 'reveal',
-            description: 'Reveals the current pokemon',
-            type: ApplicationCommandType.ChatInput
-        };
+        return new SlashCommandBuilder()
+        .setName('reveal')
+        .setNameLocalizations({
+            'de': 'aufloesen'
+        })
+        .setDescription('Reveals the current pokemon')
+        .setDescriptionLocalizations({
+            'de': 'Löst das aktuell gesuchte Pokemon auf'
+        });
     }
 }

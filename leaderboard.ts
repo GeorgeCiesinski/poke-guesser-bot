@@ -1,4 +1,4 @@
-import { ApplicationCommandType, Message, ChatInputCommandInteraction, EmbedBuilder, User, BaseInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, User, BaseInteraction, SlashCommandBuilder } from "discord.js";
 import { Model } from "sequelize";
 import Database from "./data/postgres";
 import Language from "./language";

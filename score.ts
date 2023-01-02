@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Database from "./data/postgres";
 import Language from './language';
 import Util from './util';
@@ -42,25 +42,36 @@ export default class Score {
     }
 
     static getRegisterObject() {
-        return {
-            name: 'score',
-            description: 'Shows the score of someone or yourself',
-            type: ApplicationCommandType.ChatInput,
-            options: [
-                {
-                    name: 'show',
-                    description: 'Shows the Score of someone or yourself',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'user',
-                            description: 'The user whose score you want to know',
-                            required: false,
-                            type: ApplicationCommandOptionType.User
-                        }
-                    ]
-                }
-            ]
-        };
+        return new SlashCommandBuilder()
+        .setName('score')
+        .setNameLocalizations({
+            'de': 'punktzahl'
+        })
+        .setDescription('Shows the score of someone or yourself')
+        .setDescriptionLocalizations({
+            'de': 'Zeigt die Punktzahl von jemandem oder dir selbst an'
+        })
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('show')
+            .setNameLocalizations({
+                'de': 'anzeigen'
+            })
+            .setDescription('Shows the score of someone or yourself')
+            .setDescriptionLocalizations({
+                'de': 'Zeigt die Punktzahl von jemandem oder dir selbst an'
+            })
+            .addUserOption(option =>
+                option
+                .setName('user')
+                .setNameLocalizations({
+                    'de': 'benutzer'
+                })
+                .setDescription('The user whose score you want to know')
+                .setDescriptionLocalizations({
+                    'de': 'Der Benutzer dessen Punktzahl du wissen willst'
+                })
+            )
+        );
     }
 }
