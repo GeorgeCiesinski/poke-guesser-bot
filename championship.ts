@@ -33,7 +33,7 @@ export default class Championship {
                 }
                 break;
             default:
-                    await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /championship subcommand (${subcommand}`, lang);
+                await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommand), lang);
         }
     }
 

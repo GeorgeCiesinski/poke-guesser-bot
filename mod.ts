@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, GuildMember, MembershipScreeningFieldType } from "discord.js";
+import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, GuildMember } from "discord.js";
 import Language from './language';
 import Util from './util';
 import Delay from "./delay";
@@ -98,7 +98,7 @@ export default class Mod {
                             }
                             break;
                         default:
-                            await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /mod score subcommand (${subcommand}`, lang);
+                            await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommand), lang);
                     }
                     break;
                 case 'delay': // /mod delay ?
@@ -111,7 +111,7 @@ export default class Mod {
                     await Championship.championship(interaction, db);
                     break;
                 default:
-                    await Util.editReply(interaction, 'Invalid subcommand group', `You used an invalid /mod championship subcommand group (${subcommandgroup}`, lang);
+                    await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommandgroup + '' + subcommand), lang);
             }
         } else {
             Util.editReply(interaction, lang.obj['mod_no_mod_title'], lang.obj['mod_no_mod_description'], lang);

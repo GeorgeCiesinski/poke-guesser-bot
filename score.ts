@@ -33,12 +33,11 @@ export default class Score {
                 let userScore = await db.getScore(interaction.guildId, user.id);
                 title = user.tag;
                 if (userScore)
-                    description = `**User**: <@${user.id}>\n**Position**: ${userScore.position}\n**Score**: ${userScore.score}`;
+                    description = `**${lang.obj['user']}**: <@${user.id}>\n**${lang.obj['position']}**: ${userScore.position}\n**${lang.obj['score']}**: ${userScore.score}`;
                 else
-                    description = `**User**: <@${user.id}>\n**Position**: N/A\n**Score**: N/A`;
+                    description = `**${lang.obj['user']}**: <@${user.id}>\n**${lang.obj['position']}**: N/A\n**${lang.obj['score']}**: N/A`;
                 break;
         }
-        // returnEmbed(title, message, image=null)
         await Util.editReply(interaction, title, description, lang);
     }
 

@@ -1,4 +1,6 @@
 {
+	"error_invalid_subcommand_title": "Invalid Subcommand",
+	"error_invalid_subcommand_description": "You used an invalid /<commandName> subcommand (<subcommandName>)",
 	"help_admin_title": "Admin Help",
 	"help_settings_mods_add": "Adds a role or user to the collection of bot mods for this server",
 	"help_settings_mods_remove": "Removes a role or user from the collection of bot mods for this server",
@@ -153,6 +155,8 @@
 	"catch_caught_description": "1 point added to <guesser>'s score.\n\nUse `/score show` to see your score\nUse `/leaderboard` to see the updated leaderboard",
 	"catch_guess_incorrect_title": "Incorrect",
 	"catch_guess_incorrect_description": "Your guess was not correct!",
+	"catch_this_pokemon": "Catch This Pokémon!",
+	"catch_pokemon_name": "Pokémon Name",
 	"leaderboard_title": "Pokémaster Leaderboard",
 	"leaderboard_description": "Top 20 Pokémasters in this channel.",
 	"embed_author_name": "POKé-GUESSER BOT",
@@ -168,5 +172,9 @@
 	"leaderboard_position_not_claimed": "Position not claimed",
 	"leaderboard_elite_four": "--------- ELITE FOUR ---------",
 	"leaderboard_next_runnerups": "The next runnerups are:",
-	"leaderboard_runnerups": "--------- RUNNERUPS ---------"
+	"leaderboard_runnerups": "--------- RUNNERUPS ---------",
+	"user": "User",
+	"position": "Position",
+	"score": "Score",
+	"not_available": "N/A"
 }

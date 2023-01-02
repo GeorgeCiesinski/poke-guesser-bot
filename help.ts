@@ -62,6 +62,8 @@ export default class Help {
                                 `\`/leaderboard\` - ${lang.obj['help_leaderboard']}\n` +
                                 `\`/score show [<user>]\` - ${lang.obj['help_score_show']}\n`;
                 break;
+            default:
+                await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', type ? type : 'null'), lang);
         }
         Util.editReply(interaction, title, description, lang);
     }

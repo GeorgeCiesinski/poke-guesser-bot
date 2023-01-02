@@ -57,7 +57,7 @@ export default class Settings {
                         }
                         break;
                     default:
-                        await Util.editReply(interaction, 'Invalid Subcommand Group', `You used an invalid /settings subcommand group (${subcommandgroup}`, lang);
+                        await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommandgroup + ' ' + subcommand), lang);
                 }
                 break;
             case 'remove':
@@ -85,7 +85,7 @@ export default class Settings {
                         }
                         break;
                     default:
-                        await Util.editReply(interaction, 'Invalid Subcommand Group', `You used an invalid /settings subcommand group (${subcommandgroup}`, lang);
+                        await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommandgroup + ' ' + subcommand), lang);
                 }
                 break;
             case 'show':
@@ -115,8 +115,8 @@ export default class Settings {
                         description = await db.getLanguageCode(interaction.guildId);
                         break;
                     default:
-                        title = 'Invalid Subcommand Group';
-                        description = `You used an invalid /settings subcommand group (${subcommandgroup}`;
+                        title = lang.obj['error_invalid_subcommand_title'];
+                        description = lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommandgroup + ' ' + subcommand);
                         break;
                 }
                 await Util.editReply(interaction, title, description, lang);
@@ -140,7 +140,7 @@ export default class Settings {
                         }
                         break;
                     default:
-                        await Util.editReply(interaction, 'Invalid Subcommand Group', `You used an invalid /settings subcommand group (${subcommandgroup}`, lang);
+                        await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommandgroup + ' ' + subcommand), lang);
                         break;
                 }
                 break;
@@ -155,7 +155,7 @@ export default class Settings {
                         }
                         break;
                     default:
-                        await Util.editReply(interaction, 'Invalid Subcommand Group', `You used an invalid /settings subcommand group (${subcommandgroup}`, lang);
+                        await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommandgroup + ' ' + subcommand), lang);
                         break;
                 }
                 break;
@@ -211,7 +211,7 @@ export default class Settings {
                 await Util.editReply(interaction, helpTitle, helpDescription, lang);
                 break;
             default:
-                await Util.editReply(interaction, 'Invalid Subcommand', `You used an invalid /settings subcommand (${subcommand}`, lang);
+                await Util.editReply(interaction, lang.obj['error_invalid_subcommand_title'], lang.obj['error_invalid_subcommand_description'].replace('<commandName>', interaction.commandName).replace('<subcommandName>', subcommandgroup + ' ' + subcommand), lang);
                 break;
         }
         // returnEmbed(title, message, image=null);

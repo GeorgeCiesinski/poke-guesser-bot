@@ -30,7 +30,7 @@ type FetchSpriteType = {
 export default class Util {
     
     // Wraps reply in poke-guesser themed embed
-    static returnEmbed(title: string, description: string, language: {code: string, obj: { [key: string]: string }}, color: number = 0x00AE86, image: string | null = null): EmbedBuilder | {embed: EmbedBuilder, attachment: AttachmentBuilder} {
+    static returnEmbed(title: string, description: string, language: {code: string, obj: { [key: string]: string }}, color: number = 0x00AE86, image: string | null = null): {embed: EmbedBuilder, attachment: AttachmentBuilder | null} {
         // Creates new embedded message
         let embed = new EmbedBuilder()
             .setTitle(title)
@@ -54,7 +54,10 @@ export default class Util {
                 attachment
             }
         } else {
-            return embed;
+            return {
+                embed,
+                attachment: null
+            };
         }
     }
 
@@ -153,7 +156,7 @@ export default class Util {
     static async editReply(interaction: ChatInputCommandInteraction, title: string, description: string, language: {code: string, obj: { [key: string]: string }}): Promise<Message<boolean>> {
         return await interaction.editReply({
             embeds: [
-                Util.returnEmbed(title, description, language) as EmbedBuilder
+                Util.returnEmbed(title, description, language).embed
             ]
         });
     }

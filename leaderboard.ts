@@ -23,26 +23,12 @@ export default class Leaderboard {
         }
         await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
         const lang = await Language.getLanguage(interaction.guildId, db);
-        //const type = interaction.options.getString('type');
         let table = '';
         let longestUserLength: number = 0;
         let userName = '';
         let score = '';
         let scores = await db.getScores(interaction.guildId);
-        const leaderboardEmbed: EmbedBuilder = new EmbedBuilder()
-        .setTitle(lang.obj['leaderboard_title'])
-        .setAuthor({
-            name: lang.obj['embed_author_name'],
-            iconURL: lang.obj['leaderboard_author_icon_url'],
-            url: lang.obj['leaderboard_author_url']
-        })
-        .setColor(0x00AE86)
-        .setDescription(lang.obj['leaderboard_description'])
-        .setThumbnail(lang.obj['leaderboard_thumbnail'])
-        .setFooter({
-            text: lang.obj['credits_text'],
-            iconURL: lang.obj['credits_icon_url']
-        });
+        const leaderboardEmbed: EmbedBuilder = Util.returnEmbed(lang.obj['leaderboard_title'], lang.obj['leaderboard_description'], lang).embed;
         // Add fields to Embed
         for (let i: number = 0; i < Math.max(5, scores.length); i++) {
             let userId = scores[i]?.getDataValue('userId');

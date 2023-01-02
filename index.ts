@@ -62,7 +62,7 @@ client.on("interactionCreate", async (interaction) => {
                 const lang = await Language.getLanguage(interaction.guildId, db);
                 interaction.reply({
                     embeds: [
-                        Util.returnEmbed(lang.obj['channel_forbidden_error_title'], lang.obj['channel_forbidden_error_description'], lang) as EmbedBuilder
+                        Util.returnEmbed(lang.obj['channel_forbidden_error_title'], lang.obj['channel_forbidden_error_description'], lang).embed
                     ],
                     ephemeral: true
                 });
@@ -75,8 +75,9 @@ client.on("interactionCreate", async (interaction) => {
         }
     } else if (interaction.isButton()) {
         if (interaction.customId == 'catchBtn') {
-            let modal = new ModalBuilder().setTitle('Catch This Pokémon!').setCustomId('catchModal').setComponents(
-                new ActionRowBuilder<TextInputBuilder>().setComponents(new TextInputBuilder().setCustomId('guess').setLabel('Pokémon Name').setMaxLength(100).setMinLength(1).setPlaceholder('Pokémon Name').setStyle(TextInputStyle.Short))
+            const lang = await Language.getLanguage(interaction.guildId, db);
+            let modal = new ModalBuilder().setTitle(lang.obj['catch_this_pokemon']).setCustomId('catchModal').setComponents(
+                new ActionRowBuilder<TextInputBuilder>().setComponents(new TextInputBuilder().setCustomId('guess').setLabel(lang.obj['catch_pokemon_name']).setMaxLength(100).setMinLength(1).setPlaceholder(lang.obj['catch_pokemon_name']).setStyle(TextInputStyle.Short))
             );
             await interaction.showModal(modal);
             let submitted = await interaction.awaitModalSubmit({
