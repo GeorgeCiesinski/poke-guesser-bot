@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionsBitField, Role, GuildMember, GuildChannel, } from "discord.js";
+import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionsBitField, Role, GuildMember, GuildChannel, SlashCommandBuilder, } from "discord.js";
 import Database from "./data/postgres";
 import Language from './language';
 import Util from './util';
@@ -218,143 +218,261 @@ export default class Settings {
     }
 
     static getRegisterObject() {
-        return {
-            name: 'settings',
-            description: 'View or set settings in an ephemeral message',
-            type: ApplicationCommandType.ChatInput,
-            options: [
-                {
-                    name: 'mods',
-                    description: 'View, add or remove bot mods',
-                    type: ApplicationCommandOptionType.SubcommandGroup,
-                    options: [
-                        {
-                            name: 'add',
-                            description: 'Add a bot mod',
-                            type: ApplicationCommandOptionType.Subcommand,
-                            options: [
-                                {
-                                    name: 'mentionable',
-                                    description: 'The user or role to add as a bot mod',
-                                    required: true,
-                                    type: ApplicationCommandOptionType.Mentionable
-                                }
-                            ]
-                        },
-                        {
-                            name: 'remove',
-                            description: 'Remove a bot mod',
-                            type: ApplicationCommandOptionType.Subcommand,
-                            options: [
-                                {
-                                    name: 'mentionable',
-                                    description: 'The user or role to remove from the bot mods',
-                                    required: true,
-                                    type: ApplicationCommandOptionType.Mentionable
-                                }
-                            ]
-                        },
-                        {
-                            name: 'show',
-                            description: 'Shows the current mods',
-                            type: ApplicationCommandOptionType.Subcommand
-                        },
-                        {
-                            name: 'help',
-                            description: 'Shows help for mod settings',
-                            type: ApplicationCommandOptionType.Subcommand
-                        }
-                    ]
-                },
-                {
-                    name: 'channels',
-                    description: 'View, add or remove channels in which the bot responds',
-                    type: ApplicationCommandOptionType.SubcommandGroup,
-                    options: [
-                        {
-                            name: 'add',
-                            description: 'Add a channel in which the bot responds',
-                            type: ApplicationCommandOptionType.Subcommand,
-                            options: [
-                                {
-                                    name: 'channel',
-                                    description: 'The channel in which the bot should start responding',
-                                    required: true,
-                                    type: ApplicationCommandOptionType.Channel
-                                }
-                            ]
-                        },
-                        {
-                            name: 'remove',
-                            description: 'Remove a channel from the channels in which the bot responds',
-                            type: ApplicationCommandOptionType.Subcommand,
-                            options: [
-                                {
-                                    name: 'channel',
-                                    description: 'The channel in which the bot should stop responding',
-                                    required: true,
-                                    type: ApplicationCommandOptionType.Channel
-                                }
-                            ]
-                        },
-                        {
-                            name: 'show',
-                            description: 'Shows the current channels in which the bot responds',
-                            type: ApplicationCommandOptionType.Subcommand
-                        },
-                        {
-                            name: 'help',
-                            description: 'Shows help for mod settings',
-                            type: ApplicationCommandOptionType.Subcommand
-                        }
-                    ]
-                },
-                {
-                    name: 'language',
-                    description: 'View, set or unset a preferred language',
-                    type: ApplicationCommandOptionType.SubcommandGroup,
-                    options: [
-                        {
-                            name: 'set',
-                            description: 'Set the preferred language for this server',
-                            type: ApplicationCommandOptionType.Subcommand,
-                            options: [
-                                {
-                                    name: 'language',
-                                    description: 'The language code of your preferred language (e.g. en_US)',
-                                    required: true,
-                                    type: ApplicationCommandOptionType.String
-                                }
-                            ]
-                        },
-                        {
-                            name: 'unset',
-                            description: 'Unsets your preferred language for this server',
-                            type: ApplicationCommandOptionType.Subcommand
-                        },
-                        {
-                            name: 'show',
-                            description: 'Shows your currently set preferred language for this server',
-                            type: ApplicationCommandOptionType.Subcommand
-                        },
-                        {
-                            name: 'help',
-                            description: 'Shows help for language settings',
-                            type: ApplicationCommandOptionType.Subcommand
-                        }
-                    ]
-                },
-                {
-                    name: 'reset',
-                    description: 'Resets the current settings',
-                    type: ApplicationCommandOptionType.Subcommand
-                },
-                {
-                    name: 'help',
-                    description: 'Shows Help for the /settings command',
-                    type: ApplicationCommandOptionType.Subcommand
-                }
-            ]
-        };
+        return new SlashCommandBuilder()
+        .setName('settings')
+        .setNameLocalizations({
+            'de': 'einstellungen'
+        })
+        .setDescription('View or manage settings in ephemeral messages')
+        .setDescriptionLocalizations({
+            'de': 'Einstellungen in kurzlebigen Nachrichten anzeigen oder verwalten'
+        })
+        .addSubcommandGroup(subcommandgroup =>
+            subcommandgroup
+            .setName('mods')
+            .setNameLocalizations({
+                'de': 'mods'
+            })
+            .setDescription('View or manage bot mods')
+            .setDescriptionLocalizations({
+                'de': 'Bot Mods anzeigen oder verwalten'
+            })
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('add')
+                .setNameLocalizations({
+                    'de': 'hinzufuegen'
+                })
+                .setDescription('Add a bot mod')
+                .setDescriptionLocalizations({
+                    'de': 'Einen Bot Mod hinzufügen'
+                })
+                .addMentionableOption(option =>
+                    option
+                    .setName('mentionable')
+                    .setNameLocalizations({
+                        'de': 'erwaehnbares'
+                    })
+                    .setDescription('The user or role to add as a bot mod')
+                    .setDescriptionLocalizations({
+                        'de': 'Der Benutzer oder die Rolle, die zu einem Bot Mod werden soll'
+                    })
+                    .setRequired(true)
+                )
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('remove')
+                .setNameLocalizations({
+                    'de': 'entfernen'
+                })
+                .setDescription('Remove a bot mod')
+                .setDescriptionLocalizations({
+                    'de': 'Einen Bot Mod entfernen'
+                })
+                .addMentionableOption(option =>
+                    option
+                    .setName('mentionable')
+                    .setNameLocalizations({
+                        'de': 'erwaehnbares'
+                    })
+                    .setDescription('The user or role to remove from a Bot Mod')
+                    .setDescriptionLocalizations({
+                        'de': 'Der Benutzer oder die Rolle, die kein Bot Mod mehr sein soll'
+                    })
+                    .setRequired(true)
+                )
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('show')
+                .setNameLocalizations({
+                    'de': 'anzeigen'
+                })
+                .setDescription('Shows the current mods')
+                .setDescriptionLocalizations({
+                    'de': 'Zeigt die aktuellen bot mods an'
+                })
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('help')
+                .setNameLocalizations({
+                    'de': 'hilfe'
+                })
+                .setDescription('Shows help for mod settings')
+                .setDescriptionLocalizations({
+                    'de': 'Zeigt Hilfe zu den Mod Einstellungen an'
+                })
+            )
+        )
+        .addSubcommandGroup(subcommandgroup =>
+            subcommandgroup
+            .setName('channels')
+            .setNameLocalizations({
+                'de': 'kanaele'
+            })
+            .setDescription('View or manage bot channels')
+            .setDescriptionLocalizations({
+                'de': 'Bot Kanäle anzeigen oder verwalten'
+            })
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('add')
+                .setNameLocalizations({
+                    'de': 'hinzufuegen'
+                })
+                .setDescription('Add a bot channel')
+                .setDescriptionLocalizations({
+                    'de': 'Einen Bot Kanal hinzufügen'
+                })
+                .addChannelOption(option =>
+                    option
+                    .setName('mentionable')
+                    .setNameLocalizations({
+                        'de': 'erwaehnbares'
+                    })
+                    .setDescription('The channel to add as a bot channel')
+                    .setDescriptionLocalizations({
+                        'de': 'Der Kanal, der zu einem Bot Kanal werden soll'
+                    })
+                    .setRequired(true)
+                )
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('remove')
+                .setNameLocalizations({
+                    'de': 'entfernen'
+                })
+                .setDescription('Remove a bot channel')
+                .setDescriptionLocalizations({
+                    'de': 'Einen Bot Kanal entfernen'
+                })
+                .addMentionableOption(option =>
+                    option
+                    .setName('mentionable')
+                    .setNameLocalizations({
+                        'de': 'erwaehnbares'
+                    })
+                    .setDescription('The channel to remove from the bot channels')
+                    .setDescriptionLocalizations({
+                        'de': 'Der Kanal, der kein Bot Kanal mehr sein soll'
+                    })
+                    .setRequired(true)
+                )
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('show')
+                .setNameLocalizations({
+                    'de': 'anzeigen'
+                })
+                .setDescription('Shows the current bot channels')
+                .setDescriptionLocalizations({
+                    'de': 'Zeigt die aktuellen Bot Kanäle an'
+                })
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('help')
+                .setNameLocalizations({
+                    'de': 'hilfe'
+                })
+                .setDescription('Shows help for channel settings')
+                .setDescriptionLocalizations({
+                    'de': 'Zeigt Hilfe zu den Kanal Einstellungen an'
+                })
+            )
+        )
+        .addSubcommandGroup(subcommandgroup =>
+            subcommandgroup
+            .setName('language')
+            .setNameLocalizations({
+                'de': 'sprache'
+            })
+            .setDescription('View or manage a preferred language')
+            .setDescriptionLocalizations({
+                'de': 'Die bevorzugte Sprache ansehen und verwalten'
+            })
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('set')
+                .setNameLocalizations({
+                    'de': 'setzen'
+                })
+                .setDescription('Set the preferred language for this server')
+                .setDescriptionLocalizations({
+                    'de': 'Die bevorzugte Sprache für diesen Server setzen'
+                })
+                .addStringOption(option =>
+                    option
+                    .setName('language')
+                    .setNameLocalizations({
+                        'de': 'sprache'
+                    })
+                    .setDescription('The language code of your preferred language (e.g. en_US)')
+                    .setDescriptionLocalizations({
+                        'de': 'Der Sprachcode der bevorzugten Sprache (z. B. en_US)'
+                    })
+                    .setRequired(true)
+                )
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('unset')
+                .setNameLocalizations({
+                    'de': 'zuruecksetzen'
+                })
+                .setDescription('Unsets your preferred language for this server')
+                .setDescriptionLocalizations({
+                    'de': 'Setzt die bevorzugte Sprache für diesen Server zurück'
+                })
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('show')
+                .setNameLocalizations({
+                    'de': 'anzeigen'
+                })
+                .setDescription('Shows your currently set preferred language for this server')
+                .setDescriptionLocalizations({
+                    'de': 'Zeigt die aktuell bevorzugte Serversprache an'
+                })
+            )
+            .addSubcommand(subcommand =>
+                subcommand
+                .setName('help')
+                .setNameLocalizations({
+                    'de': 'hilfe'
+                })
+                .setDescription('Shows help for language settings')
+                .setDescriptionLocalizations({
+                    'de': 'Zeigt Hilfe zu den Spracheinstellungen an'
+                })
+            )
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('reset')
+            .setNameLocalizations({
+                'de': 'zuruecksetzen'
+            })
+            .setDescription('Resets all current settings')
+            .setDescriptionLocalizations({
+                'de': 'Setzt alle aktuellen Einstellungen zurück'
+            })
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+            .setName('help')
+            .setNameLocalizations({
+                'de': 'hilfe'
+            })
+            .setDescription('Shows Help for the /settings command')
+            .setDescriptionLocalizations({
+                'de': 'Zeigt Hilfe zu dem /settings-Befel an'
+            })
+        );
     }
 }
