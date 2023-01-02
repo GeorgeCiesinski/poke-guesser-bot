@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Util from "./util";
 import Language from "./language";
 import Database from "./data/postgres";
@@ -69,32 +69,47 @@ export default class Help {
     }
 
     static getRegisterObject() {
-        return {
-            name: 'help',
-            description: 'Shows help in an ephemeral message',
-            type: ApplicationCommandType.ChatInput,
-            options: [
-                {
-                    name: 'type',
-                    description: 'Choose which help to show',
-                    required: true,
-                    type: ApplicationCommandOptionType.String,
-                    choices: [
-                        {
-                            name: 'admin',
-                            value: 'admin'
-                        },
-                        {
-                            name: 'mod',
-                            value: 'mod'
-                        },
-                        {
-                            name: 'player',
-                            value: 'player'
-                        }
-                    ]
-                }
-            ]
-        };
+        return new SlashCommandBuilder()
+        .setName('help')
+        .setNameLocalizations({
+            'de': 'hilfe'
+        })
+        .setDescription('Shows help in an ephemeral message')
+        .setDescriptionLocalizations({
+            'de': 'Zeigt Hilfe in einer kurzlebigen Nachricht'
+        })
+        .addStringOption(option =>
+            option
+            .setName('type')
+            .setNameLocalizations({
+                'de': 'typ'
+            })
+            .setDescription('Choose which help to show')
+            .setDescriptionLocalizations({
+                'de': 'Wähle welche Hilfe gezeigt werden soll'
+            })
+            .setRequired(true)
+            .setChoices({
+                name: 'Admin',
+                name_localizations: {
+                    'de': 'Admin'
+                },
+                value: 'admin'
+            },
+            {
+                name: 'Mod',
+                name_localizations: {
+                    'de': 'Mod'
+                },
+                value: 'mod'
+            },
+            {
+                name: 'Player',
+                name_localizations: {
+                    'de': 'Spieler'
+                },
+                value: 'player'
+            })
+        );
     }
 }
