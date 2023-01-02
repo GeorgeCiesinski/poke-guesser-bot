@@ -1,4 +1,4 @@
-import { ApplicationCommandType, Message, ChatInputCommandInteraction, EmbedBuilder, User, BaseInteraction } from "discord.js";
+import { ApplicationCommandType, Message, ChatInputCommandInteraction, EmbedBuilder, User, BaseInteraction, SlashCommandBuilder } from "discord.js";
 import { Model } from "sequelize";
 import Database from "./data/postgres";
 import Language from "./language";
@@ -126,10 +126,14 @@ export default class Leaderboard {
     }
 
     static getRegisterObject() {
-        return {
-            name: 'leaderboard',
-            description: 'Shows the Leaderboard',
-            type: ApplicationCommandType.ChatInput
-        };
+        return new SlashCommandBuilder()
+        .setName('leaderboard')
+        .setNameLocalizations({
+            'de': 'bestenliste'
+        })
+        .setDescription('Shows the Leaderboard')
+        .setDescriptionLocalizations({
+            'de': 'Zeigt die Bestenliste'
+        });
     }
 }
