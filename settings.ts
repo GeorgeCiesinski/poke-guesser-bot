@@ -471,7 +471,7 @@ export default class Settings {
             })
             .setDescription('Shows Help for the /settings command')
             .setDescriptionLocalizations({
-                'de': 'Zeigt Hilfe zu dem /settings-Befel an'
+                'de': 'Zeigt Hilfe zum /settings-Befehl an'
             })
         );
     }
