@@ -23,13 +23,13 @@ const mySecret = process.env['TOKEN'];
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user?.tag}!`);  // Logging
     const registerObject = Commands.getRegisterObject();
-    await client.application?.commands.create(registerObject.help as ApplicationCommandDataResolvable);
-    await client.application?.commands.create(registerObject.settings as ApplicationCommandDataResolvable);
-    await client.application?.commands.create(registerObject.leaderboard as ApplicationCommandDataResolvable);
-    await client.application?.commands.create(registerObject.score as ApplicationCommandDataResolvable);
-    await client.application?.commands.create(registerObject.explore as ApplicationCommandDataResolvable);
-    await client.application?.commands.create(registerObject.reveal as ApplicationCommandDataResolvable);
-    await client.application?.commands.create(registerObject.mod as ApplicationCommandDataResolvable);
+    await client.application?.commands.create(registerObject.help);
+    await client.application?.commands.create(registerObject.settings);
+    await client.application?.commands.create(registerObject.leaderboard);
+    await client.application?.commands.create(registerObject.score);
+    await client.application?.commands.create(registerObject.explore);
+    await client.application?.commands.create(registerObject.reveal);
+    await client.application?.commands.create(registerObject.mod);
     process.kill(process.pid, 'SIGTERM');
 });
 
