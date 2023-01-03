@@ -1,5 +1,4 @@
 import { EmbedBuilder, AttachmentBuilder, Message, GuildMember, PermissionsBitField, User, APIGuildMember, Role, APIRole, ChatInputCommandInteraction, BaseInteraction } from 'discord.js';
-import Language from './language';
 
 type FetchSpriteType = {
     back_default: string,

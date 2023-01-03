@@ -1,7 +1,7 @@
 import * as DotEnv from 'dotenv';
 DotEnv.config();
 
-import { ApplicationCommandDataResolvable, Client, GatewayIntentBits, Partials } from "discord.js";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
 import Commands from './commands';
 
 const client = new Client({intents: [
