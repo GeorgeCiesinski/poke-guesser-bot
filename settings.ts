@@ -1,4 +1,4 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, ChatInputCommandInteraction, PermissionsBitField, Role, GuildMember, GuildChannel, SlashCommandBuilder, } from "discord.js";
+import { ChatInputCommandInteraction, PermissionsBitField, Role, GuildMember, GuildChannel, SlashCommandBuilder } from "discord.js";
 import Database from "./data/postgres";
 import Language from './language';
 import Util from './util';
