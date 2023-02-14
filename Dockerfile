@@ -1,4 +1,4 @@
-FROM node:19
+FROM node:19-buster-slim
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install -g typescript
