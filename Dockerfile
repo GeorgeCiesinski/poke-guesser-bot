@@ -1,4 +1,4 @@
-FROM node:19-buster-slim
+FROM node:19.6-bullseye-slim
 WORKDIR /usr/src/app
 COPY . .
 RUN npm install -g typescript
