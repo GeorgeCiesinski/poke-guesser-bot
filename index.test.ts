@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { index } from './index';
+// import { index } from './index';
 
 describe('index module', () => {
 	test('adds 1 + 2 to equal 3', () => {
