@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "start": "node index.js"
+    "start": "node index.js",
+    "check-format": "npx prettier --check .",
+    "format": "npx prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -20,17 +22,26 @@
   "devDependencies": {
     "@jest/globals": "^29.4.3",
     "jest": "^29.4.3",
-    "ts-jest": "^29.0.5"
+    "ts-jest": "^29.0.5",
+    "prettier": "^2.8.8"
   },
   "jest": {
     "verbose": true,
-    "moduleFileExtensions": ["js", "jsx", "json", "ts", "tsx"],
-    "roots": ["<rootDir>", "<rootDir>/test"],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ],
+    "roots": [
+      "<rootDir>",
+      "<rootDir>/test"
+    ],
     "transform": {
       "^.+\\.m?[tj]sx?$": [
         "ts-jest",
-        {
-        }
+        {}
       ]
     }
   }

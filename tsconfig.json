@@ -1,23 +1,18 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"module": "CommonJS",
-		"outDir": "build",
-		"noImplicitAny": true,
-		"alwaysStrict": true,
-		"esModuleInterop": true,
-		"removeComments": true,
-		"preserveConstEnums": true,
-		"strictNullChecks": true,
-		"allowJs": true,
-		"checkJs": true,
-		"sourceMap": true,
-		"resolveJsonModule": true
-	},
-	"exclude": [
-		"build/",
-		"node_modules",
-		"**/*.spec.ts",
-		"*.js"
-	]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "outDir": "build",
+    "noImplicitAny": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "checkJs": true,
+    "sourceMap": true,
+    "resolveJsonModule": true
+  },
+  "exclude": ["build/", "node_modules", "**/*.spec.ts", "*.js"]
 }

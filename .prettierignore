@@ -1,0 +1,13 @@
+.git
+.svn
+.hg
+node_modules
+.env
+docker.env
+node_modules/
+build/
+package-lock.json
+*.js
+*.md
+*.yml
+*.yaml
