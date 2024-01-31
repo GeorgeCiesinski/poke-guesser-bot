@@ -1,4 +1,4 @@
-import * as DotEnv from "dotenv";
+import "dotenv/config";
 import {
   Client,
   GatewayIntentBits,
@@ -19,8 +19,6 @@ import Commands from "./commands";
 import Language from "./language";
 import Util from "./util";
 import Database from "./data/postgres";
-
-DotEnv.config();
 
 const mySecret = process.env["TOKEN"]; // Discord Token
 
