@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^14.14.1",
-    "dotenv": "^16.4.1",
+    "dotenv": "^16.4.2",
     "pg": "^8.11.0",
     "sequelize": "^6.36.0"
   },
