@@ -1,6 +1,7 @@
 import "dotenv/config";
 import {
   Client,
+  Events,
   GatewayIntentBits,
   Partials,
   ModalBuilder,
@@ -41,11 +42,11 @@ const client = new Client({
 
 const db = new Database();
 
-client.on("ready", () => {
+client.on(Events.ClientReady, () => {
   console.log(`Logged in as ${client.user?.tag}!`); // Logging
 });
 
-client.on("interactionCreate", async (interaction) => {
+client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.guild?.available) {
     console.warn(
       "Guild not available: interaction.guild.available is either null or false",
