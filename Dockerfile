@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:22.4.1-bookworm-slim as builder
+FROM node:22.7.0-bookworm-slim as builder
 WORKDIR /usr/src/app
 COPY package.json .
 COPY package-lock.json .
@@ -9,7 +9,7 @@ RUN npm ci
 RUN npm run build
 
 # Stage 2: Run
-FROM node:22.4.1-bookworm-slim
+FROM node:22.7.0-bookworm-slim
 # Add wait script
 COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
 WORKDIR /usr/src/app
