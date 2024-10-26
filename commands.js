@@ -3,6 +3,53 @@ import { SlashCommandBuilder } from "discord.js";
 export function getRegisterArray() {
   return [
     new SlashCommandBuilder()
+      .setName("ping")
+      .setDescription("Responds with a pong"),
+    new SlashCommandBuilder()
+      .setName("showconfig")
+      .setDescription("Shows the current configuration"),
+    new SlashCommandBuilder()
+      .setName("resetconfig")
+      .setDescription("Resets the current configuration"),
+    new SlashCommandBuilder()
+      .setName("addrole")
+      .setDescription("Add an authorized role to the configuration")
+      .addRoleOption((option) =>
+        option
+          .setName("role")
+          .setDescription("The role you want to add to the configuration")
+          .setRequired(true),
+      ),
+    new SlashCommandBuilder()
+      .setName("removerole")
+      .setDescription("Removes an authorized role from the configuration")
+      .addRoleOption((option) =>
+        option
+          .setName("role")
+          .setDescription("The role you want to remove from the configuration")
+          .setRequired(true),
+      ),
+    new SlashCommandBuilder()
+      .setName("addchannel")
+      .setDescription("Adds an authorized channel to the configuration")
+      .addChannelOption((option) =>
+        option
+          .setName("channel")
+          .setDescription("The channel you want to add to the configuration")
+          .setRequired(true),
+      ),
+    new SlashCommandBuilder()
+      .setName("removechannel")
+      .setDescription("Removes an authorized channel from the configuration")
+      .addChannelOption((option) =>
+        option
+          .setName("channel")
+          .setDescription(
+            "The channel you want to remove from the configuration",
+          )
+          .setRequired(true),
+      ),
+    new SlashCommandBuilder()
       .setName("explore")
       .setDescription("Generate a new pokemon"),
     new SlashCommandBuilder()

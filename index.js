@@ -71,79 +71,6 @@ const mySecret = process.env["TOKEN"]; // Discord Token
 let guessEntered = false;
 
 /*
-ADMIN COMMANDS
-
-checkCommand() checks any command inputted after !
-
-Any functions called by checkCommand() should either be organized in one of the imported files, or should be placed below checkCommand() if it doesn't belong in the other files. 
-*/
-
-// Checks command, calls appropriate function
-function checkCommand(command, msg) {
-  // If command is ping, reply with bot status
-  if (command === "ping") {
-    const title = "Pong!";
-    const message = "Beep-boop! Poke-guesser-bot is running!";
-    embedReply(title, message, msg);
-  }
-
-  /*
-  Configuration Utilities
-  */
-
-  // Displays configuration settings
-  if (command === "show config") {
-    showConfig(msg, db);
-  }
-
-  // Resets configuration to default settings
-  if (command === "reset config") {
-    resetConfig(msg, db);
-  }
-
-  /*
-  Configuration Roles
-  */
-
-  // Adds role to configuration
-  if (command.startsWith("add role ")) {
-    const role = msg.content.split("add role ")[1];
-    addRole(role, msg, db);
-  }
-
-  // Removes role from configuration
-  if (command.startsWith("remove role ")) {
-    const role = msg.content.split("remove role ")[1];
-    removeRole(role, msg, db);
-  }
-
-  /*
-  Configuration Channels
-  */
-
-  // Adds channel to configuration
-  if (command.startsWith("add channel ")) {
-    const channel = msg.content.split("add channel ")[1];
-    addChannel(channel, msg, db);
-  }
-
-  // Removes channel from configuration
-  if (command.startsWith("remove channel ")) {
-    const channel = msg.content.split("remove channel ")[1];
-    removeChannel(channel, msg, db);
-  }
-
-  /*
-  Game Controls
-  */
-
-  // Output the leaderboard
-  if (command === "leaderboard") {
-    showLeaderboard(msg, db);
-  }
-}
-
-/*
 PLAYER COMMANDS
 
 checkInput() checks any command inputted after $
@@ -271,7 +198,7 @@ function checkInput(inputRequest, msg) {
 /*
 BOT ON
 
-This section runs when the bot is logged in and listening for commands. First, it writes a log to the console indicating it is logged in. Next, it listens on the server and determines whether a message starts with ! or $ before calling either the Admin checkCommand function, or the User checkInput function.
+This section runs when the bot is logged in and listening for commands. First, it writes a log to the console indicating it is logged in. Next, it listens on the server and determines whether a message starts with ! or $ before calling either function.
 */
 
 // Outputs console log when bot is logged in
@@ -288,17 +215,6 @@ client.on(Events.MessageCreate, (msg) => {
   authenticateChannel(msg, db).then((authorized) => {
     // Returns if channel is not in config
     if (authorized === false) return;
-
-    // Check if user message starts with ! indicating command, call checkCommand
-    if (msg.content.startsWith("!")) {
-      // Authenticate if user is authorized
-      authenticateRole(msg, db).then((authorized) => {
-        if (authorized) {
-          const command = msg.content.split("!")[1];
-          checkCommand(command, msg);
-        }
-      });
-    }
 
     // Check if user message starts with $ indicating guess, call checkGuess
     if (msg.content.startsWith("$")) {
@@ -370,11 +286,37 @@ let interactionCreate = async (interaction) => {
       await interaction.deferReply({ ephemeral: false });
     }
   }
+  if (interaction.commandName == "ping") {
+    embedReply("Pong!", "Beep-boop! Poke-guesser-bot is running!", interaction);
+    return;
+  }
   let channelAllowed = await authenticateChannel(interaction, db);
   if (channelAllowed) {
     let roleAllowed = await authenticateRole(interaction, db);
     let pokemon = null;
     switch (interaction.commandName) {
+      case "showconfig":
+        showConfig(interaction, db);
+        break;
+      case "resetconfig":
+        resetConfig(interaction, db);
+        break;
+      case "addrole":
+        addRole(interaction.options.getRole("role"), interaction, db);
+        break;
+      case "removerole":
+        removeRole(interaction.options.getRole("role"), interaction, db);
+        break;
+      case "addchannel":
+        addChannel(interaction.options.getChannel("channel"), interaction, db);
+        break;
+      case "removechannel":
+        removeChannel(
+          interaction.options.getChannel("channel"),
+          interaction,
+          db,
+        );
+        break;
       case "explore":
         console.log("Generating a new pokemon.");
         // Returns pokemon json object
