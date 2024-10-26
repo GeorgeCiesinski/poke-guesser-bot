@@ -1,8 +1,6 @@
-const Discord = require("discord.js");
-const Database = require("./database.js");
-const util = require("./util");
-
-const db = new Database();
+import Discord from "discord.js";
+import Database from "./database.js";
+import { embedReply } from "./util.js";
 
 /*
 CONFIGURATION UTILITIES
@@ -10,14 +8,14 @@ This section includes utilities related to the configuration, but not specific t
 */
 
 // Sends a message to the channel with the server configuration.
-function showConfig(msg) {
+export function showConfig(msg, db) {
   db.get("configuration").then((configuration) => {
     // Console Logging
     console.log("Showing configuration.");
     console.log(configuration);
 
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Extract roles and channels from array
     const roles = configJson.configuration.roles;
@@ -44,12 +42,12 @@ function showConfig(msg) {
     ${channelText}`;
 
     // Embeds message
-    util.embedReply("Configuration Settings:", message, msg);
+    embedReply("Configuration Settings:", message, msg);
   });
 }
 
 // Resets the bot configuration
-function resetConfig(msg) {
+export function resetConfig(msg, db) {
   console.log("Resetting bot configuration.");
 
   const configuration = {
@@ -66,22 +64,13 @@ function resetConfig(msg) {
   const message = `The configuration has been reset. The bot will listen on all channels and accept commands from all roles. It is recommended to configure moderator roles before using this bot.
   
   Type \`!help\` to see how to configure the bot.`;
-  util.embedReply(title, message, msg);
+  embedReply(title, message, msg);
 }
 
 /*
 ROLES
 This section includes any role specific functions
 */
-
-// Outputs server roles (name & id)
-function roles(msg) {
-  let availableRoles = "";
-  msg.guild.roles.cache.each(
-    (role) => (availableRoles += role.name + " - " + role.id + "\n"),
-  );
-  util.embedReply("Available Roles", availableRoles, msg);
-}
 
 // Checks if role exists, returns true or false
 function roleExists(roleName, msg) {
@@ -98,7 +87,7 @@ function getRole(roleName, msg) {
 }
 
 // Adds role to bot moderator roles
-function addRole(role, msg) {
+export function addRole(role, msg, db) {
   // If role exists in server
   if (roleExists(role, msg)) {
     // Logging
@@ -109,7 +98,7 @@ function addRole(role, msg) {
       const roleObject = getRole(role, msg); // Get role object
 
       // Parse Json into javascript object
-      configJson = JSON.parse(configuration);
+      const configJson = JSON.parse(configuration);
 
       // If role exists in configuration
       if (
@@ -126,7 +115,7 @@ function addRole(role, msg) {
         const message = `The role >${role}< is already included in the configuration.
         
         Type \`!show config\` to see the current configuration.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
 
         // If role doesn't exist in configuration
       } else {
@@ -149,7 +138,7 @@ function addRole(role, msg) {
         ${roleObject.name} (ID: ${roleObject.id})
 
         Type \`!show config\` to see the current configuration.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
       }
     });
 
@@ -164,18 +153,18 @@ function addRole(role, msg) {
     const message = `The role >${role}< does not exist and could not be added.
 
     Type \`!roles\` to see the available roles on this server.`;
-    util.embedReply(title, message, msg);
+    embedReply(title, message, msg);
   }
 }
 
 // Remove role from bot moderator roles
-function removeRole(role, msg) {
+export function removeRole(role, msg, db) {
   const roleId = getRole(role, msg).id;
 
   // Get the configuration from the database
   db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Check if the role is in the database
     // If role exists in configuration
@@ -206,13 +195,13 @@ function removeRole(role, msg) {
         There are no roles set to moderate the bot. It is recommended to set at least one role.
         
         Type \`!help\` to see how to add roles.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
         // Show regular message if not
       } else {
         console.log("Role removed successfully.");
         const title = "Role removed from configuration.";
         const message = `The role >${role}< was removed from configuration successfully!`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
       }
     } else {
       console.log("Failed to remove role: doesn't exist in configuration."); // Logging
@@ -221,17 +210,17 @@ function removeRole(role, msg) {
       const message = `The role >${role}< is missing from the configuration and could not be removed.
       
       Type \`!show config\` to see the roles currently in the configuration.`;
-      util.embedReply(title, message, msg);
+      embedReply(title, message, msg);
     }
   });
 }
 
 // Returns true if user role is in config, or if configuration.roles is empty
-function authenticateRole(msg) {
+export function authenticateRole(msg, db) {
   // Get the configuration from the database
   return db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Check if the channel is in the database
     if (configJson == null || configJson.configuration.roles.length === 0) {
@@ -261,24 +250,6 @@ CHANNELS
 This section includes any channel specific functions
 */
 
-// Outputs server channels (name & id)
-function channels(msg) {
-  // String representation of available channels in the server
-  let availableChannels = "";
-
-  // For each channel in the channel cache
-  msg.guild.channels.cache.each((channel) => {
-    // If the channel is a text channel
-    if (channel.type === "text") {
-      // Add it to the available channels
-      availableChannels += channel.name + " - " + channel.id + "\n";
-    }
-  });
-
-  // Message server
-  util.embedReply("Available Channels in this Server", availableChannels, msg);
-}
-
 // Check if channel exists, return true or false
 function channelExists(channelName, msg) {
   console.log(`Checking if channel exists: >${channelName}<`); // Logging
@@ -297,7 +268,7 @@ function getChannel(channelName, msg) {
 }
 
 // Add channel to bot allowed channels
-function addChannel(channel, msg) {
+export function addChannel(channel, msg, db) {
   // If channel exists in server
   if (channelExists(channel, msg)) {
     // Logging
@@ -308,7 +279,7 @@ function addChannel(channel, msg) {
       const channelObject = getChannel(channel, msg); // Get channel object
 
       // Parse Json into javascript object
-      configJson = JSON.parse(configuration);
+      const configJson = JSON.parse(configuration);
 
       // If channel exists in configuration
       if (
@@ -324,7 +295,7 @@ function addChannel(channel, msg) {
         const message = `The channel >${channel}< is already in the configuration.
         
         Type \`!show config\` to see the current configuration.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
 
         // If channel doesn't exist in configuration
       } else {
@@ -347,7 +318,7 @@ function addChannel(channel, msg) {
         ${channelObject.name} (ID: ${channelObject.id})
 
         Type \`!show config\` to see the current configuration.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
       }
     });
 
@@ -362,18 +333,18 @@ function addChannel(channel, msg) {
     const message = `The channel >${channel}< does not exist and could not be added.
 
     Type \`!channels\` to see the available channels on this server.`;
-    util.embedReply(title, message, msg);
+    embedReply(title, message, msg);
   }
 }
 
 // Remove channel from bot allowed channels
-function removeChannel(channel, msg) {
+export function removeChannel(channel, msg, db) {
   const channelId = getChannel(channel, msg).id;
 
   // Get the configuration from the database
   db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Check if the channel is in the database
     // If channel exists in configuration
@@ -406,13 +377,13 @@ function removeChannel(channel, msg) {
         The bot will respond on every channel on this server. If you don't want this, set at least one channel.
         
         Type \`!help\` to see how to add channels.`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
         // Show regular message if not
       } else {
         console.log("Channel has been removed successfully.");
         const title = "Channel removed from configuration";
         const message = `The channel >${channel}< was removed from configuration successfully!`;
-        util.embedReply(title, message, msg);
+        embedReply(title, message, msg);
       }
     } else {
       console.log("Failed to remove channel: doesn't exist in configuration."); // Logging
@@ -421,17 +392,17 @@ function removeChannel(channel, msg) {
       const message = `The channel >${channel}< is missing from the configuration and could not be removed.
       
       Type \`!show config\` to see the channels currently in the configuration.`;
-      util.embedReply(title, message, msg);
+      embedReply(title, message, msg);
     }
   });
 }
 
 // Returns true if channel is in config, or if configuration.channels is empty
-function authenticateChannel(msg) {
+export function authenticateChannel(msg, db) {
   // Get the configuration from the database
   return db.get("configuration").then((configuration) => {
     // Parse Json into javascript object
-    configJson = JSON.parse(configuration);
+    const configJson = JSON.parse(configuration);
 
     // Check if the channel is in the database
     if (configJson == null || configJson.configuration.channels.length === 0) {
@@ -457,15 +428,3 @@ function authenticateChannel(msg) {
     }
   });
 }
-
-// Function Exports
-module.exports.showConfig = showConfig;
-module.exports.resetConfig = resetConfig;
-module.exports.roles = roles;
-module.exports.addRole = addRole;
-module.exports.removeRole = removeRole;
-module.exports.authenticateRole = authenticateRole;
-module.exports.channels = channels;
-module.exports.addChannel = addChannel;
-module.exports.removeChannel = removeChannel;
-module.exports.authenticateChannel = authenticateChannel;

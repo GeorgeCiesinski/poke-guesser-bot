@@ -1,33 +1,23 @@
-const { EmbedBuilder, AttachmentBuilder, Message } = require("discord.js");
-const Database = require("./database.js");
+import { EmbedBuilder, AttachmentBuilder, Message } from "discord.js";
 
-const db = new Database();
+const databaseKeys = ["artwork", "configuration", "leaderboard", "pokemon"];
 
 /*
 UTILITIES
 */
 
 // Check Replit database on start to make sure no values are set as null
-function checkDatabase() {
-  // Check if database has been instantiated
-  db.get("instantiated").then((instantiated) => {
-    console.log(`Instantiated: ${JSON.stringify(instantiated)}`);
-
-    if (instantiated === true || instantiated.ok === true) {
-      console.log("Database is ready.");
-    } else if (instantiated === null) {
-      instantiateDatabase(); // Set Database Keys
-    } else {
-      console.log(
-        "ERROR: Unexpected error occurred when performing startup check on database.",
-      );
-      instantiateDatabase(); // Set Database Keys
-    }
-  });
+export async function checkDatabase(db) {
+  let list = (await db.list()).split("\n");
+  if (databaseKeys.every((item) => list.includes(item))) {
+    console.log("Database is ready.");
+  } else {
+    instantiateDatabase(db); // Set Database Keys
+  }
 }
 
 // Set first values in database
-function instantiateDatabase() {
+function instantiateDatabase(db) {
   console.log("Instantiating database for the first time.");
 
   // Set blank configuration
@@ -44,14 +34,18 @@ function instantiateDatabase() {
   db.set("pokemon", "");
 
   // Set blank leaderboard
-  db.set("leaderboard", {});
-
-  // Set instantiated to True
-  db.set("instantiated", true);
+  db.set("leaderboard", JSON.stringify({}));
 }
 
 // Wraps reply in poke-guesser themed embed
-function embedReply(title, description, msg, image = null, actionRow = null) {
+export function embedReply(
+  title,
+  description,
+  msg,
+  image = null,
+  actionRow = null,
+  useFollowUp = false,
+) {
   // Creates new embedded message
   let embed = new EmbedBuilder()
     .setTitle(title) // Adds title
@@ -82,11 +76,19 @@ function embedReply(title, description, msg, image = null, actionRow = null) {
         components: actionRow ? [actionRow] : [],
       }); // Sends the embedded message back to channel
     } else {
-      msg.editReply({
-        embeds: [embed],
-        files: [attachment],
-        components: actionRow ? [actionRow] : [],
-      }); // Sends the embedded message back to channel
+      if (useFollowUp) {
+        msg.followUp({
+          embeds: [embed],
+          files: [attachment],
+          components: actionRow ? [actionRow] : [],
+        }); // Sends the embedded message back to channel
+      } else {
+        msg.editReply({
+          embeds: [embed],
+          files: [attachment],
+          components: actionRow ? [actionRow] : [],
+        }); // Sends the embedded message back to channel
+      }
     }
     return;
   }
@@ -105,10 +107,14 @@ function embedReply(title, description, msg, image = null, actionRow = null) {
 }
 
 // Capitalizes first letter of pokemon name
-function capitalize(string) {
+export function capitalize(string) {
   return string[0].toUpperCase() + string.slice(1).toLowerCase();
 }
 
-module.exports.checkDatabase = checkDatabase;
-module.exports.embedReply = embedReply;
-module.exports.capitalize = capitalize;
+export function parseIfJson(str) {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return str;
+  }
+}

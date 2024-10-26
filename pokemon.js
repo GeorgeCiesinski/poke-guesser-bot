@@ -4,7 +4,7 @@ Functions that call PokéAPI
 https://pokeapi.co/docs/v2
 */
 
-function generatePokemon() {
+export function generatePokemon() {
   // Fetch json of all available pokemon up to a limit of 2000 (~1200 avilable)
   return (
     fetch("https://pokeapi.co/api/v2/pokemon/?limit=2000")
@@ -24,7 +24,7 @@ function generatePokemon() {
 }
 
 // Fetches the sprite using the pokemon's api url
-function fetchSprite(url) {
+export function fetchSprite(url) {
   return (
     fetch(url)
       // Converts result to json
@@ -39,7 +39,7 @@ function fetchSprite(url) {
 }
 
 // Fetches the pokemon's names in different languages
-function fetchNames(nameOrId) {
+export function fetchNames(nameOrId) {
   return (
     fetch(`https://pokeapi.co/api/v2/pokemon-species/${nameOrId}/`)
       // Parse to json
@@ -64,8 +64,3 @@ function fetchNames(nameOrId) {
       })
   );
 }
-
-// Exports each function separately
-module.exports.generatePokemon = generatePokemon;
-module.exports.fetchSprite = fetchSprite;
-module.exports.fetchNames = fetchNames;
