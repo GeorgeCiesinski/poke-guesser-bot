@@ -1,5 +1,3 @@
-// REPLIT_DB_URL=http://localhost:1337/token
-
 import "dotenv/config";
 import ReplitClient from "@replit/database";
 import sqlite3 from "sqlite3";
