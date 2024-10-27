@@ -207,7 +207,7 @@ export async function showLeaderboard(msg, db, useFollowup = false) {
         // Creates table header for overflow leaderboard
         if (i == 5) {
           // Creates an array of usernames in items starting from index 5
-          usernames = Array.from(
+          const usernames = Array.from(
             items.slice(5),
             async (x) => await findUser(msg, x[0]),
           );
