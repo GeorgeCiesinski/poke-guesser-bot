@@ -19,7 +19,6 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@replit/database": "^3.0.1",
     "prettier": "^3.3.3"
   }
 }
