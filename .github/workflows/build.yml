@@ -27,19 +27,19 @@ jobs:
           deno install
       - name: Compile
         run: |
-          deno compile -ERWN src/main.ts
+          deno compile -ERN src/main.ts --output poke-guesser-bot
       - name: Upload artifact (Windows)
         if: startsWith(matrix.os, 'windows')
         uses: actions/upload-artifact@v4
         with:
-          name: herokerrey-bot-${{ matrix.os }}
-          path: herokerrey-bot.exe
+          name: poke-guesser-bot-${{ matrix.os }}
+          path: poke-guesser-bot.exe
       - name: Upload artifact (Ubuntu and Mac)
         if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macos')
         uses: actions/upload-artifact@v4
         with:
-          name: herokerrey-bot-${{ matrix.os }}
-          path: herokerrey-bot
+          name: poke-guesser-bot-${{ matrix.os }}
+          path: poke-guesser-bot
   create-release:
     needs: [build]
     runs-on: ubuntu-latest
@@ -53,29 +53,29 @@ jobs:
       - uses: actions/download-artifact@v4
         name: Download Windows
         with:
-          name: herokerrey-bot-windows-latest
+          name: poke-guesser-bot-windows-latest
           path: release-artifacts/
 
       - name: Rename Windows Binary
-        run: mv release-artifacts/herokerrey-bot.exe release-artifacts/herokerrey-bot-Windows.exe
+        run: mv release-artifacts/poke-guesser-bot.exe release-artifacts/poke-guesser-bot-Windows.exe
 
       - uses: actions/download-artifact@v4
         name: Download Linux
         with:
-          name: herokerrey-bot-ubuntu-latest
+          name: poke-guesser-bot-ubuntu-latest
           path: release-artifacts/
 
       - name: Rename Linux Binary
-        run: mv release-artifacts/herokerrey-bot release-artifacts/herokerrey-bot-Linux
+        run: mv release-artifacts/poke-guesser-bot release-artifacts/poke-guesser-bot-Linux
 
       - uses: actions/download-artifact@v4
         name: Download Mac
         with:
-          name: herokerrey-bot-macos-latest
+          name: poke-guesser-bot-macos-latest
           path: release-artifacts/
 
       - name: Rename Mac Binary
-        run: mv release-artifacts/herokerrey-bot release-artifacts/herokerrey-bot-Mac
+        run: mv release-artifacts/poke-guesser-bot release-artifacts/poke-guesser-bot-Mac
 
       - name: Create release
         uses: ncipollo/release-action@v1.14.0
