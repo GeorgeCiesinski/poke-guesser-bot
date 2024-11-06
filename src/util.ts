@@ -244,4 +244,17 @@ export default class Util {
         return member.user?.username;
     }
   }
+
+  static async fileExists(path: string) {
+    try {
+      await Deno.lstat(path);
+      return true;
+    } catch (err) {
+      if (err instanceof Deno.errors.NotFound) {
+        return false;
+      } else {
+        throw err;
+      }
+    }
+  }
 }

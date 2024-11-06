@@ -249,7 +249,7 @@ export default class Settings {
             try {
               const language = interaction.options.getString("language");
               if (language) {
-                if (/*TODO*/ fs.existsSync(`./languages/${language}.json`)) {
+                if (await Util.fileExists(`./languages/${language}.json`)) {
                   await db.setLanguage(interaction.guild!.id, language);
                   await Util.editReply(
                     interaction,
