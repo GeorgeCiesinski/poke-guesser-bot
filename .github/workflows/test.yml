@@ -6,8 +6,8 @@ on:
   pull_request:
 
 jobs:
-  format-and-lint:
-    name: Check Formatting
+  test:
+    name: Check Test Files
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

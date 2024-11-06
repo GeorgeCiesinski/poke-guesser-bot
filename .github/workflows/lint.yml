@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  format-and-lint:
+  lint:
     name: Check Linting
     runs-on: ubuntu-latest
     steps:

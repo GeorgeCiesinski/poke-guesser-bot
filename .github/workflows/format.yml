@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  format-and-lint:
+  format:
     name: Check Formatting
     runs-on: ubuntu-latest
     steps:
