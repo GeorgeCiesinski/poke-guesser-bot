@@ -21,7 +21,6 @@ services:
     image: "ghcr.io/georgeciesinski/poke-guesser-bot"
     container_name: poke-guesser-bot
     restart: unless-stopped
-    image: poke-guesser-bot
     depends_on:
       db:
         condition: service_healthy
