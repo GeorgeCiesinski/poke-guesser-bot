@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:22.12.0-bookworm-slim as builder
+FROM node:22.12.0-bookworm-slim AS builder
 WORKDIR /usr/src/app
 COPY package.json .
 COPY package-lock.json .
