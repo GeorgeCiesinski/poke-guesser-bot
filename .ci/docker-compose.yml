@@ -1,7 +1,6 @@
-version: "3.1"
 services:
   db:
-    image: postgres:15
+    image: postgres:17.2-bookworm
     container_name: poke-guesser-postgres
     restart: "no"
     environment:
