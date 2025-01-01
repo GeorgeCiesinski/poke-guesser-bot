@@ -7,7 +7,7 @@ COPY deno.json .
 COPY deno.lock .
 RUN deno install
 COPY . .
-RUN deno cacne src/main.ts
+RUN deno cache src/main.ts
 ENV WAIT_COMMAND="deno run -ERN src/main.ts"
 # comma separated list of pairs host:port for which you want to wait.
 ENV WAIT_HOSTS=db:5432
