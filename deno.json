@@ -5,7 +5,7 @@
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.10",
-    "discord.js": "npm:discord.js@^14.16.3",
+    "discord.js": "npm:discord.js@^14.17.0",
     "pg": "npm:pg@^8.13.1",
     "sequelize": "npm:sequelize@^6.37.5"
   }
