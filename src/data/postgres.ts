@@ -1,7 +1,6 @@
-import { Sequelize, Model, DataTypes } from "sequelize";
-import * as fs from "fs";
-import LanguageApi from "../language";
-import Util from "../util";
+import { DataTypes, Model, Sequelize } from "sequelize";
+import LanguageApi from "../language.ts";
+import Util from "../util.ts";
 import { GuildChannel, GuildMember, Role } from "discord.js";
 // Discord-IDs are 18 chars atm (2021) but will increase in the future
 
@@ -14,26 +13,26 @@ export default class Database {
   private Language = class extends Model {};
   private Score = class extends Model {};
   private Encounter = class extends Model {
-    name: any;
-    language: string;
+    name: string | null = null;
+    language: string | null = null;
   };
   private Artwork = class extends Model {};
   private LastExplore = class extends Model {};
   private Lightning = class extends Model {};
 
   constructor() {
-    if (process.env["DATABASE_URL"]) {
-      this.db = new Sequelize(process.env["DATABASE_URL"], {
+    if (Deno.env.has("DATABASE_URL")) {
+      this.db = new Sequelize(Deno.env.get("DATABASE_URL")!, {
         logging: false,
       });
     } else {
       this.db = new Sequelize(
-        process.env["POSTGRES_DB"] ?? "pokebot",
-        process.env["POSTGRES_USER"] ?? "postgres",
-        process.env["POSTGRES_PASSWORD"] ?? "postgres",
+        Deno.env.get("POSTGRES_DB") ?? "pokebot",
+        Deno.env.get("POSTGRES_USER") ?? "postgres",
+        Deno.env.get("POSTGRES_PASSWORD") ?? "postgres",
         {
-          host: process.env["POSTGRES_HOST"] ?? "db",
-          port: parseInt(process.env["POSTGRES_PORT"] ?? "5432"),
+          host: Deno.env.get("POSTGRES_HOST") ?? "db",
+          port: parseInt(Deno.env.get("POSTGRES_PORT") ?? "5432"),
           dialect: "postgres",
           logging: false,
         },
@@ -264,7 +263,7 @@ export default class Database {
    */
   async setUsernameMode(serverId: string, mode: number) {
     if (mode < 0 || mode > 4) throw new Error("mode must be between 0 and 4");
-    let oldMode = await this.getUsernameMode(serverId);
+    const oldMode = await this.getUsernameMode(serverId);
     if (oldMode == null || oldMode == undefined) {
       return await this.Username.create({ serverId, mode });
     } else {
@@ -277,13 +276,13 @@ export default class Database {
     if (await this.isMod(mentionable)) {
       throw Util.isUser(mentionable)
         ? lang.obj["settings_mods_add_already_existing_user"].replace(
-            "{mentionable}",
-            `<@!${mentionable.id}>`,
-          )
+          "{mentionable}",
+          `<@!${mentionable.id}>`,
+        )
         : lang.obj["settings_mods_add_already_existing_role"].replace(
-            "{mentionable}",
-            `<@&${mentionable.id}>`,
-          );
+          "{mentionable}",
+          `<@&${mentionable.id}>`,
+        );
     } else {
       return await this.Mod.create({
         serverId: mentionable.guild.id,
@@ -298,13 +297,13 @@ export default class Database {
     if (!(await this.isMod(mentionable))) {
       throw Util.isUser(mentionable)
         ? lang.obj["settings_mods_remove_not_existing_mod_user"].replace(
-            "{mentionable}",
-            `<@!${mentionable.id}>`,
-          )
+          "{mentionable}",
+          `<@!${mentionable.id}>`,
+        )
         : lang.obj["settings_mods_remove_not_existing_mod_role"].replace(
-            "{mentionable}",
-            `<@&${mentionable.id}>`,
-          );
+          "{mentionable}",
+          `<@&${mentionable.id}>`,
+        );
     } else {
       return await this.Mod.destroy({
         where: {
@@ -405,7 +404,7 @@ export default class Database {
   }
 
   async resetChannels(serverId: string): Promise<number> {
-    return this.Channel.destroy({
+    return await this.Channel.destroy({
       where: {
         serverId,
       },
@@ -474,7 +473,7 @@ export default class Database {
   }
 
   async getLanguageCode(serverId: string): Promise<string> {
-    let result = await this.Language.findAll({
+    const result = await this.Language.findAll({
       where: {
         serverId,
       },
@@ -484,50 +483,43 @@ export default class Database {
   }
 
   async getLanguages() {
-    return new Promise<string[]>((resolve, reject) => {
-      fs.readdir(
-        "./languages",
-        (err: NodeJS.ErrnoException | null, filenames: string[]) => {
-          if (err != null) {
-            reject(err);
-          } else {
-            for (let i = 0; i < filenames.length; i++) {
-              filenames[i] = filenames[i].substring(
-                0,
-                filenames[i].lastIndexOf("."),
-              );
-            }
-            resolve(filenames);
-          }
-        },
+    const filenames: string[] = [];
+    for await (const dirEntry of Deno.readDir("./languages")) {
+      filenames.push(
+        dirEntry.name.substring(0, dirEntry.name.lastIndexOf(".")),
       );
-    });
+    }
+    return filenames;
   }
 
   async getLanguageObject(language: string = "en_US") {
-    return require(`./languages/${language}.json`);
+    const languageObj = await import(`./languages/${language}.json`, {
+      with: { type: "json" },
+    });
+    return languageObj.default;
   }
 
   async getScore(
     serverId: string,
     userId: string,
-  ): Promise<{
-    position: number;
-    serverId: string;
-    userId: string;
-    score: number;
-  } | null> {
-    let scores = await this.Score.findAll({
+  ): Promise<
+    {
+      position: number;
+      serverId: string;
+      userId: string;
+      score: number;
+    } | null
+  > {
+    const scores = await this.Score.findAll({
       where: {
         serverId,
       },
       order: [["score", "DESC"]],
     });
-    let position = 1;
     for (let i = 0; i < scores.length; i++) {
       if (scores[i].getDataValue("userId") == userId) {
         return {
-          position,
+          position: i + 1,
           serverId,
           userId,
           score: scores[i].getDataValue("score"),
@@ -616,7 +608,6 @@ export default class Database {
     userId: string,
     score: number,
   ): Promise<number | [affectedCount: number]> {
-    const lang = await LanguageApi.getLanguage(serverId, this);
     const current = await this.Score.findOne({
       where: {
         serverId,
@@ -665,7 +656,7 @@ export default class Database {
   }
 
   async clearEncounters(serverId: string, channelId: string): Promise<number> {
-    return this.Encounter.destroy({
+    return await this.Encounter.destroy({
       where: {
         serverId,
         channelId,
@@ -679,7 +670,7 @@ export default class Database {
     name: string,
     language: string,
   ) {
-    return this.Encounter.create({
+    return await this.Encounter.create({
       serverId,
       channelId,
       name,
@@ -889,6 +880,6 @@ export default class Database {
   }
 
   async disconnect() {
-    return this.db.close();
+    return await this.db.close();
   }
 }

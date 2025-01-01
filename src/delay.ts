@@ -2,26 +2,30 @@ import {
   ChatInputCommandInteraction,
   SlashCommandSubcommandGroupBuilder,
 } from "discord.js";
-import Database from "./data/postgres";
-import Language from "./language";
-import Util from "./util";
-import enLocalizations from "./languages/slash-commands/en.json";
-import deLocalizations from "./languages/slash-commands/de.json";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import enLocalizations from "./languages/slash-commands/en.json" with {
+  type: "json",
+};
+import deLocalizations from "./languages/slash-commands/de.json" with {
+  type: "json",
+};
 
 export default class Delay {
   static async delay(interaction: ChatInputCommandInteraction, db: Database) {
-    const lang = await Language.getLanguage(interaction.guildId!, db);
-    let subcommand = interaction.options.getSubcommand();
+    const lang = await Language.getLanguage(interaction.guild!.id, db);
+    const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
-      case "set":
+      case "set": {
         try {
-          let d = interaction.options.getInteger("days", false) || 0;
-          let h = interaction.options.getInteger("hours", false) || 0;
-          let m = interaction.options.getInteger("minutes", false) || 0;
-          let s = interaction.options.getInteger("seconds", false) || 0;
-          let user = interaction.options.getUser("user");
+          const d = interaction.options.getInteger("days", false) || 0;
+          const h = interaction.options.getInteger("hours", false) || 0;
+          const m = interaction.options.getInteger("minutes", false) || 0;
+          const s = interaction.options.getInteger("seconds", false) || 0;
+          const user = interaction.options.getUser("user");
           if (user) {
-            await Delay.setDelay(interaction.guildId!, user.id, d, h, m, s);
+            await Delay.setDelay(interaction.guild!.id, user.id, d, h, m, s);
             await Util.editReply(
               interaction,
               lang.obj["mod_delay_set_title_success"],
@@ -38,9 +42,10 @@ export default class Delay {
           );
         }
         break;
-      case "unset":
+      }
+      case "unset": {
         try {
-          let user = interaction.options.getUser("user");
+          const user = interaction.options.getUser("user");
           if (user) {
             await Delay.unsetDelay(interaction.guildId!, user.id);
             await Util.editReply(
@@ -59,9 +64,10 @@ export default class Delay {
           );
         }
         break;
-      case "show":
+      }
+      case "show": {
         try {
-          let user = interaction.options.getUser("user");
+          const user = interaction.options.getUser("user");
           if (user) {
             await Delay.showDelay(interaction.guildId!, user.id);
             await Util.editReply(
@@ -80,7 +86,8 @@ export default class Delay {
           );
         }
         break;
-      default:
+      }
+      default: {
         await Util.editReply(
           interaction,
           lang.obj["error_invalid_subcommand_title"],
@@ -89,10 +96,11 @@ export default class Delay {
             .replace("<subcommandName>", subcommand),
           lang,
         );
+      }
     }
   }
 
-  private static async setDelay(
+  private static setDelay(
     serverId: string,
     userId: string,
     days: number = 0,
@@ -100,15 +108,20 @@ export default class Delay {
     minutes: number = 0,
     seconds: number = 0,
   ) {
-    // TODO: Execute Delay Actions
+    // TODO: Make async
+    console.log(
+      `TODO: setDelay(${serverId}, ${userId}, ${days}, ${hours}, ${minutes}, ${seconds})`,
+    );
   }
 
-  private static async unsetDelay(serverId: string, userId: string) {
-    // TODO: Execute Delay Actions
+  private static unsetDelay(serverId: string, userId: string) {
+    // TODO: Make async
+    console.log(`TODO: unsetDelay(${serverId}, ${userId})`);
   }
 
-  private static async showDelay(serverId: string, userId: string) {
-    // TODO: Execute Delay Actions
+  private static showDelay(serverId: string, userId: string) {
+    // TODO: Make async
+    console.log(`TODO: showDelay(${serverId}, ${userId})`);
   }
 
   static getRegisterObject(
@@ -143,7 +156,7 @@ export default class Delay {
               .setDescriptionLocalizations({
                 de: deLocalizations.delay_set_user_description,
               })
-              .setRequired(true),
+              .setRequired(true)
           )
           .addIntegerOption((option) =>
             option
@@ -154,7 +167,7 @@ export default class Delay {
               .setDescription(enLocalizations.delay_set_days_description)
               .setDescriptionLocalizations({
                 de: deLocalizations.delay_set_days_description,
-              }),
+              })
           )
           .addIntegerOption((option) =>
             option
@@ -165,7 +178,7 @@ export default class Delay {
               .setDescription(enLocalizations.delay_set_hours_description)
               .setDescriptionLocalizations({
                 de: deLocalizations.delay_set_hours_description,
-              }),
+              })
           )
           .addIntegerOption((option) =>
             option
@@ -176,7 +189,7 @@ export default class Delay {
               .setDescription(enLocalizations.delay_set_minutes_description)
               .setDescriptionLocalizations({
                 de: deLocalizations.delay_set_minutes_description,
-              }),
+              })
           )
           .addIntegerOption((option) =>
             option
@@ -187,8 +200,8 @@ export default class Delay {
               .setDescription(enLocalizations.delay_set_seconds_description)
               .setDescriptionLocalizations({
                 de: deLocalizations.delay_set_seconds_name,
-              }),
-          ),
+              })
+          )
       )
       .addSubcommand((subcommand) =>
         subcommand
@@ -210,8 +223,8 @@ export default class Delay {
               .setDescriptionLocalizations({
                 de: deLocalizations.delay_unset_user_description,
               })
-              .setRequired(true),
-          ),
+              .setRequired(true)
+          )
       )
       .addSubcommand((subcommand) =>
         subcommand
@@ -233,8 +246,8 @@ export default class Delay {
               .setDescriptionLocalizations({
                 de: deLocalizations.delay_show_user_description,
               })
-              .setRequired(true),
-          ),
+              .setRequired(true)
+          )
       );
   }
 }

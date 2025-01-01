@@ -3,14 +3,18 @@ import {
   GuildMember,
   SlashCommandBuilder,
 } from "discord.js";
-import Language from "./language";
-import Util from "./util";
-import Delay from "./delay";
-import Timeout from "./timeout";
-import Championship from "./championship";
-import Database from "./data/postgres";
-import enLocalizations from "./languages/slash-commands/en.json";
-import deLocalizations from "./languages/slash-commands/de.json";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import Delay from "./delay.ts";
+import Timeout from "./timeout.ts";
+import Championship from "./championship.ts";
+import Database from "./data/postgres.ts";
+import enLocalizations from "./languages/slash-commands/en.json" with {
+  type: "json",
+};
+import deLocalizations from "./languages/slash-commands/de.json" with {
+  type: "json",
+};
 
 export default class Mod {
   static async mod(interaction: ChatInputCommandInteraction, db: Database) {
@@ -21,8 +25,8 @@ export default class Mod {
       isMod = true;
     } else {
       if (interaction.member) {
-        let member = interaction.member as GuildMember;
-        for (let [, /*roleId*/ role] of member.roles.cache) {
+        const member = interaction.member as GuildMember;
+        for (const [, role] of member.roles.cache) {
           if (await db.isMod(role)) {
             isMod = true;
             break;
@@ -48,28 +52,28 @@ export default class Mod {
           break;
         default:
           switch (subcommand) {
-            case "score":
-              let user =
-                interaction.options.getUser("user", false) || interaction.user;
-              let action = interaction.options.getString("action", false);
-              let amount = interaction.options.getInteger("amount", false);
+            case "score": {
+              const user = interaction.options.getUser("user", false) ||
+                interaction.user;
+              const action = interaction.options.getString("action", false);
+              const amount = interaction.options.getInteger("amount", false);
               switch (action) {
-                case "add":
+                case "add": {
                   try {
-                    let dbScore = await db.getScore(
-                      interaction.guildId!,
+                    const dbScore = await db.getScore(
+                      interaction.guild!.id,
                       user.id,
                     );
                     if (amount) {
                       if (dbScore) {
                         await db.setScore(
-                          interaction.guildId!,
+                          interaction.guild!.id,
                           user.id,
                           dbScore.score + amount,
                         );
                       } else {
                         await db.setScore(
-                          interaction.guildId!,
+                          interaction.guild!.id,
                           user.id,
                           amount,
                         );
@@ -77,22 +81,22 @@ export default class Mod {
                     } else {
                       if (dbScore) {
                         await db.setScore(
-                          interaction.guildId!,
+                          interaction.guild!.id,
                           user.id,
                           dbScore.score + 1,
                         );
                       } else {
-                        await db.setScore(interaction.guildId!, user.id, 0);
+                        await db.setScore(interaction.guild!.id, user.id, 0);
                       }
                     }
-                    Util.editReply(
+                    await Util.editReply(
                       interaction,
                       lang.obj["mod_score_add_title_success"],
                       lang.obj["mod_score_add_description_success"],
                       lang,
                     );
                   } catch (err) {
-                    Util.editReply(
+                    await Util.editReply(
                       interaction,
                       lang.obj["mod_score_add_title_failed"],
                       `${lang.obj["mod_score_add_description_failed"]}${err}`,
@@ -100,52 +104,57 @@ export default class Mod {
                     );
                   }
                   break;
-                case "remove":
+                }
+                case "remove": {
                   try {
                     if (amount) {
                       await db.removeScore(
-                        interaction.guildId!,
+                        interaction.guild!.id,
                         user.id,
                         amount,
                       );
                     } else {
-                      await db.unsetScore(interaction.guildId!, user.id);
+                      await db.unsetScore(interaction.guild!.id, user.id);
                     }
-                    Util.editReply(
+                    await Util.editReply(
                       interaction,
                       lang.obj["mod_score_remove_title_success"],
                       lang.obj["mod_score_remove_description_success"],
                       lang,
                     );
                   } catch (err) {
-                    Util.editReply(
+                    await Util.editReply(
                       interaction,
                       lang.obj["mod_score_remove_title_failed"],
-                      `${lang.obj["mod_score_remove_description_failed"]}${err}`,
+                      `${
+                        lang.obj["mod_score_remove_description_failed"]
+                      }${err}`,
                       lang,
                     );
                   }
                   break;
-                case "set":
+                }
+                case "set": {
                   try {
                     if (amount && amount >= 0) {
-                      await db.setScore(interaction.guildId!, user.id, amount);
+                      await db.setScore(interaction.guild!.id, user.id, amount);
                     } else {
-                      let dbScore = await db.getScore(
-                        interaction.guildId!,
+                      const dbScore = await db.getScore(
+                        interaction.guild!.id,
                         user.id,
                       );
-                      if (!dbScore)
-                        await db.setScore(interaction.guildId!, user.id, 0);
+                      if (!dbScore) {
+                        await db.setScore(interaction.guild!.id, user.id, 0);
+                      }
                     }
-                    Util.editReply(
+                    await Util.editReply(
                       interaction,
                       lang.obj["mod_score_set_title_success"],
                       lang.obj["mod_score_set_description_success"],
                       lang,
                     );
                   } catch (err) {
-                    Util.editReply(
+                    await Util.editReply(
                       interaction,
                       lang.obj["mod_score_set_title_failed"],
                       `${lang.obj["mod_score_set_description_failed"]}${err}`,
@@ -153,8 +162,9 @@ export default class Mod {
                     );
                   }
                   break;
-                default:
-                  Util.editReply(
+                }
+                default: {
+                  await Util.editReply(
                     interaction,
                     lang.obj["error_invalid_subcommand_title"],
                     lang.obj["error_invalid_subcommand_description"]
@@ -162,8 +172,10 @@ export default class Mod {
                       .replace("<subcommandName>", action!),
                     lang,
                   );
+                }
               }
               break;
+            }
             default:
               await Util.editReply(
                 interaction,
@@ -181,7 +193,7 @@ export default class Mod {
           break;
       }
     } else {
-      Util.editReply(
+      await Util.editReply(
         interaction,
         lang.obj["mod_no_mod_title"],
         lang.obj["mod_no_mod_description"],
@@ -218,7 +230,7 @@ export default class Mod {
               .setDescriptionLocalizations({
                 de: deLocalizations.mod_score_user_description,
               })
-              .setRequired(true),
+              .setRequired(true)
           )
           .addStringOption((option) =>
             option
@@ -253,7 +265,7 @@ export default class Mod {
                   value: "set",
                 },
               )
-              .setRequired(true),
+              .setRequired(true)
           )
           .addIntegerOption((option) =>
             option
@@ -265,17 +277,17 @@ export default class Mod {
               .setDescriptionLocalizations({
                 de: deLocalizations.mod_score_amount_description,
               })
-              .setRequired(true),
-          ),
+              .setRequired(true)
+          )
       )
       .addSubcommandGroup((subcommandgroup) =>
-        Delay.getRegisterObject(subcommandgroup),
+        Delay.getRegisterObject(subcommandgroup)
       )
       .addSubcommandGroup((subcommandgroup) =>
-        Timeout.getRegisterObject(subcommandgroup),
+        Timeout.getRegisterObject(subcommandgroup)
       )
       .addSubcommandGroup((subcommandgroup) =>
-        Championship.getRegisterObject(subcommandgroup),
+        Championship.getRegisterObject(subcommandgroup)
       );
   }
 }

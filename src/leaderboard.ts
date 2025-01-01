@@ -1,17 +1,20 @@
 import {
+  BaseInteraction,
   ChatInputCommandInteraction,
   EmbedBuilder,
-  User,
-  BaseInteraction,
-  SlashCommandBuilder,
   GuildMember,
+  SlashCommandBuilder,
 } from "discord.js";
 import { Model } from "sequelize";
-import Database from "./data/postgres";
-import Language from "./language";
-import Util from "./util";
-import enLocalizations from "./languages/slash-commands/en.json";
-import deLocalizations from "./languages/slash-commands/de.json";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import enLocalizations from "./languages/slash-commands/en.json" with {
+  type: "json",
+};
+import deLocalizations from "./languages/slash-commands/de.json" with {
+  type: "json",
+};
 
 export default class Leaderboard {
   static async leaderboard(
@@ -24,8 +27,8 @@ export default class Leaderboard {
     let longestUserLength: number = 0;
     let userName = "";
     let score = "";
-    let scores = await db.getScores(interaction.guildId!);
-    let usernameMode = (
+    const scores = await db.getScores(interaction.guildId!);
+    const usernameMode = (
       await db.getUsernameMode(interaction.guildId!)
     )?.getDataValue("mode");
     const leaderboardEmbed: EmbedBuilder = Util.returnEmbed(
@@ -35,8 +38,8 @@ export default class Leaderboard {
     ).embed;
     // Add fields to Embed
     for (let i: number = 0; i < Math.max(5, scores.length); i++) {
-      let userId = scores[i]?.getDataValue("userId");
-      let memberObj = userId
+      const userId = scores[i]?.getDataValue("userId");
+      const memberObj = userId
         ? await Util.findMember(interaction, userId)
         : null;
       if (memberObj) {
@@ -57,8 +60,7 @@ export default class Leaderboard {
             value: lang.obj["leaderboard_all_hail"],
           },
           {
-            name:
-              "🏆 " +
+            name: "🏆 " +
               lang.obj["leaderboard_score_name"]
                 .replace("<placement>", (i + 1).toString())
                 .replace("<username>", userName),
@@ -119,8 +121,7 @@ export default class Leaderboard {
       // Adds additional users into overflow leaderboard up until 20
       // Pad first column to fit double digits, second column by longest username
       if (i >= 5 && i < 20) {
-        table +=
-          (i + 1).toString().padEnd("00 ".length) +
+        table += (i + 1).toString().padEnd("00 ".length) +
           "| " +
           userName.padEnd(longestUserLength, " ") +
           " | " +
@@ -146,12 +147,12 @@ export default class Leaderboard {
   ) {
     let longestUsernameLength: number = 0;
     for (let i: number = 0; i < scores.length; i++) {
-      let m: GuildMember | undefined = (await Util.findMember(
+      const m: GuildMember | undefined = (await Util.findMember(
         interaction,
         scores[i].getDataValue("userId"),
       )) as GuildMember | undefined;
       if (m) {
-        let memberUsername = Util.getCorrectUsernameFormat(usernameModeId, m);
+        const memberUsername = Util.getCorrectUsernameFormat(usernameModeId, m);
         if (memberUsername.length > longestUsernameLength) {
           longestUsernameLength = memberUsername.length;
         }

@@ -4,10 +4,10 @@ import {
   EmbedBuilder,
   ModalSubmitInteraction,
 } from "discord.js";
-import Database from "./data/postgres";
-import Language from "./language";
-import Lightning from "./lightning";
-import Util from "./util";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Lightning from "./lightning.ts";
+import Util from "./util.ts";
 
 export default class Catch {
   private static guessEntered: boolean = false;
@@ -24,11 +24,12 @@ export default class Catch {
     if (
       (modalInteraction.guild && !modalInteraction.guild.available) ||
       !modalInteraction.guild
-    )
+    ) {
       return;
+    }
     const lang = await Language.getLanguage(modalInteraction.guild.id, db);
     // TODO: Disadvantages like delay and timeout
-    let encounter = await db.getEncounter(
+    const encounter = await db.getEncounter(
       modalInteraction.guild.id,
       btnInteraction.channelId,
     );
@@ -38,13 +39,13 @@ export default class Catch {
       for (let i = 0; i < encounter.length; i++) {
         if (
           encounter[i].getDataValue("name").toLowerCase() ===
-          guess.toLowerCase()
+            guess.toLowerCase()
         ) {
           await db.clearEncounters(
             modalInteraction.guild.id,
             btnInteraction.channelId,
           );
-          let artwork = await db.getArtwork(
+          const artwork = await db.getArtwork(
             modalInteraction.guild.id,
             btnInteraction.channelId,
           );
@@ -55,20 +56,21 @@ export default class Catch {
           );
           let englishIndex = 0;
           for (let j = 0; j < encounter.length; j++) {
-            if (encounter[j].getDataValue("language") === "en")
+            if (encounter[j].getDataValue("language") === "en") {
               englishIndex = j;
+            }
           }
           // Send messsage that guess is correct
           let title = "";
           if (
             encounter[i].getDataValue("name").toLowerCase() ===
-            encounter[englishIndex].getDataValue("name").toLowerCase()
-          )
+              encounter[englishIndex].getDataValue("name").toLowerCase()
+          ) {
             title = lang.obj["catch_caught_english_title"].replace(
               "<pokemon>",
               Util.capitalize(encounter[englishIndex].getDataValue("name")),
             );
-          else
+          } else {
             title = lang.obj["catch_caught_other_language_title"]
               .replace(
                 "<englishPokemon>",
@@ -78,8 +80,9 @@ export default class Catch {
                 "<guessedPokemon>",
                 Util.capitalize(encounter[i].getDataValue("name")),
               );
+          }
           console.log(`catch.js-artwork: ${artwork}`);
-          let returnedEmbed: {
+          const returnedEmbed: {
             embed: EmbedBuilder;
             attachment: AttachmentBuilder | null;
           } = Util.returnEmbed(
@@ -92,17 +95,18 @@ export default class Catch {
             0x00ae86,
             artwork,
           );
-          if (returnedEmbed.attachment == null)
+          if (returnedEmbed.attachment == null) {
             await btnInteraction.followUp({
               embeds: [returnedEmbed.embed],
               ephemeral: false,
             });
-          else
+          } else {
             await btnInteraction.followUp({
               embeds: [returnedEmbed.embed],
               files: [returnedEmbed.attachment],
               ephemeral: false,
             });
+          }
           guessed = true;
           await db.unsetArtwork(
             modalInteraction.guild.id,
