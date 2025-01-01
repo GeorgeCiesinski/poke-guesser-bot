@@ -2,11 +2,15 @@ import {
   ChatInputCommandInteraction,
   SlashCommandSubcommandGroupBuilder,
 } from "discord.js";
-import Database from "./data/postgres";
-import Language from "./language";
-import Util from "./util";
-import enLocalizations from "./languages/slash-commands/en.json";
-import deLocalizations from "./languages/slash-commands/de.json";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import enLocalizations from "./languages/slash-commands/en.json" with {
+  type: "json",
+};
+import deLocalizations from "./languages/slash-commands/de.json" with {
+  type: "json",
+};
 
 export default class Championship {
   static async championship(
@@ -14,7 +18,7 @@ export default class Championship {
     db: Database,
   ) {
     const lang = await Language.getLanguage(interaction.guildId!, db);
-    let subcommand = interaction.options.getSubcommand();
+    const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
       case "new":
         try {
@@ -26,6 +30,7 @@ export default class Championship {
             lang,
           );
         } catch (err) {
+          console.error(err);
           await Util.editReply(
             interaction,
             lang.obj["mod_championship_new_title_failed"],
@@ -46,8 +51,9 @@ export default class Championship {
     }
   }
 
-  private static async newChampionship(serverId: string) {
-    // TODO: Execute newChampionship Actions
+  private static newChampionship(serverId: string) {
+    // TODO: Make async when there is an actual logic
+    console.log(`TODO: Execute newChampionship Actions for server ${serverId}`);
   }
 
   static getRegisterObject(
@@ -71,7 +77,7 @@ export default class Championship {
           .setDescription(enLocalizations.championship_new_description)
           .setDescriptionLocalizations({
             de: deLocalizations.championship_new_description,
-          }),
+          })
       );
   }
 }

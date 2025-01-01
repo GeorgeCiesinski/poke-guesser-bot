@@ -1,27 +1,21 @@
-import "dotenv/config";
 import {
+  ActionRowBuilder,
   Client,
   Events,
   GatewayIntentBits,
-  Partials,
+  GuildChannel,
+  Interaction,
   ModalBuilder,
-  ActionRowBuilder,
+  Partials,
   TextInputBuilder,
   TextInputStyle,
-  ComponentType,
-  ButtonBuilder,
-  ButtonStyle,
-  EmbedBuilder,
-  InteractionResponse,
-  GuildChannel,
-  ActionRow,
 } from "discord.js";
-import Commands from "./commands";
-import Language from "./language";
-import Util from "./util";
-import Database from "./data/postgres";
+import Commands from "./commands.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import Database from "./data/postgres.ts";
 
-const mySecret = process.env["TOKEN"]; // Discord Token
+const mySecret = Deno.env.has("TOKEN") ? Deno.env.get("TOKEN") : null; // Discord Token
 
 const client = new Client({
   intents: [
@@ -46,7 +40,7 @@ client.on(Events.ClientReady, () => {
   console.log(`Logged in as ${client.user?.tag}!`); // Logging
 });
 
-client.on(Events.InteractionCreate, async (interaction) => {
+client.on(Events.InteractionCreate, async (interaction: Interaction) => {
   if (!interaction.guild?.available) {
     console.warn(
       "Guild not available: interaction.guild.available is either null or false",
@@ -91,7 +85,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
       } else {
         const lang = await Language.getLanguage(interaction.guildId, db);
-        interaction.reply({
+        await interaction.reply({
           embeds: [
             Util.returnEmbed(
               lang.obj["channel_forbidden_error_title"],
@@ -112,7 +106,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   } else if (interaction.isButton()) {
     if (interaction.customId == "catchBtn") {
       const lang = await Language.getLanguage(interaction.guildId, db);
-      let modal = new ModalBuilder()
+      const modal = new ModalBuilder()
         .setTitle(lang.obj["catch_this_pokemon"])
         .setCustomId("catchModal")
         .setComponents(
@@ -127,7 +121,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           ),
         );
       await interaction.showModal(modal);
-      let submitted = await interaction
+      const submitted = await interaction
         .awaitModalSubmit({
           filter: (i) =>
             i.customId == "catchModal" && i.user.id == interaction.user.id,
@@ -148,22 +142,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-// Gracefully disconnect Postgres-Client on exit
-if (process.platform === "win32") {
-  let rl = require("readline").createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  rl.on("SIGINT", () => {
-    process.exit();
-  });
-}
-
-// Bot Login
-if (!mySecret) {
-  console.log(
-    "TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot.",
-  );
-} else {
-  client.login(mySecret);
+if (import.meta.main) {
+  // Bot Login
+  if (!mySecret) {
+    console.log(
+      "TOKEN not found! You must setup the Discord TOKEN as per the README file before running this bot.",
+    );
+  } else {
+    client.login(mySecret);
+  }
 }

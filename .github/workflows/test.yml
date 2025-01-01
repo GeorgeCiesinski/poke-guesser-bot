@@ -1,0 +1,24 @@
+name: Deno Test
+
+on:
+  push:
+    branches: ["master", "main", "develop"]
+  pull_request:
+
+jobs:
+  test:
+    name: Check Test Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Install dependencies
+        run: |
+          deno install
+      - name: Test
+        run: |
+          deno test

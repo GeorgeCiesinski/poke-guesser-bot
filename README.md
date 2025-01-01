@@ -1,6 +1,7 @@
 # Poké-guesser Bot
 
-Poké-guesser Bot is a discord bot that runs a Pokemon guessing game. The bot automatically tracks the score of participating users.
+Poké-guesser Bot is a discord bot that runs a Pokemon guessing game. The bot
+automatically tracks the score of participating users.
 
 # Features
 
@@ -12,26 +13,33 @@ The bot has the following roles:
 - Mod
 - Player
 
-You can learn more about the [roles here](https://github.com/GeorgeCiesinski/poke-guesser-bot/wiki/Bot-Roles).
+You can learn more about the
+[roles here](https://github.com/GeorgeCiesinski/poke-guesser-bot/wiki/Bot-Roles).
 
 ## Commands
 
-Each role has access to certain commands. You can find out more from [this wiki page](https://github.com/GeorgeCiesinski/poke-guesser-bot/wiki/Commands).
+Each role has access to certain commands. You can find out more from
+[this wiki page](https://github.com/GeorgeCiesinski/poke-guesser-bot/wiki/Commands).
 
 ### Guessing / Catching
 
-You can simply guess the pokémon name by clicking or tapping on `Catch This Pokémon!`-button below the message that shows the pokémon that needs to be guessed. After that a modal opens up that asks you for the name where you need to enter it and press or tap on `Submit`.
-![catch](docs/images/catch.png)
+You can simply guess the pokémon name by clicking or tapping on
+`Catch This Pokémon!`-button below the message that shows the pokémon that needs
+to be guessed. After that a modal opens up that asks you for the name where you
+need to enter it and press or tap on `Submit`. ![catch](docs/images/catch.png)
 
 ### Lightning Round
 
-You can start a lightning round, meaning one explore after each other for a given amount of loops, by doing `/lightning start` instead of `/explore`.
+You can start a lightning round, meaning one explore after each other for a
+given amount of loops, by doing `/lightning start` instead of `/explore`.
 
-It will then automatically explore a new pokemon if the current one was caught or revealed.
+It will then automatically explore a new pokemon if the current one was caught
+or revealed.
 
 ## Channel configuration
 
-You can set which channels the bot is allowed to reply in. The bot can listen and reply on all channels if no channels are set.
+You can set which channels the bot is allowed to reply in. The bot can listen
+and reply on all channels if no channels are set.
 
 ## Leaderboard
 
@@ -39,7 +47,9 @@ Generate a Leaderboard of the top players.
 
 ## Hosted by YOU on Docker
 
-You can clone this repository to run it yourself through Docker Compose so you know exactly what this bot is doing. You can also fork this repo and make any modifications you want!
+You can clone this repository to run it yourself through Docker Compose so you
+know exactly what this bot is doing. You can also fork this repo and make any
+modifications you want!
 
 ## Multi-language Support
 
@@ -49,10 +59,11 @@ Poké-guesser Bot supports guesses in any language supported by Poké-API.
 
 ## Discord Bot Setup
 
-In order to use Poke-guesser-bot, you need to setup a discord bot first using the Discord Developer Portal.
+In order to use Poke-guesser-bot, you need to setup a discord bot first using
+the Discord Developer Portal.
 
 <!-- Keep ordered lists in html format -->
-<ol>            
+<ol>
     <li>
         Login to the <a href="https://discord.com/developers/applications">Discord Developer portal</a>.
     </li>
@@ -81,10 +92,10 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
         </ul>
     </li>
     <li>
-        Add the Database configuration to the <code>.env</code> file. There are two options: 
+        Add the Database configuration to the <code>.env</code> file. There are two options:
         <ol>
             <li>
-                If you use a Database URL, add it to the <code>.env</code> file as below: 
+                If you use a Database URL, add it to the <code>.env</code> file as below:
                 <br><code>DATABASE_URL: "postgres://user:pass@example.com:5432/dbname"</code> (your string)
             </li>
             <li>
@@ -92,7 +103,7 @@ In order to use Poke-guesser-bot, you need to setup a discord bot first using th
                 <ul>
                     <li><strong>POSTGRES_HOST:</strong> Connection string for Postgres server. Leave as <code>db</code> if using Docker.</li>
                     <li><strong>POSTGRES_USER & POSTGRES_PASSWORD:</strong> User/pass for postgres server. Doesn't need to be changed if using Docker.
-                </ul>  
+                </ul>
             </li>
         </ol>
     </li>
@@ -112,11 +123,15 @@ The bot uses slash commands which need to be registered with discord.
 
 ## Running the Bot
 
-This bot was written to run locally or on docker with NodeJS and PostgreSQL and uses Env-Files for the senstive data that will get loaded in NodeJS as Environment Variables.
+This bot was written to run locally or on docker with NodeJS and PostgreSQL and
+uses Env-Files for the senstive data that will get loaded in NodeJS as
+Environment Variables.
 
 ### Run in Docker
 
-**Important:** _You must have already set up a Discord bot on the Discord Developer portal. If you haven't, follow the instructions in [this](#discord-bot-setup) section first._
+**Important:** _You must have already set up a Discord bot on the Discord
+Developer portal. If you haven't, follow the instructions in
+[this](#discord-bot-setup) section first._
 
 <ol>
     <li>
@@ -139,7 +154,7 @@ You can also run the bot using node, but the database has to be set up manually.
         Run the command:
         <br><code>node index.js</code>
         <br>or
-        <br><code>npm start</code> 
+        <br><code>npm start</code>
     </li>
 </ol>
 
@@ -151,23 +166,29 @@ The database.
 
 ## node.js
 
-This project is written entirely using JavaScript in the [Node.JS](https://nodejs.org/en/) runtime environment.
+This project is written entirely using JavaScript in the
+[Node.JS](https://nodejs.org/en/) runtime environment.
 
 ## discord.js
 
-All interactions with discord were handled thanks to the [discord.js](https://discord.js.org/#/) library.
+All interactions with discord were handled thanks to the
+[discord.js](https://discord.js.org/#/) library.
 
 ## Poké-API
 
-This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API provided a list of all pokémon, including their variants, as well as sprites that were instrumental in building this Poke-guesser Bot.
+This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API
+provided a list of all pokémon, including their variants, as well as sprites
+that were instrumental in building this Poke-guesser Bot.
 
 # Contributions
 
-If you are interested in making a contribution, please read our **Contributions Guidelines** located in `docs/CONTRIBUTING.md`.
+If you are interested in making a contribution, please read our **Contributions
+Guidelines** located in `docs/CONTRIBUTING.md`.
 
 # Terms of Conduct
 
-Before participating in this community, please read our **Code of Conduct** located in `docs/CODE_OF_CONDUCT.md`.
+Before participating in this community, please read our **Code of Conduct**
+located in `docs/CODE_OF_CONDUCT.md`.
 
 # License
 
@@ -177,6 +198,8 @@ Before participating in this community, please read our **Code of Conduct** loca
 
 Code Contributions by [Wissididom](https://github.com/Wissididom)
 
-Replit Cover Image by [PIRO4D](https://pixabay.com/users/piro4d-2707530/) from [Pixabay](https://pixabay.com)
+Replit Cover Image by [PIRO4D](https://pixabay.com/users/piro4d-2707530/) from
+[Pixabay](https://pixabay.com)
 
-Leaderboard Image by [Aurelia Candeloro](https://www.instagram.com/aurelia.borealis)
+Leaderboard Image by
+[Aurelia Candeloro](https://www.instagram.com/aurelia.borealis)

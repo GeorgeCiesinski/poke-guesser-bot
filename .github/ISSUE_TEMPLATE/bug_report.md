@@ -42,7 +42,9 @@ If applicable, add screenshots to help explain your problem.
 
 ## Possible solutions
 
-Do you have an idea of what could resolve this? If yes, fill in this section making sure to link to the relevant library/documentation, or the stack overflow question that addresses this bug.
+Do you have an idea of what could resolve this? If yes, fill in this section
+making sure to link to the relevant library/documentation, or the stack overflow
+question that addresses this bug.
 
 ## Additional context
 

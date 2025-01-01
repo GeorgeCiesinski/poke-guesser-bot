@@ -1,20 +1,23 @@
 import {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   ChatInputCommandInteraction,
-  ModalSubmitInteraction,
-  GuildMember,
   EmbedBuilder,
-  AttachmentBuilder,
+  ModalSubmitInteraction,
   SlashCommandBuilder,
 } from "discord.js";
-import Database from "./data/postgres";
-import Language from "./language";
-import Util from "./util";
-import Explore from "./explore";
-import enLocalizations from "./languages/slash-commands/en.json";
-import deLocalizations from "./languages/slash-commands/de.json";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import Explore from "./explore.ts";
+import enLocalizations from "./languages/slash-commands/en.json" with {
+  type: "json",
+};
+import deLocalizations from "./languages/slash-commands/de.json" with {
+  type: "json",
+};
 
 export default class Lightning {
   static async lightning(
@@ -22,12 +25,12 @@ export default class Lightning {
     db: Database,
     preventDefer: boolean = false,
   ) {
-    db.setLightningLoops(
+    await db.setLightningLoops(
       interaction.guildId!,
       interaction.channelId!,
       interaction.options.getInteger("loops")! - 1,
     );
-    Explore.explore(interaction, db, preventDefer);
+    await Explore.explore(interaction, db, preventDefer);
   }
 
   static async checkLightning(
@@ -41,13 +44,16 @@ export default class Lightning {
     if (loops) {
       Lightning.explore(interaction!, db);
       loops -= 1;
-      if (loops > 0)
+      if (loops > 0) {
         db.setLightningLoops(
           interaction.guildId!,
           interaction.channelId!,
           loops,
         );
-      else db.unsetLightningLoops(interaction.guildId!, interaction.channelId!);
+      } else {db.unsetLightningLoops(
+          interaction.guildId!,
+          interaction.channelId!,
+        );}
     }
   }
 
@@ -56,31 +62,34 @@ export default class Lightning {
     db: Database,
     preventDefer: boolean = false,
   ) {
+    if (!preventDefer) await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     console.log("Generating a new Pokemon");
     await db.clearEncounters(interaction.guildId!, interaction.channelId!);
     await db.unsetArtwork(interaction.guildId!, interaction.channelId!);
-    let pokemon = await Util.generatePokemon();
+    const pokemon = await Util.generatePokemon();
     await db.addEncounter(
       interaction.guildId!,
       interaction.channelId!,
       pokemon.url.replace(/.+\/(\d+)\//g, "$1"),
       "id",
     );
-    let names = await Util.fetchNames(
+    const names = await Util.fetchNames(
       pokemon.url.replace(/.+\/(\d+)\//g, "$1"),
     );
     if (!names) {
       console.log(
-        `Warning: 404 Not Found for pokemon ${pokemon.url.replace(
-          /.+\/(\d+)\//g,
-          "$1",
-        )}. Fetching new pokemon.`,
+        `Warning: 404 Not Found for pokemon ${
+          pokemon.url.replace(
+            /.+\/(\d+)\//g,
+            "$1",
+          )
+        }. Fetching new pokemon.`,
       );
       this.explore(interaction, db, true); // Attention: Recursive
       return;
     }
-    for (let name of names) {
+    for (const name of names) {
       // Sets current pokemon (different languages) names in database
       console.log(
         `Guild: ${interaction.guildId}, Channel: ${interaction.channelId}, Name: ${name.name}, Language: ${name.languageName}`,
@@ -93,8 +102,8 @@ export default class Lightning {
       );
     }
     // Gets sprite url for the reply to the command with the newly generated pokemon
-    let sprites = await Util.fetchSprite(pokemon.url);
-    let spriteUrl = sprites.front_default;
+    const sprites = await Util.fetchSprite(pokemon.url);
+    const spriteUrl = sprites.front_default;
     if (!spriteUrl) {
       console.log(
         `Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`,
@@ -102,7 +111,7 @@ export default class Lightning {
       this.explore(interaction, db, true); // Attention: Recursive
       return;
     }
-    let officialArtUrl = sprites.other.official_artwork.front_default;
+    const officialArtUrl = sprites.other.official_artwork.front_default;
     console.log(spriteUrl);
     console.log(officialArtUrl);
     await db.setArtwork(
@@ -110,7 +119,7 @@ export default class Lightning {
       interaction.channelId!,
       officialArtUrl,
     );
-    let returnedEmbed: {
+    const returnedEmbed: {
       embed: EmbedBuilder;
       attachment: AttachmentBuilder | null;
     } = Util.returnEmbed(
@@ -120,23 +129,24 @@ export default class Lightning {
       0x00ae86,
       spriteUrl,
     );
-    let actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(
+    const actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(
       new ButtonBuilder()
         .setCustomId("catchBtn")
         .setLabel(lang.obj["catch_this_pokemon"])
         .setStyle(ButtonStyle.Primary),
     );
-    if (returnedEmbed.attachment == null)
+    if (returnedEmbed.attachment == null) {
       await interaction.followUp({
         embeds: [returnedEmbed.embed],
         components: [actionRow],
       });
-    else
+    } else {
       await interaction.followUp({
         embeds: [returnedEmbed.embed],
         files: [returnedEmbed.attachment],
         components: [actionRow],
       });
+    }
     await db.setLastExplore(
       interaction.guildId!,
       interaction.channelId!,
@@ -174,8 +184,8 @@ export default class Lightning {
               .setDescriptionLocalizations({
                 de: deLocalizations.lightning_start_loops_description,
               })
-              .setRequired(true),
-          ),
+              .setRequired(true)
+          )
       );
   }
 }

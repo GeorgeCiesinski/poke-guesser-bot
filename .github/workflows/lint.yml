@@ -1,0 +1,25 @@
+name: Deno Linting
+
+on:
+  push:
+    branches: ["master", "main", "develop"]
+  pull_request:
+
+jobs:
+  lint:
+    name: Check Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Install dependencies
+        run: |
+          deno install
+      - name: Check lint
+        run: |
+          deno lint --fix
+          git --no-pager diff --exit-code --color=never
