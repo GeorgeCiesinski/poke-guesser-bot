@@ -7,7 +7,8 @@ COPY deno.json .
 COPY deno.lock .
 RUN deno install
 COPY . .
-ENV WAIT_COMMAND="deno -A main.ts"
+RUN deno cacne src/main.ts
+ENV WAIT_COMMAND="deno run -ERN src/main.ts"
 # comma separated list of pairs host:port for which you want to wait.
 ENV WAIT_HOSTS=db:5432
 # max number of seconds to wait for all the hosts to be available before failure. The default is 30 seconds.
