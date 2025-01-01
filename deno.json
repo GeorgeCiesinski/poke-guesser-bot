@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "start": "deno run --env -ERN src/main.ts"
+    "start": "deno run --env -ERN src/main.ts",
     "dev": "deno run --env -ERN --watch src/main.ts"
   },
   "imports": {

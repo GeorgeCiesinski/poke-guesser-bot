@@ -21,7 +21,9 @@ export default class Database {
   private Lightning = class extends Model {};
 
   constructor() {
-    if (Deno.env.has("DATABASE_URL")) {
+    if (
+      Deno.env.has("DATABASE_URL") && Deno.env.get("DATABASE_URL")!.trim() != ""
+    ) {
       this.db = new Sequelize(Deno.env.get("DATABASE_URL")!, {
         logging: false,
       });
