@@ -14,6 +14,7 @@ import {
   EmbedBuilder,
   TextInputStyle,
   TextInputBuilder,
+  MessageFlags,
   ModalBuilder,
 } from "discord.js";
 import Database from "./database.js";
@@ -269,7 +270,7 @@ let interactionCreate = async (interaction) => {
         console.error("Timed out", e);
         interaction.followUp({
           content: "Modal timed out (> 60 seconds)",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
     }
@@ -278,12 +279,12 @@ let interactionCreate = async (interaction) => {
   if (!interaction.deferred) {
     if (interaction.commandName == "mod") {
       if (interaction.options.getSubcommand() == "newchampionship") {
-        await interaction.deferReply({ ephemeral: false });
+        await interaction.deferReply();
       } else {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       }
     } else {
-      await interaction.deferReply({ ephemeral: false });
+      await interaction.deferReply();
     }
   }
   if (interaction.commandName == "ping") {
@@ -548,7 +549,7 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
           });
         let followUpMsg = await btnInteraction.followUp({
           embeds: [embed],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
         await btnInteraction.channel.messages
           .fetch({ limit: 100 })
@@ -664,7 +665,7 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
       if (!correct) {
         await btnInteraction.followUp({
           content: `Incorrect guess (\`${guess}\`)`,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
     });
