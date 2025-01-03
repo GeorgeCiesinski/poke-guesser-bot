@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  SlashCommandBuilder,
+} from "discord.js";
 import Util from "./util.ts";
 import Language from "./language.ts";
 import Database from "./data/postgres.ts";
