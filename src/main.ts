@@ -5,6 +5,7 @@ import {
   GatewayIntentBits,
   GuildChannel,
   Interaction,
+  MessageFlags,
   ModalBuilder,
   Partials,
   TextInputBuilder,
@@ -93,14 +94,14 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
               lang,
             ).embed,
           ],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
     } else {
       await interaction.reply({
         content:
           "interactionCreate -> interaction.channel is either null or undefined",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   } else if (interaction.isButton()) {

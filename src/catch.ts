@@ -2,6 +2,7 @@ import {
   AttachmentBuilder,
   ButtonInteraction,
   EmbedBuilder,
+  MessageFlags,
   ModalSubmitInteraction,
 } from "discord.js";
 import Database from "./data/postgres.ts";
@@ -98,13 +99,12 @@ export default class Catch {
           if (returnedEmbed.attachment == null) {
             await btnInteraction.followUp({
               embeds: [returnedEmbed.embed],
-              ephemeral: false,
+              flags: MessageFlags.Ephemeral,
             });
           } else {
             await btnInteraction.followUp({
               embeds: [returnedEmbed.embed],
               files: [returnedEmbed.attachment],
-              ephemeral: false,
             });
           }
           guessed = true;
@@ -127,7 +127,7 @@ export default class Catch {
               lang,
             ).embed,
           ],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
     } else {
@@ -139,7 +139,7 @@ export default class Catch {
             lang,
           ).embed,
         ],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       this.guessEntered = false; // Reset guessEntered
     }

@@ -1,6 +1,7 @@
 import {
   ChatInputCommandInteraction,
   GuildMember,
+  MessageFlags,
   SlashCommandBuilder,
 } from "discord.js";
 import Language from "./language.ts";
@@ -18,7 +19,7 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 
 export default class Mod {
   static async mod(interaction: ChatInputCommandInteraction, db: Database) {
-    await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let isMod = false;
     if (await db.isMod(interaction.member as GuildMember | null)) {

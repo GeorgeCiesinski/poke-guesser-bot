@@ -24,7 +24,7 @@ export default class Explore {
     db: Database,
     preventDefer: boolean = false,
   ) {
-    if (!preventDefer) await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+    if (!preventDefer) await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let isMod = false;
     if (await db.isMod(interaction.member as GuildMember | null)) {

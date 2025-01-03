@@ -16,7 +16,7 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 
 export default class Reveal {
   static async reveal(interaction: ChatInputCommandInteraction, db: Database) {
-    await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+    await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     if (await db.isMod(interaction.member as GuildMember | null)) {
       console.log("isMod: true");

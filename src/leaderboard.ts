@@ -21,7 +21,7 @@ export default class Leaderboard {
     interaction: ChatInputCommandInteraction,
     db: Database,
   ) {
-    await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+    await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let table = "";
     let longestUserLength: number = 0;
