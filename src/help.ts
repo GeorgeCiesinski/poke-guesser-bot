@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 import Util from "./util.ts";
 import Language from "./language.ts";
 import Database from "./data/postgres.ts";
@@ -11,7 +11,7 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 
 export default class Help {
   static async help(interaction: ChatInputCommandInteraction, db: Database) {
-    await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guild!.id, db);
     const type = interaction.options.getString("type");
     let title = "";

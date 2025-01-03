@@ -11,7 +11,7 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 
 export default class Score {
   static async score(interaction: ChatInputCommandInteraction, db: Database) {
-    await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+    await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let title = "";
     let description = "";

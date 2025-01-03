@@ -2,6 +2,7 @@ import {
   ChatInputCommandInteraction,
   GuildChannel,
   GuildMember,
+  MessageFlags,
   PermissionsBitField,
   Role,
   SlashCommandBuilder,
@@ -21,7 +22,7 @@ export default class Settings {
     interaction: ChatInputCommandInteraction,
     db: Database,
   ): Promise<void> {
-    await interaction.deferReply({ ephemeral: true }); // PokeBot is thinking
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     // https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
     console.log(
