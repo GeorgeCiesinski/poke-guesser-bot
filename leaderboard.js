@@ -260,8 +260,7 @@ export async function showLeaderboard(msg, db, useFollowup = false) {
     });
 }
 
-// Shows User Position
-export function position(msg, db) {
+export function position(interaction, db) {
   db.get("leaderboard")
     .then((leaderboard) => parseIfJson(leaderboard))
     .then((leaderboard) => {
@@ -284,38 +283,45 @@ export function position(msg, db) {
       const userIds = Array.from(items, (user) => user[0]);
       console.log(JSON.stringify(userIds));
 
-      const firstMention = msg.mentions.users.first();
-      if (firstMention) {
+      const user = interaction.options.getUser("user");
+      if (user) {
         // !== undefined && !== null
         // Find position of mentioned user
-        const userPosition = userIds.indexOf(firstMention.id) + 1;
-        replyPosition(msg, firstMention.username, userPosition, true);
+        const userPosition = userIds.indexOf(user.id) + 1;
+        replyPosition(interaction, user.username, userPosition, true);
       } else {
         // Find position of message author
-        const userPosition = userIds.indexOf(msg.author.id) + 1;
-        replyPosition(msg, msg.author.username, userPosition, false);
+        const userPosition = userIds.indexOf(interaction.user.id) + 1;
+        replyPosition(
+          interaction,
+          interaction.user.username,
+          userPosition,
+          false,
+        );
       }
     });
 }
 
-function replyPosition(msg, userName, userPosition, mention) {
+function replyPosition(interaction, userName, userPosition, user) {
   if (userPosition === 0) {
     console.log(`${userName} is not on the leaderboard.`);
-    if (mention) {
-      msg.reply(
+    if (user) {
+      interaction.editReply(
         `${userName} is currently not on the leaderboard. ${userName} must guess at least one pokemon first!`,
       );
     } else {
-      msg.reply(
+      interaction.editReply(
         "You are currently not on the leaderboard. You must guess at least one pokemon first!",
       );
     }
   } else {
     console.log(`${userName}'s position: ${userPosition}`);
-    if (mention) {
-      msg.reply(`${userName}'s current position is: ${userPosition}`);
+    if (user) {
+      interaction.editReply(
+        `${userName}'s current position is: ${userPosition}`,
+      );
     } else {
-      msg.reply(`Your current position is: ${userPosition}`);
+      interaction.editReply(`Your current position is: ${userPosition}`);
     }
   }
 }

@@ -151,8 +151,8 @@ function checkInput(inputRequest, msg) {
                 title = `${capitalize(pokemon[englishIndex].name)} (${capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
               message = `1 point added to ${msg.author}'s score.'
               
-              \`$position\`: see your current position
-              \`$leaderboard\`: see the updated leaderboard`;
+              \`/position\`: see your current position
+              \`/leaderboard\`: see the updated leaderboard`;
               await embedReply(title, message, msg, artwork);
               await msg.channel.messages
                 .fetch({ limit: 100 })
@@ -188,11 +188,6 @@ function checkInput(inputRequest, msg) {
   // Display Leaderboard
   if (inputRequest === "leaderboard") {
     showLeaderboard(msg, db);
-  }
-
-  // Display Position
-  if (inputRequest.startsWith("position")) {
-    position(msg, db);
   }
 }
 
@@ -429,6 +424,9 @@ let interactionCreate = async (interaction) => {
         break;
       case "leaderboard":
         showLeaderboard(interaction, db);
+        break;
+      case "position":
+        position(interaction, db);
         break;
       case "mod":
         await mod(interaction, db);

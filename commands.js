@@ -59,6 +59,15 @@ export function getRegisterArray() {
       .setName("leaderboard")
       .setDescription("Shows the Leaderboard"),
     new SlashCommandBuilder()
+      .setName("position")
+      .setDescription("Shows the position of a user")
+      .addUserOption((option) =>
+        option
+          .setName("user")
+          .setDescription("The user whose position you want to get")
+          .setRequired(false),
+      ),
+    new SlashCommandBuilder()
       .setName("mod")
       .setDescription("Manage delay, timeout and score")
       .addSubcommand((subcommand) =>
