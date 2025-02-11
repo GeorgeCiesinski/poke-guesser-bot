@@ -4,7 +4,7 @@
     "jsr:@std/assert@^1.0.11": "1.0.11",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:discord.js@^14.17.3": "14.17.3",
-    "npm:pg@^8.13.1": "8.13.1",
+    "npm:pg@^8.13.2": "8.13.2",
     "npm:sequelize@^6.37.5": "6.37.5"
   },
   "jsr": {
@@ -179,14 +179,14 @@
     "pg-int8@1.0.1": {
       "integrity": "sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw=="
     },
-    "pg-pool@3.7.0_pg@8.13.1": {
-      "integrity": "sha512-ZOBQForurqh4zZWjrgSwwAtzJ7QiRX0ovFkZr2klsen3Nm0aoh33Ls0fzfv3imeH/nw/O27cjdz5kzYJfeGp/g==",
+    "pg-pool@3.7.1_pg@8.13.2": {
+      "integrity": "sha512-xIOsFoh7Vdhojas6q3596mXFsR8nwBQBXX5JiV7p9buEVAGqYL4yFzclON5P9vFrpu1u7Zwl2oriyDa89n0wbw==",
       "dependencies": [
         "pg"
       ]
     },
-    "pg-protocol@1.7.0": {
-      "integrity": "sha512-hTK/mE36i8fDDhgDFjy6xNOG+LCorxLG3WO17tku+ij6sVHXh1jQUJ8hYAnRhNla4QVD2H8er/FOjc/+EgC6yQ=="
+    "pg-protocol@1.7.1": {
+      "integrity": "sha512-gjTHWGYWsEgy9MsY0Gp6ZJxV24IjDqdpTW7Eh0x+WfJLFsm/TJx1MzL6T0D88mBvkpxotCQ6TwW6N+Kko7lhgQ=="
     },
     "pg-types@2.2.0": {
       "integrity": "sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==",
@@ -198,8 +198,8 @@
         "postgres-interval"
       ]
     },
-    "pg@8.13.1": {
-      "integrity": "sha512-OUir1A0rPNZlX//c7ksiu7crsGZTKSOXJPgtNiHGIlC9H0lO+NC6ZDYksSgBYY/thSWhnSRBv8w1lieNNGATNQ==",
+    "pg@8.13.2": {
+      "integrity": "sha512-L5QkPvTjVWWHbLaFjCkOSplpb2uCiRYbg0IJ2okCy5ClYfWlSgDDnvdR6dyw3EWAH2AfS4j8E61QFI7gLfTtlw==",
       "dependencies": [
         "pg-cloudflare",
         "pg-connection-string",
@@ -301,7 +301,7 @@
     "dependencies": [
       "jsr:@std/assert@^1.0.11",
       "npm:discord.js@^14.17.3",
-      "npm:pg@^8.13.1",
+      "npm:pg@^8.13.2",
       "npm:sequelize@^6.37.5"
     ]
   }
