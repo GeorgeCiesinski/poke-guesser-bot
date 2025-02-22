@@ -1,4 +1,4 @@
-FROM denoland/deno:2.1.5
+FROM denoland/deno:2.2.1
 # Add wait script
 COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
 WORKDIR /app
