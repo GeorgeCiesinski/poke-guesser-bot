@@ -605,8 +605,8 @@ async function catchModalSubmitted(btnInteraction, modalInteraction, db) {
               title = `${capitalize(pokemon[englishIndex].name)} (${capitalize(pokemon[i].name ? pokemon[i].name : pokemon[i])}) has been caught!`;
             message = `1 point added to ${btnInteraction.user}'s score.'
                           
-                          \`$position\`: see your current position
-                          \`$leaderboard\`: see the updated leaderboard`;
+                          \`/position\`: see your current position
+                          \`/leaderboard\`: see the updated leaderboard`;
             let embed = new EmbedBuilder()
               .setTitle(title)
               .setAuthor({
