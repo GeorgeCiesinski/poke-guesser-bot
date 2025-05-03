@@ -289,148 +289,178 @@ let interactionCreate = async (interaction) => {
   let channelAllowed = await authenticateChannel(interaction, db);
   if (channelAllowed) {
     let roleAllowed = await authenticateRole(interaction, db);
-    let pokemon = null;
-    switch (interaction.commandName) {
-      case "showconfig":
-        showConfig(interaction, db);
-        break;
-      case "resetconfig":
-        resetConfig(interaction, db);
-        break;
-      case "addrole":
-        addRole(interaction.options.getRole("role"), interaction, db);
-        break;
-      case "removerole":
-        removeRole(interaction.options.getRole("role"), interaction, db);
-        break;
-      case "addchannel":
-        addChannel(interaction.options.getChannel("channel"), interaction, db);
-        break;
-      case "removechannel":
-        removeChannel(
-          interaction.options.getChannel("channel"),
-          interaction,
-          db,
-        );
-        break;
-      case "explore":
-        console.log("Generating a new pokemon.");
-        // Returns pokemon json object
-        pokemon = await generatePokemon();
-        let pokemonNames = [pokemon.url.replace(/.+\/(\d+)\//g, "$1")];
-        let names = await fetchNames(pokemonNames[0]);
-        if (!names) {
-          console.log(
-            `Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`,
-          );
-          await interactionCreate(interaction);
-          return;
+    if (roleAllowed) {
+      switch (interaction.commandName) {
+        case "showconfig": {
+          showConfig(interaction, db);
+          break;
         }
-        for (let name of names) {
-          pokemonNames.push(name); // available properties: name, languageName and languageUrl
+        case "resetconfig": {
+          resetConfig(interaction, db);
+          break;
         }
-        console.log(pokemonNames);
-        db.set("pokemon", JSON.stringify(pokemonNames)); // Sets current pokemon (different languages) names in database
-        // Gets sprite url, and replies to the channel with newly generated pokemon
-        let sprites = await fetchSprite(pokemon.url);
-        const spriteUrl = sprites.front_default;
-        if (!spriteUrl) {
-          console.log(
-            `Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`,
-          );
-          interactionCreate(interaction);
-          return;
+        case "addrole": {
+          addRole(interaction.options.getRole("role"), interaction, db);
+          break;
         }
-        const officialArtUrl = sprites.other["official-artwork"].front_default;
-        console.log(spriteUrl);
-        console.log(officialArtUrl);
-        // Set official artwork url in database
-        db.set("artwork", officialArtUrl); // Sets official art url in database
-        const title = "A wild POKEMON appeared!";
-        const message =
-          "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
-        let actionRow = new ActionRowBuilder().setComponents(
-          new ButtonBuilder()
-            .setCustomId("catchBtn")
-            .setLabel("Catch This Pokémon!")
-            .setStyle(ButtonStyle.Primary),
-        );
-        embedReply(title, message, interaction, spriteUrl, actionRow);
-        break;
-      case "reveal":
-        pokemon = await db
-          .get("pokemon")
-          .then((pokemon) => parseIfJson(pokemon));
-        if (pokemon === "") {
-          console.log(
-            "Admin requested reveal, but no pokemon is currently set.",
+        case "removerole": {
+          removeRole(interaction.options.getRole("role"), interaction, db);
+          break;
+        }
+        case "addchannel": {
+          addChannel(
+            interaction.options.getChannel("channel"),
+            interaction,
+            db,
           );
-          const title = "There is no pokemon to reveal";
+          break;
+        }
+        case "removechannel": {
+          removeChannel(
+            interaction.options.getChannel("channel"),
+            interaction,
+            db,
+          );
+          break;
+        }
+        case "explore": {
+          console.log("Generating a new pokemon.");
+          // Returns pokemon json object
+          var pokemon = await generatePokemon();
+          let pokemonNames = [pokemon.url.replace(/.+\/(\d+)\//g, "$1")];
+          let names = await fetchNames(pokemonNames[0]);
+          if (!names) {
+            console.log(
+              `Warning: 404 Not Found for pokemon ${pokemonNames[0]}. Fetching new pokemon.`,
+            );
+            await interactionCreate(interaction);
+            return;
+          }
+          for (let name of names) {
+            pokemonNames.push(name); // available properties: name, languageName and languageUrl
+          }
+          console.log(pokemonNames);
+          db.set("pokemon", JSON.stringify(pokemonNames)); // Sets current pokemon (different languages) names in database
+          // Gets sprite url, and replies to the channel with newly generated pokemon
+          let sprites = await fetchSprite(pokemon.url);
+          const spriteUrl = sprites.front_default;
+          if (!spriteUrl) {
+            console.log(
+              `Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`,
+            );
+            interactionCreate(interaction);
+            return;
+          }
+          const officialArtUrl =
+            sprites.other["official-artwork"].front_default;
+          console.log(spriteUrl);
+          console.log(officialArtUrl);
+          // Set official artwork url in database
+          db.set("artwork", officialArtUrl); // Sets official art url in database
+          const title = "A wild POKEMON appeared!";
           const message =
-            "You have to explore to find a pokemon. Type `!explore` to find a new pokemon.";
-          embedReply(title, message, interaction);
-        } else {
-          let pokemonNames = [pokemon[0]];
-          for (let i = 1; i < pokemon.length; i++) {
-            let lowercaseName = pokemon[i].name.toLowerCase();
-            if (!pokemonNames.includes(lowercaseName))
-              pokemonNames.push(lowercaseName.toLowerCase());
-          }
-
-          let englishIndex = 0; // Find english index
-          for (let i = 1; i < pokemon.length; i++) {
-            if (pokemon[i].languageName === "en") englishIndex = i;
-          }
-
-          // build string to put in between brackets
-          let inBrackets = "";
-          for (let i = 0; i < pokemonNames.length; i++) {
-            if (inBrackets == "") inBrackets = capitalize(pokemonNames[i]);
-            else inBrackets += ", " + capitalize(pokemonNames[i]);
-          }
-          console.log(
-            `Admin requested reveal: ${pokemon[englishIndex].name} (${inBrackets})`,
+            "Type `$catch _____` with the correct pokemon name to catch this pokemon!";
+          let actionRow = new ActionRowBuilder().setComponents(
+            new ButtonBuilder()
+              .setCustomId("catchBtn")
+              .setLabel("Catch This Pokémon!")
+              .setStyle(ButtonStyle.Primary),
           );
-          const title = "Pokemon escaped!";
-          const message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
-          await db.set("pokemon", ""); // Sets current pokemon to empty string
-          await interaction.channel.messages
-            .fetch({ limit: 100 })
-            .then(async (messages) => {
-              const botMessage = messages.find(
-                (msg) =>
-                  msg.author.id == interaction.client.user.id &&
-                  msg.interaction?.commandName != "reveal",
-              );
-              if (botMessage) {
-                try {
-                  await botMessage.edit({
-                    components: [],
-                  });
-                } catch (err) {
-                  // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
-                  // Assuming it is a deferred interaction message
-                }
-              }
-            })
-            .catch((err) => {
-              console.error(
-                "Failed to fetch most recent messages to remove the components:",
-                err,
-              );
-            });
-          await embedReply(title, message, interaction);
+          embedReply(title, message, interaction, spriteUrl, actionRow);
+          break;
         }
-        break;
-      case "leaderboard":
+        case "reveal": {
+          pokemon = await db
+            .get("pokemon")
+            .then((pokemon) => parseIfJson(pokemon));
+          if (pokemon === "") {
+            console.log(
+              "Admin requested reveal, but no pokemon is currently set.",
+            );
+            const title = "There is no pokemon to reveal";
+            const message =
+              "You have to explore to find a pokemon. Type `!explore` to find a new pokemon.";
+            embedReply(title, message, interaction);
+          } else {
+            let pokemonNames = [pokemon[0]];
+            for (let i = 1; i < pokemon.length; i++) {
+              let lowercaseName = pokemon[i].name.toLowerCase();
+              if (!pokemonNames.includes(lowercaseName))
+                pokemonNames.push(lowercaseName.toLowerCase());
+            }
+
+            let englishIndex = 0; // Find english index
+            for (let i = 1; i < pokemon.length; i++) {
+              if (pokemon[i].languageName === "en") englishIndex = i;
+            }
+
+            // build string to put in between brackets
+            let inBrackets = "";
+            for (let i = 0; i < pokemonNames.length; i++) {
+              if (inBrackets == "") inBrackets = capitalize(pokemonNames[i]);
+              else inBrackets += ", " + capitalize(pokemonNames[i]);
+            }
+            console.log(
+              `Admin requested reveal: ${pokemon[englishIndex].name} (${inBrackets})`,
+            );
+            const title = "Pokemon escaped!";
+            const message = `As you approached, the pokemon escaped, but you were able to catch a glimpse of ${capitalize(pokemon[englishIndex].name)} (${inBrackets}) as it fled.`;
+            await db.set("pokemon", ""); // Sets current pokemon to empty string
+            await interaction.channel.messages
+              .fetch({ limit: 100 })
+              .then(async (messages) => {
+                const botMessage = messages.find(
+                  (msg) =>
+                    msg.author.id == interaction.client.user.id &&
+                    msg.interaction?.commandName != "reveal",
+                );
+                if (botMessage) {
+                  try {
+                    await botMessage.edit({
+                      components: [],
+                    });
+                  } catch (err) {
+                    // Ignore if it doesn't work, because that is prohbably just because the message has neither embed nor content
+                    // Assuming it is a deferred interaction message
+                  }
+                }
+              })
+              .catch((err) => {
+                console.error(
+                  "Failed to fetch most recent messages to remove the components:",
+                  err,
+                );
+              });
+            await embedReply(title, message, interaction);
+          }
+          break;
+        }
+        case "mod": {
+          await mod(interaction, db);
+          break;
+        }
+      }
+    }
+    switch (interaction.commandName) {
+      case "leaderboard": {
         showLeaderboard(interaction, db);
         break;
-      case "position":
+      }
+      case "position": {
         position(interaction, db);
         break;
-      case "mod":
-        await mod(interaction, db);
-        break;
+      }
+      default: {
+        if (roleAllowed) {
+          await interaction.editReply({
+            content: "You ran an non-existant command (how?)",
+          });
+        } else {
+          await interaction.editReply({
+            content: "Role not allowed",
+          });
+        }
+      }
     }
   } else {
     await interaction.editReply({
