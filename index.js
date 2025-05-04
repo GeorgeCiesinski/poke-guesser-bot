@@ -326,7 +326,7 @@ let interactionCreate = async (interaction) => {
         case "explore": {
           console.log("Generating a new pokemon.");
           // Returns pokemon json object
-          var pokemon = await generatePokemon();
+          let pokemon = await generatePokemon();
           let pokemonNames = [pokemon.url.replace(/.+\/(\d+)\//g, "$1")];
           let names = await fetchNames(pokemonNames[0]);
           if (!names) {
@@ -370,7 +370,7 @@ let interactionCreate = async (interaction) => {
           break;
         }
         case "reveal": {
-          pokemon = await db
+          let pokemon = await db
             .get("pokemon")
             .then((pokemon) => parseIfJson(pokemon));
           if (pokemon === "") {
@@ -439,6 +439,11 @@ let interactionCreate = async (interaction) => {
           await mod(interaction, db);
           break;
         }
+        default: {
+          await interaction.editReply({
+            content: "You ran an non-existant command (how?)",
+          });
+        }
       }
     }
     switch (interaction.commandName) {
@@ -451,11 +456,7 @@ let interactionCreate = async (interaction) => {
         break;
       }
       default: {
-        if (roleAllowed) {
-          await interaction.editReply({
-            content: "You ran an non-existant command (how?)",
-          });
-        } else {
+        if (!roleAllowed) {
           await interaction.editReply({
             content: "Role not allowed",
           });
