@@ -439,11 +439,6 @@ let interactionCreate = async (interaction) => {
           await mod(interaction, db);
           break;
         }
-        default: {
-          await interaction.editReply({
-            content: "You ran an non-existant command (how?)",
-          });
-        }
       }
     }
     switch (interaction.commandName) {
