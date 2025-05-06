@@ -526,23 +526,21 @@ export async function setUser(interaction, db) {
     });
 }
 
-// Finds the GuildMember by User-IDs (either string or array)
-function findMember(messageOrInteraction, ids) {
-  // Return member or undefined if not found (force specifies if cache should be checked)
-  // I could have omitted the force property, but i have put it there to make it clear
-  return messageOrInteraction.guild.members.fetch({ user: ids, force: false });
+function findMember(messageOrInteraction, id) {
+  try {
+    return messageOrInteraction.guild.members.fetch(id);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
 
 // Finds the User by User-ID
 function findUser(messageOrInteraction, id) {
-  return findMember(messageOrInteraction, id).then((member) => {
-    // If member found, return member, else return null
-    if (member) {
-      console.log(`User ID ${id} found in guild.`);
-      return member.user;
-    } else {
-      console.log(`WARNING: User ID ${id} not found in guild.`);
-      return null;
-    }
-  });
+  try {
+    return messageOrInteraction.client.users.fetch(id);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
