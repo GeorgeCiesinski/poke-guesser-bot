@@ -13,7 +13,7 @@ jobs:
       COMPOSE_FILE: .ci/docker-compose.yml
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Build the Docker image
         run: docker compose build --no-cache
       - name: Test the Docker image
