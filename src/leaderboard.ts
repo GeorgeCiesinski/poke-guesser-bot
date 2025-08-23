@@ -112,7 +112,7 @@ export default class Leaderboard {
       // Creates table header for overflow leaderboard
       if (i == 5) {
         // Get longest username starting from index 5
-        longestUserLength = await this.getLongestUsername(
+        longestUserLength = await Leaderboard.getLongestUsername(
           interaction,
           scores.slice(5),
           usernameMode,
