@@ -81,7 +81,7 @@ export default class Leaderboard {
             value: lang.obj["leaderboard_all_hail"],
           },
           {
-            name: lang.obj["leaderboard_score_name"]
+            name: "🏆 " + lang.obj["leaderboard_score_name"]
               .replace("<placement>", (i + 1).toString())
               .replace("<username>", "TBA"),
             value: lang.obj["leaderboard_position_not_claimed"],
@@ -95,7 +95,7 @@ export default class Leaderboard {
       // If on element 1-4, and element exists, create new elite four member
       if (i > 0 && i < 5 && i < scores.length) {
         leaderboardEmbed.addFields({
-          name: lang.obj["leaderboard_score_name"]
+          name: "🏅 " + lang.obj["leaderboard_score_name"]
             .replace("<placement>", (i + 1).toString())
             .replace("<username>", userName),
           value: lang.obj["leaderboard_score_value"].replace("<score>", score),
