@@ -21,7 +21,6 @@ const mySecret = Deno.env.has("TOKEN") ? Deno.env.get("TOKEN") : null; // Discor
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.MessageContent,
