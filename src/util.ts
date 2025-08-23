@@ -90,7 +90,8 @@ export default class Util {
   ): Promise<GuildMember | undefined> {
     // Return member or undefined if not found (force specifies if cache should be checked)
     // I could have omitted the force property, but i have put it there to make it clear
-    return await interaction.guild?.members.fetch({ user: id, force: false });
+    return await interaction.guild?.members.fetch({ user: id, force: false })
+      .catch((_err) => undefined);
   }
 
   // Finds the User by User-ID

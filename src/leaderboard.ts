@@ -150,7 +150,7 @@ export default class Leaderboard {
       const m: GuildMember | undefined = (await Util.findMember(
         interaction,
         scores[i].getDataValue("userId"),
-      )).catch(err => undefined) as GuildMember | undefined;
+      )) as GuildMember | undefined;
       if (m) {
         const memberUsername = Util.getCorrectUsernameFormat(usernameModeId, m);
         if (memberUsername.length > longestUsernameLength) {
