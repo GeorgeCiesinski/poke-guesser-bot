@@ -1,6 +1,6 @@
 # Poké-guesser Bot
 
-The last instance of the legacy bot was migrated over to the new version, so this project will likely be archived or deleted soonish. Maybe I will push the branch to the upstream repo, but I'm not sure about that yet.
+The last instance of the legacy bot was migrated over to the new version, so this branch will likely get deleted at some point.
 
 Poké-guesser Bot is a discord bot which selects random pokémon and asks the user to guess the pokémon name. The bot automatically tracks the score of participating users. It also recognizes a number of admin commands, and player commands such as catching pokémon, and displaying the leaderboard.
 
