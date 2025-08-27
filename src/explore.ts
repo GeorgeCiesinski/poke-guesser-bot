@@ -1,18 +1,22 @@
 import {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   ChatInputCommandInteraction,
-  GuildMember,
   EmbedBuilder,
-  AttachmentBuilder,
+  GuildMember,
   SlashCommandBuilder,
 } from "discord.js";
-import Database from "./data/postgres";
-import Language from "./language";
-import Util from "./util";
-import enLocalizations from "./languages/slash-commands/en.json";
-import deLocalizations from "./languages/slash-commands/de.json";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import enLocalizations from "./languages/slash-commands/en.json" with {
+  type: "json",
+};
+import deLocalizations from "./languages/slash-commands/de.json" with {
+  type: "json",
+};
 
 export default class Explore {
   static async explore(
@@ -20,15 +24,15 @@ export default class Explore {
     db: Database,
     preventDefer: boolean = false,
   ) {
-    if (!preventDefer) await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+    if (!preventDefer) await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let isMod = false;
     if (await db.isMod(interaction.member as GuildMember | null)) {
       isMod = true;
     } else {
       if (interaction.member) {
-        let member = interaction.member as GuildMember;
-        for (let [, /*roleId*/ role] of member.roles.cache) {
+        const member = interaction.member as GuildMember;
+        for (const [, role] of member.roles.cache) {
           if (await db.isMod(role)) {
             isMod = true;
             break;
@@ -40,27 +44,29 @@ export default class Explore {
       console.log("Generating a new Pokemon");
       await db.clearEncounters(interaction.guildId!, interaction.channelId);
       await db.unsetArtwork(interaction.guildId!, interaction.channelId);
-      let pokemon = await Util.generatePokemon();
+      const pokemon = await Util.generatePokemon();
       await db.addEncounter(
         interaction.guildId!,
         interaction.channelId,
         pokemon.url.replace(/.+\/(\d+)\//g, "$1"),
         "id",
       );
-      let names = await Util.fetchNames(
+      const names = await Util.fetchNames(
         pokemon.url.replace(/.+\/(\d+)\//g, "$1"),
       );
       if (!names) {
         console.log(
-          `Warning: 404 Not Found for pokemon ${pokemon.url.replace(
-            /.+\/(\d+)\//g,
-            "$1",
-          )}. Fetching new pokemon.`,
+          `Warning: 404 Not Found for pokemon ${
+            pokemon.url.replace(
+              /.+\/(\d+)\//g,
+              "$1",
+            )
+          }. Fetching new pokemon.`,
         );
         this.explore(interaction, db, true); // Attention: Recursive
         return;
       }
-      for (let name of names) {
+      for (const name of names) {
         // Sets current pokemon (different languages) names in database
         console.log(
           `Guild: ${interaction.guildId}, Channel: ${interaction.channelId}, Name: ${name.name}, Language: ${name.languageName}`,
@@ -73,8 +79,8 @@ export default class Explore {
         );
       }
       // Gets sprite url for the reply to the command with the newly generated pokemon
-      let sprites = await Util.fetchSprite(pokemon.url);
-      let spriteUrl = sprites.front_default;
+      const sprites = await Util.fetchSprite(pokemon.url);
+      const spriteUrl = sprites.front_default;
       if (!spriteUrl) {
         console.log(
           `Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`,
@@ -82,7 +88,7 @@ export default class Explore {
         this.explore(interaction, db, true); // Attention: Recursive
         return;
       }
-      let officialArtUrl = sprites.other.official_artwork.front_default;
+      const officialArtUrl = sprites.other.official_artwork.front_default;
       console.log(spriteUrl);
       console.log(officialArtUrl);
       await db.setArtwork(
@@ -90,7 +96,7 @@ export default class Explore {
         interaction.channelId,
         officialArtUrl,
       );
-      let returnedEmbed: {
+      const returnedEmbed: {
         embed: EmbedBuilder;
         attachment: AttachmentBuilder | null;
       } = Util.returnEmbed(
@@ -100,23 +106,24 @@ export default class Explore {
         0x00ae86,
         spriteUrl,
       );
-      let actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(
+      const actionRow = new ActionRowBuilder<ButtonBuilder>().setComponents(
         new ButtonBuilder()
           .setCustomId("catchBtn")
           .setLabel(lang.obj["catch_this_pokemon"])
           .setStyle(ButtonStyle.Primary),
       );
-      if (returnedEmbed.attachment == null)
+      if (returnedEmbed.attachment == null) {
         await interaction.editReply({
           embeds: [returnedEmbed.embed],
           components: [actionRow],
         });
-      else
+      } else {
         await interaction.editReply({
           embeds: [returnedEmbed.embed],
           files: [returnedEmbed.attachment],
           components: [actionRow],
         });
+      }
       await db.setLastExplore(
         interaction.guildId!,
         interaction.channelId,

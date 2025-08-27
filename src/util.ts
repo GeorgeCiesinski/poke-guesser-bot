@@ -1,15 +1,15 @@
 import {
-  EmbedBuilder,
-  AttachmentBuilder,
-  Message,
-  GuildMember,
-  PermissionsBitField,
-  User,
   APIGuildMember,
-  Role,
   APIRole,
-  ChatInputCommandInteraction,
+  AttachmentBuilder,
   BaseInteraction,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  GuildMember,
+  Message,
+  PermissionsBitField,
+  Role,
+  User,
 } from "discord.js";
 
 type FetchSpriteType = {
@@ -48,7 +48,7 @@ export default class Util {
     image: string | null = null,
   ): { embed: EmbedBuilder; attachment: AttachmentBuilder | null } {
     // Creates new embedded message
-    let embed = new EmbedBuilder()
+    const embed = new EmbedBuilder()
       .setTitle(title)
       .setAuthor({
         name: language.obj["embed_author_name"],
@@ -64,7 +64,7 @@ export default class Util {
       });
     // Adds image (if applicable) and returns both (if applicable)
     if (image) {
-      let attachment = new AttachmentBuilder(image, { name: "pokemon.png" });
+      const attachment = new AttachmentBuilder(image, { name: "pokemon.png" });
       embed.setImage("attachment://pokemon.png");
       return {
         embed,
@@ -90,7 +90,8 @@ export default class Util {
   ): Promise<GuildMember | undefined> {
     // Return member or undefined if not found (force specifies if cache should be checked)
     // I could have omitted the force property, but i have put it there to make it clear
-    return await interaction.guild?.members.fetch({ user: id, force: false });
+    return await interaction.guild?.members.fetch({ user: id, force: false })
+      .catch((_err) => undefined);
   }
 
   // Finds the User by User-ID
@@ -122,19 +123,19 @@ export default class Util {
 
   static async generatePokemon(): Promise<{ name: string; url: string }> {
     // Fetch json of all available pokemon up to a limit of 2000 (~1200 available)
-    let res: Response = await fetch(
+    const res: Response = await fetch(
       "https://pokeapi.co/api/v2/pokemon/?limit=2000",
     );
-    let json: any = await res.json();
-    let result: { name: string; url: string }[] = json.results;
+    const json = await res.json();
+    const result: { name: string; url: string }[] = json.results;
     return result[Math.floor(Math.random() * result.length)];
   }
 
   // Fetches the sprite using the pokemon's api url
   static async fetchSprite(url: string): Promise<FetchSpriteType> {
-    let res: Response = await fetch(url);
-    let json: any = await res.json();
-    let sprites: FetchSpriteType = {
+    const res: Response = await fetch(url);
+    const json = await res.json();
+    const sprites: FetchSpriteType = {
       back_default: json.sprites.back_default,
       back_female: json.sprites.back_female,
       back_shiny: json.sprites.back_shiny,
@@ -183,7 +184,7 @@ export default class Util {
           };
         },
       );
-    } catch (err) {
+    } catch {
       // For example id 10220 returns 404 Not Found
       return null;
     }
@@ -202,6 +203,7 @@ export default class Util {
 
   static translateUsernameModeId(
     usernameModeId: number,
+    // deno-lint-ignore no-explicit-any
     languageObject: any,
   ): string {
     switch (usernameModeId) {
@@ -241,6 +243,19 @@ export default class Util {
       case 4:
       default:
         return member.user?.username;
+    }
+  }
+
+  static async fileExists(path: string) {
+    try {
+      await Deno.lstat(path);
+      return true;
+    } catch (err) {
+      if (err instanceof Deno.errors.NotFound) {
+        return false;
+      } else {
+        throw err;
+      }
     }
   }
 }

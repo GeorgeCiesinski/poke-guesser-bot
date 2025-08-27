@@ -1,8 +1,7 @@
-import "dotenv/config";
-import { REST, Routes, SlashCommandBuilder } from "discord.js";
-import Commands from "./commands";
+import { REST, Routes } from "discord.js";
+import Commands from "./commands.ts";
 
-const token = process.env["TOKEN"];
+const token = Deno.env.get("TOKEN");
 
 if (!token) {
   throw new Error(
@@ -19,9 +18,9 @@ const registerArray = Commands.getRegisterArray();
     console.log(
       `Started refreshing ${registerArray.length} application (/) commands.`,
     );
-    const userData: any = await rest.get(Routes.user());
+    const userData = await rest.get(Routes.user());
     const userId: string = userData.id;
-    const data: any = await rest.put(Routes.applicationCommands(userId), {
+    const data = await rest.put(Routes.applicationCommands(userId), {
       body: registerArray,
     });
     console.log(

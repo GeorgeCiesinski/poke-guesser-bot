@@ -3,34 +3,39 @@ import {
   GuildMember,
   SlashCommandBuilder,
 } from "discord.js";
-import Database from "./data/postgres";
-import Lightning from "./lightning";
-import Language from "./language";
-import Util from "./util";
-import enLocalizations from "./languages/slash-commands/en.json";
-import deLocalizations from "./languages/slash-commands/de.json";
+import Database from "./data/postgres.ts";
+import Lightning from "./lightning.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import enLocalizations from "./languages/slash-commands/en.json" with {
+  type: "json",
+};
+import deLocalizations from "./languages/slash-commands/de.json" with {
+  type: "json",
+};
 
 export default class Reveal {
   static async reveal(interaction: ChatInputCommandInteraction, db: Database) {
-    await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+    await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     if (await db.isMod(interaction.member as GuildMember | null)) {
       console.log("isMod: true");
-      let encounter = await db.getEncounter(
+      const encounter = await db.getEncounter(
         interaction.guildId!,
         interaction.channelId,
       );
       if (encounter.length > 0) {
-        let pokemonNames: string[] = [];
+        const pokemonNames: string[] = [];
         let englishIndex = 0;
         for (let i = 0; i < encounter.length; i++) {
           // console.log(encounter)
           encounter[i].name = encounter[i].getDataValue("name");
           encounter[i].language = encounter[i].getDataValue("language");
           if (!encounter[i].name) continue;
-          let lowercaseName = encounter[i].name.toLowerCase();
-          if (!pokemonNames.includes(lowercaseName))
-            pokemonNames.push(lowercaseName);
+          const lowercaseName = encounter[i].name?.toLowerCase();
+          if (!pokemonNames.includes(lowercaseName ?? "")) {
+            pokemonNames.push(lowercaseName ?? "");
+          }
           if (encounter[i].language === "en") englishIndex = i;
         }
         // build string to put in between brackets
@@ -41,7 +46,9 @@ export default class Reveal {
           else inBrackets += `, ${Util.capitalize(pokemonNames[i])}`;
         }
         console.log(
-          `Mod requested reveal: ${encounter[englishIndex].name} (${inBrackets})`,
+          `Mod requested reveal: ${
+            encounter[englishIndex].name
+          } (${inBrackets})`,
         );
         // returnEmbed(title, message, image=null)
         await Util.editReply(
@@ -50,7 +57,9 @@ export default class Reveal {
           lang.obj["reveal_pokemon_escaped_description"]
             .replace(
               "<englishPokemon>",
-              Util.capitalize(encounter[englishIndex].name),
+              encounter[englishIndex].name
+                ? Util.capitalize(encounter[englishIndex].name!)
+                : "N/A",
             )
             .replace("<inBrackets>", inBrackets),
           lang,

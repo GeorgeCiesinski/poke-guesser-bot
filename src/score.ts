@@ -1,28 +1,40 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import Database from "./data/postgres";
-import Language from "./language";
-import Util from "./util";
-import enLocalizations from "./languages/slash-commands/en.json";
-import deLocalizations from "./languages/slash-commands/de.json";
+import Database from "./data/postgres.ts";
+import Language from "./language.ts";
+import Util from "./util.ts";
+import enLocalizations from "./languages/slash-commands/en.json" with {
+  type: "json",
+};
+import deLocalizations from "./languages/slash-commands/de.json" with {
+  type: "json",
+};
 
 export default class Score {
   static async score(interaction: ChatInputCommandInteraction, db: Database) {
-    await interaction.deferReply({ ephemeral: false }); // PokeBot is thinking
+    await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let title = "";
     let description = "";
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
-      case "show":
+      case "show": {
         let user = interaction.options.getUser("user", false);
         if (!user) user = interaction.user;
-        let userScore = await db.getScore(interaction.guildId!, user.id);
+        const userScore = await db.getScore(interaction.guild!.id, user.id);
         title = user.tag;
-        if (userScore)
-          description = `**${lang.obj["user"]}**: <@${user.id}>\n**${lang.obj["position"]}**: ${userScore.position}\n**${lang.obj["score"]}**: ${userScore.score}`;
-        else
-          description = `**${lang.obj["user"]}**: <@${user.id}>\n**${lang.obj["position"]}**: N/A\n**${lang.obj["score"]}**: N/A`;
+        if (userScore) {
+          description = `**${lang.obj["user"]}**: <@${user.id}>\n**${
+            lang.obj["position"]
+          }**: ${userScore.position}\n**${
+            lang.obj["score"]
+          }**: ${userScore.score}`;
+        } else {
+          description = `**${lang.obj["user"]}**: <@${user.id}>\n**${
+            lang.obj["position"]
+          }**: N/A\n**${lang.obj["score"]}**: N/A`;
+        }
         break;
+      }
     }
     await Util.editReply(interaction, title, description, lang);
   }
@@ -56,8 +68,8 @@ export default class Score {
               .setDescription(enLocalizations.score_show_user_description)
               .setDescriptionLocalizations({
                 de: deLocalizations.score_show_user_description,
-              }),
-          ),
+              })
+          )
       );
   }
 }
