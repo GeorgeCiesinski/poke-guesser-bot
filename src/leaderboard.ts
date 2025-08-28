@@ -49,7 +49,7 @@ export default class Leaderboard {
           userName = Util.getCorrectUsernameFormat(usernameMode, memberObj);
         }
       } else {
-        userName = userId;
+        continue;
       }
       score = scores[i]?.getDataValue("score");
       // If on the first element, and element exists, create champion
