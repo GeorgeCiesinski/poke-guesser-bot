@@ -18,7 +18,21 @@ export default class Reveal {
   static async reveal(interaction: ChatInputCommandInteraction, db: Database) {
     await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
+    let isMod = false;
     if (await db.isMod(interaction.member as GuildMember | null)) {
+      isMod = true;
+    } else {
+      if (interaction.member) {
+        const member = interaction.member as GuildMember;
+        for (const [, role] of member.roles.cache) {
+          if (await db.isMod(role)) {
+            isMod = true;
+            break;
+          }
+        }
+      }
+    }
+    if (isMod) {
       console.log("isMod: true");
       const encounter = await db.getEncounter(
         interaction.guildId!,
