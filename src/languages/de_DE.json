@@ -195,7 +195,5 @@
   "username_mode_1": "Spitzname wenn existent -> Nutzername",
   "username_mode_2": "Anzeigename wenn existent -> Nutzername",
   "username_mode_3": "Anzeigename wenn existent -> Spitzname wenn existent -> Nutzername",
-  "username_mode_4": "Immer Nutzername",
-  "championship_no_mod_title": "Kein Mod!",
-  "championship_no_mod_description": "Du musst Mod sein um `/championship` ausführen zu können!"
+  "username_mode_4": "Immer Nutzername"
 }
