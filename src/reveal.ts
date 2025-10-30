@@ -35,8 +35,8 @@ export default class Reveal {
     if (!isMod) {
       await Util.editReply(
         interaction,
-        lang.obj["reveal_no_encounter_title"],
-        lang.obj["reveal_no_encounter_description"],
+        lang.obj["reveal_no_mod_title"],
+        lang.obj["reveal_no_mod_description"],
         lang,
       );
       return;
