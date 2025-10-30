@@ -156,7 +156,7 @@
   "explore_fetch_names_failed_title": "Namen laden fehlgeschlagen",
   "explore_fetch_names_failed_description": "Das Laden der Pokémonnamen ist fehlgeschlagen!",
   "reveal_no_mod_title": "Kein Mod",
-  "reveal_no_mod_description": "Du musste Mod sein um `/reveal` ausführen zu können",
+  "reveal_no_mod_description": "Du musst Mod sein um `/reveal` ausführen zu können",
   "reveal_no_encounter_title": "Es gibt kein Pokémon das aufgedeckt werden könnte",
   "reveal_no_encounter_description": "Du musst erstmal ein Pokémon mit `/explore` generieren um ein Pokémonnamen erraten zu können.",
   "reveal_pokemon_escaped_title": "Pokémon entkommen!",

@@ -25,6 +25,7 @@ export default class Lightning {
     db: Database,
     preventDefer: boolean = false,
   ) {
+    // TODO: I should check permissions / isMod here, but I cannot be arsed currently.
     await db.setLightningLoops(
       interaction.guildId!,
       interaction.channelId!,
