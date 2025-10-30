@@ -199,7 +199,5 @@
   "championship_no_mod_title": "No Mod",
   "championship_no_mod_description": "You need to be a Mod to run `/championship`",
   "delay_no_mod_title": "No Mod",
-  "delay_no_mod_description": "You need to be a Mod to run `/mod delay`",
-  "timeout_no_mod_title": "No Mod",
-  "timeout_no_mod_description": "You need to be a Mod to run `/mod timeout`"
+  "delay_no_mod_description": "You need to be a Mod to run `/mod delay`"
 }
