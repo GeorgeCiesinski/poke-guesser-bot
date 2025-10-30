@@ -1,5 +1,6 @@
 import {
   ChatInputCommandInteraction,
+  GuildMember,
   SlashCommandSubcommandGroupBuilder,
 } from "discord.js";
 import Database from "./data/postgres.ts";
@@ -18,6 +19,29 @@ export default class Championship {
     db: Database,
   ) {
     const lang = await Language.getLanguage(interaction.guildId!, db);
+    let isMod = false;
+    if (await db.isMod(interaction.member as GuildMember | null)) {
+      isMod = true;
+    } else {
+      if (interaction.member) {
+        const member = interaction.member as GuildMember;
+        for (const [, role] of member.roles.cache) {
+          if (await db.isMod(role)) {
+            isMod = true;
+            break;
+          }
+        }
+      }
+    }
+    if (!isMod) {
+      await Util.editReply(
+        interaction,
+        lang.obj["championship_no_mod_title"],
+        lang.obj["championship_no_mod_description"],
+        lang,
+      );
+      return;
+    }
     const subcommand = interaction.options.getSubcommand();
     switch (subcommand) {
       case "new":
