@@ -29,13 +29,13 @@ jobs:
           deno compile -o ./poke-guesser-bot -ERN src/main.ts
       - name: Upload artifact (Windows)
         if: startsWith(matrix.os, 'windows')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: poke-guesser-bot-${{ matrix.os }}
           path: poke-guesser-bot.exe
       - name: Upload artifact (Ubuntu and Mac)
         if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macos')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: poke-guesser-bot-${{ matrix.os }}
           path: poke-guesser-bot
