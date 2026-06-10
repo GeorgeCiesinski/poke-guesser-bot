@@ -1,3 +1,7 @@
+/**
+ * Defines the `/mod delay` subcommand group. The user-facing command shape is
+ * present while the backing delay behavior remains a TODO.
+ */
 import {
   ChatInputCommandInteraction,
   SlashCommandSubcommandGroupBuilder,
@@ -13,6 +17,13 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Delay {
+  /**
+   * Handles `/mod delay` subcommands and reports placeholder results.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to resolve the guild language.
+   * @returns A promise that resolves after the delay reply is edited.
+   */
   static async delay(interaction: ChatInputCommandInteraction, db: Database) {
     const lang = await Language.getLanguage(interaction.guild!.id, db);
     const subcommand = interaction.options.getSubcommand();
@@ -25,6 +36,8 @@ export default class Delay {
           const s = interaction.options.getInteger("seconds", false) || 0;
           const user = interaction.options.getUser("user");
           if (user) {
+            // The duration is collected in separate units to match Discord option
+            // inputs; the future implementation can convert them to one interval.
             await Delay.setDelay(interaction.guild!.id, user.id, d, h, m, s);
             await Util.editReply(
               interaction,
@@ -124,6 +137,12 @@ export default class Delay {
     console.log(`TODO: showDelay(${serverId}, ${userId})`);
   }
 
+  /**
+   * Builds the Discord slash-command subcommand group for `/mod delay`.
+   *
+   * @param subcommandgroup The builder supplied by the parent `/mod` command.
+   * @returns The same builder populated with localized delay subcommands.
+   */
   static getRegisterObject(
     subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {

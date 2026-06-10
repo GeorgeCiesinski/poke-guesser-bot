@@ -1,3 +1,7 @@
+/**
+ * Handles Pokemon catch modal submissions, validates guesses against active
+ * encounters, awards score, and advances lightning rounds.
+ */
 import {
   AttachmentBuilder,
   ButtonInteraction,
@@ -13,6 +17,14 @@ import Util from "./util.ts";
 export default class Catch {
   private static guessEntered: boolean = false;
 
+  /**
+   * Processes a submitted catch guess for the encounter button that opened it.
+   *
+   * @param btnInteraction The button interaction that launched the catch modal.
+   * @param modalInteraction The submitted modal containing the player's guess.
+   * @param db The database used to read encounters, artwork, and scores.
+   * @returns True when the guess was correct and the original button should be removed.
+   */
   static async catchModalSubmitted(
     btnInteraction: ButtonInteraction,
     modalInteraction: ModalSubmitInteraction,
@@ -36,7 +48,8 @@ export default class Catch {
     );
     if (encounter.length > 0) {
       let guessed = false;
-      // Loop through pokemon names and check against guess
+      // Each encounter stores the numeric id plus every localized species name;
+      // any exact case-insensitive match counts as a successful catch.
       for (let i = 0; i < encounter.length; i++) {
         if (
           encounter[i].getDataValue("name").toLowerCase() ===
@@ -56,12 +69,13 @@ export default class Catch {
             1,
           );
           let englishIndex = 0;
+          // The success message always highlights the English name, then adds
+          // the matched localized name when the player guessed another language.
           for (let j = 0; j < encounter.length; j++) {
             if (encounter[j].getDataValue("language") === "en") {
               englishIndex = j;
             }
           }
-          // Send messsage that guess is correct
           let title = "";
           if (
             encounter[i].getDataValue("name").toLowerCase() ===

@@ -1,8 +1,11 @@
+/**
+ * Provides the Sequelize-backed persistence layer for guild settings, scores,
+ * active encounters, artwork, explore cooldowns, and lightning state.
+ */
 import { DataTypes, Model, Sequelize } from "sequelize";
 import LanguageApi from "../language.ts";
 import Util from "../util.ts";
 import { GuildChannel, GuildMember, Role } from "discord.js";
-// Discord-IDs are 18 chars atm (2021) but will increase in the future
 
 export default class Database {
   private db: Sequelize;
@@ -20,6 +23,9 @@ export default class Database {
   private LastExplore = class extends Model {};
   private Lightning = class extends Model {};
 
+  /**
+   * Configures Sequelize, initializes all bot models, and starts schema sync.
+   */
   constructor() {
     if (
       Deno.env.has("DATABASE_URL") && Deno.env.get("DATABASE_URL")!.trim() != ""
@@ -240,14 +246,30 @@ export default class Database {
     this.prepareDb();
   }
 
+  /**
+   * Verifies that the configured database connection can authenticate.
+   *
+   * @returns A promise that resolves when authentication succeeds.
+   */
   async connect(): Promise<void> {
     return await this.db.authenticate();
   }
 
+  /**
+   * Synchronizes Sequelize models with the database schema.
+   *
+   * @returns The Sequelize instance after sync completes.
+   */
   async prepareDb(): Promise<Sequelize> {
     return await this.db.sync({ alter: true });
   }
 
+  /**
+   * Reads the username display mode configured for a guild.
+   *
+   * @param serverId The Discord guild id.
+   * @returns The stored username mode row, or null when none is configured.
+   */
   async getUsernameMode(serverId: string) {
     return await this.Username.findOne({
       where: {
@@ -257,14 +279,16 @@ export default class Database {
   }
 
   /**
-   * 0 = Nickname if exists -> Display Name if exists -> Username in any other case
-   * 1 = Nickname if exists -> Username in any other case
-   * 2 = Display Name if exists -> Username in any other case
-   * 3 = Display Name if exists -> Nickname if exists -> Username in any other case
-   * 4 = Always Username
+   * Stores a guild's username display mode.
+   *
+   * @param serverId The Discord guild id.
+   * @param mode The username mode, from 0 through 4.
+   * @returns The created row or Sequelize update result.
    */
   async setUsernameMode(serverId: string, mode: number) {
     if (mode < 0 || mode > 4) throw new Error("mode must be between 0 and 4");
+    // Modes map to the precedence order implemented in
+    // `Util.getCorrectUsernameFormat`.
     const oldMode = await this.getUsernameMode(serverId);
     if (oldMode == null || oldMode == undefined) {
       return await this.Username.create({ serverId, mode });
@@ -273,6 +297,12 @@ export default class Database {
     }
   }
 
+  /**
+   * Adds a user or role to the guild moderator allowlist.
+   *
+   * @param mentionable The guild member or role to grant moderator access.
+   * @returns The created moderator row.
+   */
   async addMod(mentionable: GuildMember | Role) {
     const lang = await LanguageApi.getLanguage(mentionable.guild.id, this);
     if (await this.isMod(mentionable)) {
@@ -294,6 +324,12 @@ export default class Database {
     }
   }
 
+  /**
+   * Removes a user or role from the guild moderator allowlist.
+   *
+   * @param mentionable The guild member or role to remove.
+   * @returns The number of removed rows.
+   */
   async removeMod(mentionable: GuildMember | Role): Promise<number> {
     const lang = await LanguageApi.getLanguage(mentionable.guild.id, this);
     if (!(await this.isMod(mentionable))) {
@@ -316,6 +352,12 @@ export default class Database {
     }
   }
 
+  /**
+   * Lists all moderator allowlist entries for a guild.
+   *
+   * @param serverId The Discord guild id.
+   * @returns All stored moderator rows for the guild.
+   */
   async listMods(serverId: string) {
     return await this.Mod.findAll({
       where: {
@@ -324,6 +366,12 @@ export default class Database {
     });
   }
 
+  /**
+   * Checks whether a member or role is on the moderator allowlist.
+   *
+   * @param mentionable The guild member or role to inspect.
+   * @returns True when the mentionable is configured as a moderator.
+   */
   async isMod(mentionable: GuildMember | Role | null): Promise<boolean> {
     if (!mentionable) return false;
     return (
@@ -336,6 +384,12 @@ export default class Database {
     );
   }
 
+  /**
+   * Removes every moderator allowlist entry for a guild.
+   *
+   * @param serverId The Discord guild id.
+   * @returns The number of removed rows.
+   */
   async resetMods(serverId: string): Promise<number> {
     return await this.Mod.destroy({
       where: {
@@ -344,6 +398,12 @@ export default class Database {
     });
   }
 
+  /**
+   * Adds a channel to the guild channel allowlist.
+   *
+   * @param channel The Discord guild channel to allow.
+   * @returns The created channel row.
+   */
   async addChannel(channel: GuildChannel) {
     const lang = await LanguageApi.getLanguage(channel.guildId, this);
     if (await this.isAllowedChannel(channel)) {
@@ -359,6 +419,12 @@ export default class Database {
     }
   }
 
+  /**
+   * Removes a channel from the guild channel allowlist.
+   *
+   * @param channel The Discord guild channel to remove.
+   * @returns The number of removed rows.
+   */
   async removeChannel(channel: GuildChannel): Promise<number> {
     const lang = await LanguageApi.getLanguage(channel.guildId, this);
     if (!(await this.isAllowedChannel(channel))) {
@@ -376,6 +442,12 @@ export default class Database {
     }
   }
 
+  /**
+   * Lists all channel allowlist entries for a guild.
+   *
+   * @param serverId The Discord guild id.
+   * @returns All stored channel rows for the guild.
+   */
   async listChannels(serverId: string) {
     return await this.Channel.findAll({
       where: {
@@ -384,6 +456,12 @@ export default class Database {
     });
   }
 
+  /**
+   * Checks whether a channel is explicitly allowed for bot commands.
+   *
+   * @param channel The Discord guild channel to inspect.
+   * @returns True when the channel is in the allowlist.
+   */
   async isAllowedChannel(channel: GuildChannel): Promise<boolean> {
     return (
       (await this.Channel.count({
@@ -395,6 +473,12 @@ export default class Database {
     );
   }
 
+  /**
+   * Checks whether a guild has any channel allowlist entries.
+   *
+   * @param serverId The Discord guild id.
+   * @returns True when at least one channel is configured.
+   */
   async isAnyAllowedChannel(serverId: string): Promise<boolean> {
     return (
       (await this.Channel.count({
@@ -405,6 +489,12 @@ export default class Database {
     );
   }
 
+  /**
+   * Removes every channel allowlist entry for a guild.
+   *
+   * @param serverId The Discord guild id.
+   * @returns The number of removed rows.
+   */
   async resetChannels(serverId: string): Promise<number> {
     return await this.Channel.destroy({
       where: {
@@ -413,6 +503,13 @@ export default class Database {
     });
   }
 
+  /**
+   * Sets or updates the preferred language for a guild.
+   *
+   * @param serverId The Discord guild id.
+   * @param languageCode The language code matching a language JSON file.
+   * @returns The created row or Sequelize update result.
+   */
   async setLanguage(serverId: string, languageCode: string) {
     const lang = await LanguageApi.getLanguage(serverId, this);
     if (await this.isLanguageSet(serverId, languageCode)) {
@@ -421,6 +518,8 @@ export default class Database {
         languageCode,
       );
     } else if (await this.isAnyLanguageSet(serverId)) {
+      // Language is stored as one row per guild, so changing it updates the
+      // existing row instead of creating duplicates.
       return await this.Language.update(
         { languageCode },
         {
@@ -437,6 +536,12 @@ export default class Database {
     }
   }
 
+  /**
+   * Removes a guild's preferred language so it falls back to the default.
+   *
+   * @param serverId The Discord guild id.
+   * @returns The number of removed rows.
+   */
   async unsetLanguage(serverId: string): Promise<number> {
     const lang = await LanguageApi.getLanguage(serverId, this);
     if (await this.isAnyLanguageSet(serverId)) {
@@ -450,6 +555,13 @@ export default class Database {
     }
   }
 
+  /**
+   * Checks whether a guild is already configured for a specific language.
+   *
+   * @param serverId The Discord guild id.
+   * @param languageCode The language code to compare.
+   * @returns True when that exact language is configured.
+   */
   async isLanguageSet(
     serverId: string,
     languageCode: string,
@@ -464,6 +576,12 @@ export default class Database {
     );
   }
 
+  /**
+   * Checks whether a guild has any preferred language configured.
+   *
+   * @param serverId The Discord guild id.
+   * @returns True when a language row exists.
+   */
   async isAnyLanguageSet(serverId: string): Promise<boolean> {
     return (
       (await this.Language.count({
@@ -474,6 +592,12 @@ export default class Database {
     );
   }
 
+  /**
+   * Gets the language code configured for a guild.
+   *
+   * @param serverId The Discord guild id.
+   * @returns The stored language code, or `en_US` when no setting exists.
+   */
   async getLanguageCode(serverId: string): Promise<string> {
     const result = await this.Language.findAll({
       where: {
@@ -484,6 +608,11 @@ export default class Database {
     else return result[0].getDataValue("languageCode");
   }
 
+  /**
+   * Lists available language file names without their `.json` extensions.
+   *
+   * @returns Language codes discovered in the languages directory.
+   */
   async getLanguages() {
     const filenames: string[] = [];
     for await (const dirEntry of Deno.readDir("./languages")) {
@@ -494,6 +623,12 @@ export default class Database {
     return filenames;
   }
 
+  /**
+   * Loads a language JSON object by code.
+   *
+   * @param language The language code to load.
+   * @returns The language string lookup object.
+   */
   async getLanguageObject(language: string = "en_US") {
     const languageObj = await import(`./languages/${language}.json`, {
       with: { type: "json" },
@@ -501,6 +636,13 @@ export default class Database {
     return languageObj.default;
   }
 
+  /**
+   * Gets one user's score and rank within a guild.
+   *
+   * @param serverId The Discord guild id.
+   * @param userId The Discord user id.
+   * @returns The ranked score entry, or null when the user has no score.
+   */
   async getScore(
     serverId: string,
     userId: string,
@@ -531,6 +673,12 @@ export default class Database {
     return null;
   }
 
+  /**
+   * Lists all scores for a guild from highest to lowest.
+   *
+   * @param serverId The Discord guild id.
+   * @returns Score rows ordered descending by score.
+   */
   async getScores(serverId: string) {
     return await this.Score.findAll({
       where: {
@@ -540,6 +688,14 @@ export default class Database {
     });
   }
 
+  /**
+   * Sets a user's score, creating the row if necessary.
+   *
+   * @param serverId The Discord guild id.
+   * @param userId The Discord user id.
+   * @param score The score value to store.
+   * @returns The created row or Sequelize update result.
+   */
   async setScore(serverId: string, userId: string, score: number) {
     const found = await this.Score.count({
       where: {
@@ -568,6 +724,14 @@ export default class Database {
     }
   }
 
+  /**
+   * Adds a positive amount to a user's score.
+   *
+   * @param serverId The Discord guild id.
+   * @param userId The Discord user id.
+   * @param score The positive score amount to add.
+   * @returns The created row or Sequelize update result.
+   */
   async addScore(serverId: string, userId: string, score: number) {
     const lang = await LanguageApi.getLanguage(serverId, this);
     const current = await this.Score.findOne({
@@ -605,6 +769,14 @@ export default class Database {
     }
   }
 
+  /**
+   * Removes score from a user, clearing the row if the subtraction would go below zero.
+   *
+   * @param serverId The Discord guild id.
+   * @param userId The Discord user id.
+   * @param score The score amount to remove.
+   * @returns The number of removed rows or Sequelize update result.
+   */
   async removeScore(
     serverId: string,
     userId: string,
@@ -637,6 +809,13 @@ export default class Database {
     }
   }
 
+  /**
+   * Deletes a user's score row.
+   *
+   * @param serverId The Discord guild id.
+   * @param userId The Discord user id.
+   * @returns The number of removed rows.
+   */
   async unsetScore(serverId: string, userId: string): Promise<number> {
     const lang = await LanguageApi.getLanguage(serverId, this);
     const found = await this.Score.count({
@@ -657,6 +836,13 @@ export default class Database {
     }
   }
 
+  /**
+   * Clears active encounter names for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns The number of removed encounter rows.
+   */
   async clearEncounters(serverId: string, channelId: string): Promise<number> {
     return await this.Encounter.destroy({
       where: {
@@ -666,6 +852,15 @@ export default class Database {
     });
   }
 
+  /**
+   * Adds an accepted answer for the active encounter in a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @param name The accepted Pokemon name or id.
+   * @param language The language code associated with the answer.
+   * @returns The created encounter row.
+   */
   async addEncounter(
     serverId: string,
     channelId: string,
@@ -680,6 +875,13 @@ export default class Database {
     });
   }
 
+  /**
+   * Reads all accepted answers for the active encounter in a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns Encounter rows for the channel.
+   */
   async getEncounter(serverId: string, channelId: string) {
     return await this.Encounter.findAll({
       where: {
@@ -689,6 +891,13 @@ export default class Database {
     });
   }
 
+  /**
+   * Checks whether reveal artwork is stored for a guild channel encounter.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns True when artwork exists.
+   */
   async artworkExists(serverId: string, channelId: string): Promise<boolean> {
     return (
       (await this.Artwork.count({
@@ -700,6 +909,13 @@ export default class Database {
     );
   }
 
+  /**
+   * Gets reveal artwork for a guild channel encounter.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns The artwork URL, or null when none is stored.
+   */
   async getArtwork(
     serverId: string,
     channelId: string,
@@ -714,6 +930,14 @@ export default class Database {
     )?.getDataValue("url");
   }
 
+  /**
+   * Sets reveal artwork for a guild channel encounter.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @param url The artwork URL to store.
+   * @returns The created row or Sequelize update result.
+   */
   async setArtwork(serverId: string, channelId: string, url: string) {
     if (await this.artworkExists(serverId, channelId)) {
       return await this.Artwork.update(
@@ -736,6 +960,13 @@ export default class Database {
     }
   }
 
+  /**
+   * Removes stored reveal artwork for a guild channel encounter.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns The number of removed rows, or null when no artwork existed.
+   */
   async unsetArtwork(
     serverId: string,
     channelId: string,
@@ -752,6 +983,13 @@ export default class Database {
     }
   }
 
+  /**
+   * Checks whether an explore timestamp is stored for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns True when a timestamp exists.
+   */
   async lastExploreExists(
     serverId: string,
     channelId: string,
@@ -766,6 +1004,13 @@ export default class Database {
     );
   }
 
+  /**
+   * Gets the last explore timestamp for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns The timestamp in milliseconds, or null when none is stored.
+   */
   async getLastExplore(
     serverId: string,
     channelId: string,
@@ -780,6 +1025,14 @@ export default class Database {
     )?.getDataValue("time");
   }
 
+  /**
+   * Sets the last explore timestamp for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @param time The timestamp in milliseconds.
+   * @returns The created row or Sequelize update result.
+   */
   async setLastExplore(serverId: string, channelId: string, time: number) {
     if (await this.lastExploreExists(serverId, channelId)) {
       return await this.LastExplore.update(
@@ -802,6 +1055,13 @@ export default class Database {
     }
   }
 
+  /**
+   * Removes the last explore timestamp for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns The number of removed rows, or null when none existed.
+   */
   async unsetLastExplore(
     serverId: string,
     channelId: string,
@@ -818,6 +1078,13 @@ export default class Database {
     }
   }
 
+  /**
+   * Checks whether a lightning round is active for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns True when lightning loop state exists.
+   */
   async lightningExists(serverId: string, channelId: string): Promise<boolean> {
     return (
       (await this.Lightning.count({
@@ -829,6 +1096,13 @@ export default class Database {
     );
   }
 
+  /**
+   * Gets the remaining lightning loop count for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns The remaining loop count, or null when no round is active.
+   */
   async getLightningLoops(
     serverId: string,
     channelId: string,
@@ -843,6 +1117,14 @@ export default class Database {
     )?.getDataValue("loops");
   }
 
+  /**
+   * Sets the remaining lightning loop count for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @param loops The remaining follow-up encounters to run.
+   * @returns The created row or Sequelize update result.
+   */
   async setLightningLoops(serverId: string, channelId: string, loops: number) {
     if (await this.lightningExists(serverId, channelId)) {
       return await this.Lightning.update(
@@ -865,6 +1147,13 @@ export default class Database {
     }
   }
 
+  /**
+   * Clears lightning state for a guild channel.
+   *
+   * @param serverId The Discord guild id.
+   * @param channelId The Discord channel id.
+   * @returns The number of removed rows, or null when no round was active.
+   */
   async unsetLightningLoops(
     serverId: string,
     channelId: string,
@@ -881,6 +1170,11 @@ export default class Database {
     }
   }
 
+  /**
+   * Closes the Sequelize database connection.
+   *
+   * @returns A promise that resolves after the connection is closed.
+   */
   async disconnect() {
     return await this.db.close();
   }

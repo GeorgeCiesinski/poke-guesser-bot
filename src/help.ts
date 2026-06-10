@@ -1,3 +1,6 @@
+/**
+ * Implements the `/help` command and its localized slash-command registration.
+ */
 import {
   ChatInputCommandInteraction,
   MessageFlags,
@@ -14,6 +17,13 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Help {
+  /**
+   * Replies with role-specific help text for admins, moderators, or players.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to resolve the guild language.
+   * @returns A promise that resolves after the interaction reply is edited.
+   */
   static async help(interaction: ChatInputCommandInteraction, db: Database) {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guild!.id, db);
@@ -101,6 +111,11 @@ export default class Help {
     Util.editReply(interaction, title, description, lang);
   }
 
+  /**
+   * Builds the Discord slash-command definition for `/help`.
+   *
+   * @returns The localized slash-command builder.
+   */
   static getRegisterObject() {
     return new SlashCommandBuilder()
       .setName(enLocalizations.help_name)

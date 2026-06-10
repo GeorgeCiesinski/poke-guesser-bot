@@ -1,3 +1,7 @@
+/**
+ * Defines the `/mod timeout` subcommand group. The user-facing command shape is
+ * present while the backing timeout behavior remains a TODO.
+ */
 import {
   ChatInputCommandInteraction,
   SlashCommandSubcommandGroupBuilder,
@@ -13,6 +17,13 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Timeout {
+  /**
+   * Handles `/mod timeout` subcommands and reports placeholder results.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to resolve the guild language.
+   * @returns A promise that resolves after the timeout reply is edited.
+   */
   static async timeout(
     interaction: ChatInputCommandInteraction,
     db: Database,
@@ -29,6 +40,8 @@ export default class Timeout {
           const guildId = interaction.guild!.id || null;
           const user = interaction.options.getUser("user") || null;
           if (guildId != null && user != null) {
+            // The duration is collected in separate units to match Discord option
+            // inputs; the future implementation can convert them to one interval.
             await Timeout.setTimeout(guildId, user.id, d, h, m, s);
             await Util.editReply(
               interaction,
@@ -131,6 +144,12 @@ export default class Timeout {
     console.log(`TODO: showTimeout(${serverId}, ${userId})`);
   }
 
+  /**
+   * Builds the Discord slash-command subcommand group for `/mod timeout`.
+   *
+   * @param subcommandgroup The builder supplied by the parent `/mod` command.
+   * @returns The same builder populated with localized timeout subcommands.
+   */
   static getRegisterObject(
     subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {

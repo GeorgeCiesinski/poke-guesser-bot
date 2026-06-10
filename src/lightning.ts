@@ -1,3 +1,7 @@
+/**
+ * Implements `/lightning`, a chained encounter mode that starts another Pokemon
+ * after each successful catch until the configured loop count is exhausted.
+ */
 import {
   ActionRowBuilder,
   AttachmentBuilder,
@@ -20,6 +24,14 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Lightning {
+  /**
+   * Starts a lightning round and immediately posts its first encounter.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to persist remaining lightning loops.
+   * @param preventDefer Set true when the interaction was already deferred.
+   * @returns A promise that resolves after the first encounter is posted.
+   */
   static async lightning(
     interaction: ChatInputCommandInteraction,
     db: Database,
@@ -34,6 +46,13 @@ export default class Lightning {
     await Explore.explore(interaction, db, preventDefer);
   }
 
+  /**
+   * Continues or ends an active lightning round after an encounter is resolved.
+   *
+   * @param interaction The interaction from the catch or reveal flow.
+   * @param db The database used to read and update remaining loops.
+   * @returns A promise that resolves after lightning state is updated.
+   */
   static async checkLightning(
     interaction: ChatInputCommandInteraction | ModalSubmitInteraction,
     db: Database,
@@ -43,6 +62,8 @@ export default class Lightning {
       interaction.channelId!,
     );
     if (loops) {
+      // Generate the next encounter before decrementing so the stored loop count
+      // tracks the number of follow-up encounters still available.
       Lightning.explore(interaction!, db);
       loops -= 1;
       if (loops > 0) {
@@ -51,13 +72,23 @@ export default class Lightning {
           interaction.channelId!,
           loops,
         );
-      } else {db.unsetLightningLoops(
+      } else {
+        db.unsetLightningLoops(
           interaction.guildId!,
           interaction.channelId!,
-        );}
+        );
+      }
     }
   }
 
+  /**
+   * Posts a lightning encounter without rechecking moderator permissions.
+   *
+   * @param interaction The command or modal interaction to reply from.
+   * @param db The database used to store encounter names and artwork.
+   * @param preventDefer Set true when the interaction was already deferred.
+   * @returns A promise that resolves after the encounter follow-up is sent.
+   */
   static async explore(
     interaction: ChatInputCommandInteraction | ModalSubmitInteraction,
     db: Database,
@@ -69,6 +100,8 @@ export default class Lightning {
     await db.clearEncounters(interaction.guildId!, interaction.channelId!);
     await db.unsetArtwork(interaction.guildId!, interaction.channelId!);
     const pokemon = await Util.generatePokemon();
+    // Store the numeric PokeAPI id as an acceptable guess in addition to all
+    // localized species names fetched below.
     await db.addEncounter(
       interaction.guildId!,
       interaction.channelId!,
@@ -87,11 +120,12 @@ export default class Lightning {
           )
         }. Fetching new pokemon.`,
       );
-      this.explore(interaction, db, true); // Attention: Recursive
+      // Some random PokeAPI resources are forms without species names; retry
+      // using the already-deferred interaction.
+      this.explore(interaction, db, true);
       return;
     }
     for (const name of names) {
-      // Sets current pokemon (different languages) names in database
       console.log(
         `Guild: ${interaction.guildId}, Channel: ${interaction.channelId}, Name: ${name.name}, Language: ${name.languageName}`,
       );
@@ -109,7 +143,9 @@ export default class Lightning {
       console.log(
         `Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`,
       );
-      this.explore(interaction, db, true); // Attention: Recursive
+      // Encounters need an image for the guessing prompt, so retry when a
+      // randomly selected resource lacks a front sprite.
+      this.explore(interaction, db, true);
       return;
     }
     const officialArtUrl = sprites.other.official_artwork.front_default;
@@ -155,6 +191,11 @@ export default class Lightning {
     );
   }
 
+  /**
+   * Builds the Discord slash-command definition for `/lightning`.
+   *
+   * @returns The localized slash-command builder.
+   */
   static getRegisterObject() {
     return new SlashCommandBuilder()
       .setName(enLocalizations.lightning_name)
