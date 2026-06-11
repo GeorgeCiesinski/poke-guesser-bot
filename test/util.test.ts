@@ -1,6 +1,6 @@
 /**
  * Tests shared utility helpers for permissions, mentionable detection,
- * username formatting, and embed construction.
+ * username formatting, PokeAPI payload mapping, and embed construction.
  */
 import { assertEquals, assertStrictEquals } from "@std/assert";
 import {
@@ -12,6 +12,12 @@ import {
 } from "discord.js";
 import Util from "../src/util.ts";
 import { enLanguage, usernameModeLabels } from "./fixtures/language.ts";
+import {
+  createGuildMember as createFakeGuildMember,
+  createInteraction,
+  embedJsonFromPayload,
+  getLastCall,
+} from "./helpers.ts";
 
 function createGuildMember(
   options: {
@@ -168,4 +174,169 @@ Deno.test("Util.fileExists reports file presence", async () => {
   assertEquals(await Util.fileExists(`${dir}/missing.txt`), false);
 
   await Deno.remove(dir, { recursive: true });
+});
+
+Deno.test("Util.generatePokemon selects a random PokeAPI result", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalRandom = Math.random;
+  // Replace both fetch and Math.random so the random selection is deterministic
+  // and does not make a live PokeAPI request.
+  globalThis.fetch = (() =>
+    Promise.resolve({
+      json: () =>
+        Promise.resolve({
+          results: [
+            { name: "bulbasaur", url: "1" },
+            { name: "ivysaur", url: "2" },
+            { name: "venusaur", url: "3" },
+            { name: "charmander", url: "4" },
+          ],
+        }),
+    } as Response)) as typeof fetch;
+  Math.random = () => 0.75;
+
+  try {
+    assertEquals(await Util.generatePokemon(), {
+      name: "charmander",
+      url: "4",
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+    Math.random = originalRandom;
+  }
+});
+
+Deno.test("Util.fetchSprite maps PokeAPI sprite payloads", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (() =>
+    Promise.resolve({
+      json: () =>
+        Promise.resolve({
+          sprites: {
+            back_default: "back",
+            back_female: "back-female",
+            back_shiny: "back-shiny",
+            back_shiny_female: "back-shiny-female",
+            front_default: "front",
+            front_female: "front-female",
+            front_shiny: "front-shiny",
+            front_shiny_female: "front-shiny-female",
+            other: {
+              dream_world: {
+                front_default: "dream",
+                front_female: "dream-female",
+              },
+              home: {
+                front_default: "home",
+                front_female: "home-female",
+                front_shiny: "home-shiny",
+                front_shiny_female: "home-shiny-female",
+              },
+              "official-artwork": {
+                front_default: "official",
+              },
+            },
+          },
+        }),
+    } as Response)) as typeof fetch;
+
+  try {
+    const sprites = await Util.fetchSprite("https://example.com/pokemon/25");
+
+    assertEquals(sprites.front_default, "front");
+    assertEquals(sprites.back_shiny, "back-shiny");
+    assertEquals(sprites.other.dream_world.front_default, "dream");
+    assertEquals(sprites.other.home.front_shiny_female, "home-shiny-female");
+    assertEquals(sprites.other.official_artwork.front_default, "official");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+Deno.test("Util.fetchNames maps species names and returns null on failure", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (() =>
+    Promise.resolve({
+      json: () =>
+        Promise.resolve({
+          names: [
+            {
+              language: { name: "en", url: "language/en" },
+              name: "Pikachu",
+            },
+            {
+              language: { name: "de", url: "language/de" },
+              name: "Pikachu",
+            },
+          ],
+        }),
+    } as Response)) as typeof fetch;
+
+  try {
+    assertEquals(await Util.fetchNames("25"), [
+      { languageName: "en", languageUrl: "language/en", name: "Pikachu" },
+      { languageName: "de", languageUrl: "language/de", name: "Pikachu" },
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+
+  // Some Pokemon form ids fail at the species endpoint; callers expect null
+  // rather than a thrown error so they can retry encounter generation.
+  globalThis.fetch =
+    (() => Promise.reject(new Error("network"))) as typeof fetch;
+  try {
+    assertStrictEquals(await Util.fetchNames("missing"), null);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+Deno.test("Util.findMember returns cached members and hides missing members", async () => {
+  const member = createFakeGuildMember({ id: "member-1" });
+  const interaction = createInteraction({
+    members: { "member-1": member },
+  });
+
+  assertStrictEquals(
+    await Util.findMember(interaction as never, "member-1"),
+    member,
+  );
+  assertStrictEquals(
+    await Util.findMember(interaction as never, "missing-member"),
+    undefined,
+  );
+});
+
+Deno.test("Util.findUser fetches Discord users", async () => {
+  const user = { id: "user-1", tag: "user#0001" };
+  const interaction = {
+    client: {
+      users: {
+        fetch: (id: string, options: { force: boolean }) => {
+          assertEquals(id, "user-1");
+          assertEquals(options, { force: false });
+          return Promise.resolve(user);
+        },
+      },
+    },
+  };
+
+  assertStrictEquals(await Util.findUser(interaction as never, "user-1"), user);
+});
+
+Deno.test("Util.editReply sends themed embeds", async () => {
+  const interaction = createInteraction();
+
+  await Util.editReply(
+    interaction as never,
+    "Utility Title",
+    "Utility body",
+    enLanguage,
+  );
+
+  const payload = getLastCall(interaction, "editReply")?.args[0];
+  const embed = embedJsonFromPayload(payload);
+  assertEquals(embed.title, "Utility Title");
+  assertEquals(embed.description, "Utility body");
 });

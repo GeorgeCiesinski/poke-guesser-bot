@@ -404,16 +404,16 @@ export default class Settings {
           await db.setUsernameMode(interaction.guild!.id, 4);
           try {
             await db.unsetLanguage(interaction.guild!.id);
-          } finally {
+          } catch {
             // Reset succeeds even when the language row was already absent; the
             // user-facing result should reflect that all settings are now defaults.
-            await Util.editReply(
-              interaction,
-              lang.obj["settings_reset_title_success"],
-              lang.obj["settings_reset_description_success"],
-              lang,
-            );
           }
+          await Util.editReply(
+            interaction,
+            lang.obj["settings_reset_title_success"],
+            lang.obj["settings_reset_description_success"],
+            lang,
+          );
         } catch (err) {
           await Util.editReply(
             interaction,

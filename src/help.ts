@@ -107,8 +107,9 @@ export default class Help {
             .replace("<subcommandName>", type ? type : "null"),
           lang,
         );
+        return;
     }
-    Util.editReply(interaction, title, description, lang);
+    await Util.editReply(interaction, title, description, lang);
   }
 
   /**
