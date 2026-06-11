@@ -218,7 +218,7 @@ export default class Delay {
               })
               .setDescription(enLocalizations.delay_set_seconds_description)
               .setDescriptionLocalizations({
-                de: deLocalizations.delay_set_seconds_name,
+                de: deLocalizations.delay_set_seconds_name_description,
               })
           )
       )
