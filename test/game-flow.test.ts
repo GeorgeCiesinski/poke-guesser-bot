@@ -653,17 +653,20 @@ Deno.test("Lightning.checkLightning continues and decrements active rounds", asy
 
   const originalExplore = Lightning.explore;
   let continued = false;
+  let preventDefer: boolean | undefined;
   // Stub continuation so this test can focus on loop-count state changes.
   (Lightning as unknown as {
     explore: typeof Lightning.explore;
-  }).explore = () => {
+  }).explore = (_interaction, _db, receivedPreventDefer) => {
     continued = true;
+    preventDefer = receivedPreventDefer;
     return Promise.resolve();
   };
 
   try {
     await Lightning.checkLightning(interaction as never, db as never);
     assertEquals(continued, true);
+    assertEquals(preventDefer, true);
     assertEquals(storedLoops, 1);
   } finally {
     (Lightning as unknown as {
@@ -687,12 +690,18 @@ Deno.test("Lightning.checkLightning unsets final active round", async () => {
   });
 
   const originalExplore = Lightning.explore;
+  let preventDefer: boolean | undefined;
+
   (Lightning as unknown as {
     explore: typeof Lightning.explore;
-  }).explore = () => Promise.resolve();
+  }).explore = (_interaction, _db, receivedPreventDefer) => {
+    preventDefer = receivedPreventDefer;
+    return Promise.resolve()
+  };
 
   try {
     await Lightning.checkLightning(interaction as never, db as never);
+    assertEquals(preventDefer, true);
     assertEquals(unset, true);
   } finally {
     (Lightning as unknown as {
