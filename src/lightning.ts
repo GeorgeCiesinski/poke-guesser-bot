@@ -64,16 +64,17 @@ export default class Lightning {
     if (loops) {
       // Generate the next encounter before decrementing so the stored loop count
       // tracks the number of follow-up encounters still available.
-      Lightning.explore(interaction!, db);
+      await Lightning.explore(interaction, db, true);
+
       loops -= 1;
       if (loops > 0) {
-        db.setLightningLoops(
+        await db.setLightningLoops(
           interaction.guildId!,
           interaction.channelId!,
           loops,
         );
       } else {
-        db.unsetLightningLoops(
+        await db.unsetLightningLoops(
           interaction.guildId!,
           interaction.channelId!,
         );
