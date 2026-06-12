@@ -22,18 +22,21 @@ export type FakeOptionsConfig = {
   channels?: Record<string, unknown | null>;
 };
 
-export function modelRow<T extends Record<string, unknown>>(values: T): T & {
-  getDataValue(key: keyof T & string): T[keyof T];
-  get(key: keyof T & string): T[keyof T];
+// Builds a fake Sequelize row from plain values. `RowValues` preserves the
+// shape of the object passed in, while `getDataValue()` and `get()` mimic the
+// model methods used by command handlers.
+export function modelRow<RowValues extends Record<string, unknown>>(
+  values: RowValues,
+): RowValues & {
+  getDataValue(key: keyof RowValues & string): RowValues[keyof RowValues];
+  get(key: keyof RowValues & string): RowValues[keyof RowValues];
 } {
-  // Command handlers read Sequelize rows through `getDataValue()`/`get()`, so
-  // these fakes keep tests focused without constructing real models.
   return {
     ...values,
-    getDataValue(key: keyof T & string) {
+    getDataValue(key: keyof RowValues & string) {
       return values[key];
     },
-    get(key: keyof T & string) {
+    get(key: keyof RowValues & string) {
       return values[key];
     },
   };

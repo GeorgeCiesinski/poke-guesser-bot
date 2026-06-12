@@ -43,12 +43,16 @@ function registryJson(): CommandJson[] {
   );
 }
 
+// Finds a registered top-level slash command by name and fails the test with a
+// readable message if the command is missing.
 function commandByName(commands: CommandJson[], name: string) {
   const command = commands.find((entry) => entry.name === name);
   assert(command, `Expected command ${name} to be registered`);
   return command;
 }
 
+// Finds a subcommand, option, or subcommand group by name under a command node
+// and fails the test immediately if the expected option is missing.
 function optionByName(parent: { options?: CommandOptionJson[] }, name: string) {
   const option = parent.options?.find((entry) => entry.name === name);
   assert(option, `Expected option ${name} to exist`);
