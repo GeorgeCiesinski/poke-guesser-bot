@@ -39,7 +39,11 @@ Deno.test("Mod.mod denies non-moderators", async () => {
 });
 
 Deno.test("Mod.mod adds score for authorized moderators", async () => {
-  const target = { id: "target-1", tag: "target#0001" };
+  const target = {
+    id: "123456789012345678",
+    username: "target",
+    tag: "target#0",
+  };
   const interaction = createInteraction({
     commandName: "mod",
     subcommand: "score",
@@ -53,7 +57,7 @@ Deno.test("Mod.mod adds score for authorized moderators", async () => {
     isMod: () => Promise.resolve(true),
     getScore: () => Promise.resolve({ score: 4 }),
     setScore: (_guildId: string, userId: string, score: number) => {
-      assertEquals(userId, "target-1");
+      assertEquals(userId, "123456789012345678");
       newScore = score;
       return Promise.resolve();
     },
@@ -68,7 +72,11 @@ Deno.test("Mod.mod adds score for authorized moderators", async () => {
 });
 
 Deno.test("Mod.mod removes score by amount or unsets when amount is absent", async () => {
-  const target = { id: "target-1", tag: "target#0001" };
+  const target = {
+    id: "123456789012345678",
+    username: "target",
+    tag: "target#0",
+  };
   const interaction = createInteraction({
     commandName: "mod",
     subcommand: "score",
@@ -81,7 +89,7 @@ Deno.test("Mod.mod removes score by amount or unsets when amount is absent", asy
   const db = createDb({
     isMod: () => Promise.resolve(true),
     removeScore: (_guildId: string, userId: string, amount: number) => {
-      assertEquals(userId, "target-1");
+      assertEquals(userId, "123456789012345678");
       removedAmount = amount;
       return Promise.resolve();
     },
@@ -94,7 +102,11 @@ Deno.test("Mod.mod removes score by amount or unsets when amount is absent", asy
 });
 
 Deno.test("Mod.mod sets score and reports invalid actions", async () => {
-  const target = { id: "target-1", tag: "target#0001" };
+  const target = {
+    id: "123456789012345678",
+    username: "target",
+    tag: "target#0",
+  };
   const interaction = createInteraction({
     commandName: "mod",
     subcommand: "score",
@@ -477,7 +489,11 @@ Deno.test("Settings.settings reset treats absent language as successful reset", 
 });
 
 Deno.test("Score.score shows existing and missing scores", async () => {
-  const target = { id: "target-1", tag: "target#0001" };
+  const target = {
+    id: "123456789012345678",
+    username: "target",
+    tag: "target#0",
+  };
   const existing = createInteraction({
     commandName: "score",
     subcommand: "show",
@@ -492,14 +508,17 @@ Deno.test("Score.score shows existing and missing scores", async () => {
   const existingEmbed = embedJsonFromPayload(
     getLastCall(existing, "editReply")?.args[0],
   );
-  assertEquals(existingEmbed.title, "target#0001");
+  assertEquals(existingEmbed.title, "target#0");
   assertMatch(String(existingEmbed.description), /10/);
   assertMatch(String(existingEmbed.description), /2/);
 
   const missing = createInteraction({
     commandName: "score",
     subcommand: "show",
-    user: { id: "self-1", tag: "self#0001" },
+    user: {
+      id: "234567890123456789",
+      tag: "self#0",
+    },
   });
   await Score.score(
     missing as never,
@@ -508,7 +527,7 @@ Deno.test("Score.score shows existing and missing scores", async () => {
   const missingEmbed = embedJsonFromPayload(
     getLastCall(missing, "editReply")?.args[0],
   );
-  assertEquals(missingEmbed.title, "self#0001");
+  assertEquals(missingEmbed.title, "self#0");
   assertMatch(String(missingEmbed.description), /N\/A/);
 });
 
@@ -619,7 +638,11 @@ Deno.test("Settings.settings owner is allowed without administrator permission",
 });
 
 Deno.test("Delay.delay replies for set, unset, show, and invalid subcommands", async () => {
-  const user = { id: "target-1", tag: "target#0001" };
+  const user = {
+    id: "123456789012345678",
+    username: "target",
+    tag: "target#0",
+  };
   const db = createDb();
 
   for (const subcommand of ["set", "unset", "show"]) {
@@ -645,7 +668,11 @@ Deno.test("Delay.delay replies for set, unset, show, and invalid subcommands", a
 });
 
 Deno.test("Timeout.timeout replies for set, unset, show, and invalid subcommands", async () => {
-  const user = { id: "target-1", tag: "target#0001" };
+  const user = {
+    id: "123456789012345678",
+    username: "target",
+    tag: "target#0",
+  };
   const db = createDb();
 
   for (const subcommand of ["set", "unset", "show"]) {
