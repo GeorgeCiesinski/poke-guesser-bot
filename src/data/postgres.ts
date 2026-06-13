@@ -27,11 +27,10 @@ export default class Database {
    * Configures Sequelize, initializes all bot models, and starts schema sync.
    */
   constructor() {
-    if (
-      // Get database url, trim it if exists, and convert result to true/false
-      !!Deno.env.get("DATABASE_URL")?.trim()
-    ) {
-      this.db = new Sequelize(Deno.env.get("DATABASE_URL")!, {
+    const databaseUrl = Deno.env.get("DATABASE_URL")?.trim();
+
+    if (databaseUrl) {
+      this.db = new Sequelize(databaseUrl, {
         logging: false,
       });
     } else {
