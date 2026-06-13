@@ -3,8 +3,12 @@
  * database methods, asserting replies, routing, and state-changing calls.
  */
 import { assert, assertEquals, assertMatch } from "@std/assert";
-import { PermissionsBitField } from "discord.js";
+import {
+  type ChatInputCommandInteraction,
+  PermissionsBitField,
+} from "discord.js";
 import Championship from "../src/championship.ts";
+import type Database from "../src/data/postgres.ts";
 import Delay from "../src/delay.ts";
 import Help from "../src/help.ts";
 import Leaderboard from "../src/leaderboard.ts";
@@ -22,6 +26,15 @@ import {
   modelRow,
 } from "./helpers.ts";
 
+// Casts the local interaction test double to the Discord command interaction
+// type expected by command handlers.
+const asChatInput = (interaction: ReturnType<typeof createInteraction>) =>
+  interaction as unknown as ChatInputCommandInteraction;
+
+// Casts the local database test double to the Database type expected by command
+// handlers.
+const asDb = (db: ReturnType<typeof createDb>) => db as unknown as Database;
+
 Deno.test("Mod.mod denies non-moderators", async () => {
   const interaction = createInteraction({
     commandName: "mod",
@@ -31,7 +44,7 @@ Deno.test("Mod.mod denies non-moderators", async () => {
   });
   const db = createDb({ isMod: () => Promise.resolve(false) });
 
-  await Mod.mod(interaction as never, db as never);
+  await Mod.mod(asChatInput(interaction), asDb(db));
 
   const payload = getLastCall(interaction, "editReply")?.args[0];
   const embed = embedJsonFromPayload(payload);
@@ -63,7 +76,7 @@ Deno.test("Mod.mod adds score for authorized moderators", async () => {
     },
   });
 
-  await Mod.mod(interaction as never, db as never);
+  await Mod.mod(asChatInput(interaction), asDb(db));
 
   assertEquals(newScore, 7);
   const payload = getLastCall(interaction, "editReply")?.args[0];
@@ -96,7 +109,7 @@ Deno.test("Mod.mod removes score by amount or unsets when amount is absent", asy
     unsetScore: () => Promise.resolve(),
   });
 
-  await Mod.mod(interaction as never, db as never);
+  await Mod.mod(asChatInput(interaction), asDb(db));
 
   assertEquals(removedAmount, 2);
 });
@@ -125,7 +138,7 @@ Deno.test("Mod.mod sets score and reports invalid actions", async () => {
     },
   });
 
-  await Mod.mod(interaction as never, db as never);
+  await Mod.mod(asChatInput(interaction), asDb(db));
 
   assertEquals(setScore, 0);
 
@@ -137,7 +150,7 @@ Deno.test("Mod.mod sets score and reports invalid actions", async () => {
     users: { user: target },
     member: createGuildMember(),
   });
-  await Mod.mod(invalidInteraction as never, db as never);
+  await Mod.mod(asChatInput(invalidInteraction), asDb(db));
   const payload = getLastCall(invalidInteraction, "editReply")?.args[0];
   const embed = embedJsonFromPayload(payload);
   assertMatch(String(embed.title), /invalid|error/i);
@@ -171,13 +184,13 @@ Deno.test("Mod.mod delegates grouped subcommands", async () => {
     const db = createDb({ isMod: () => Promise.resolve(true) });
     for (const group of ["delay", "timeout", "championship"]) {
       await Mod.mod(
-        createInteraction({
+        asChatInput(createInteraction({
           commandName: "mod",
           subcommandGroup: group,
           subcommand: group === "championship" ? "new" : "show",
           member: createGuildMember(),
-        }) as never,
-        db as never,
+        })),
+        asDb(db),
       );
     }
 
@@ -202,7 +215,7 @@ Deno.test("Settings.settings enforces owner or administrator permissions", async
   });
   const db = createDb();
 
-  await Settings.settings(forbidden as never, db as never);
+  await Settings.settings(asChatInput(forbidden), asDb(db));
 
   // Forbidden replies are captured from the fake interaction instead of sent to
   // Discord, making the permission gate easy to assert directly.
@@ -217,8 +230,8 @@ Deno.test("Settings.settings enforces owner or administrator permissions", async
     subcommand: "show",
   });
   await Settings.settings(
-    admin as never,
-    createDb({ listMods: () => Promise.resolve([]) }) as never,
+    asChatInput(admin),
+    asDb(createDb({ listMods: () => Promise.resolve([]) })),
   );
   assertEquals(getLastCall(admin, "editReply") !== undefined, true);
 });
@@ -281,7 +294,7 @@ Deno.test("Settings.settings manages mods and channels", async () => {
   ];
 
   for (const interaction of cases) {
-    await Settings.settings(interaction as never, db as never);
+    await Settings.settings(asChatInput(interaction), asDb(db));
   }
 
   assertEquals(dbCalls, ["addMod", "removeMod", "addChannel", "removeChannel"]);
@@ -292,7 +305,7 @@ Deno.test("Settings.settings manages mods and channels", async () => {
     subcommandGroup: "mods",
     subcommand: "show",
   });
-  await Settings.settings(showMods as never, db as never);
+  await Settings.settings(asChatInput(showMods), asDb(db));
   const modEmbed = embedJsonFromPayload(
     getLastCall(showMods, "editReply")?.args[0],
   );
@@ -304,7 +317,7 @@ Deno.test("Settings.settings manages mods and channels", async () => {
     subcommandGroup: "channels",
     subcommand: "show",
   });
-  await Settings.settings(showChannels as never, db as never);
+  await Settings.settings(asChatInput(showChannels), asDb(db));
   const channelEmbed = embedJsonFromPayload(
     getLastCall(showChannels, "editReply")?.args[0],
   );
@@ -337,42 +350,42 @@ Deno.test("Settings.settings manages language and username settings", async () =
     });
 
     await Settings.settings(
-      createInteraction({
+      asChatInput(createInteraction({
         commandName: "settings",
         admin: true,
         subcommandGroup: "language",
         subcommand: "set",
         strings: { language: "de_DE" },
-      }) as never,
-      db as never,
+      })),
+      asDb(db),
     );
     await Settings.settings(
-      createInteraction({
+      asChatInput(createInteraction({
         commandName: "settings",
         admin: true,
         subcommandGroup: "language",
         subcommand: "unset",
-      }) as never,
-      db as never,
+      })),
+      asDb(db),
     );
     await Settings.settings(
-      createInteraction({
+      asChatInput(createInteraction({
         commandName: "settings",
         admin: true,
         subcommandGroup: "username",
         subcommand: "set",
         integers: { mode: 3 },
-      }) as never,
-      db as never,
+      })),
+      asDb(db),
     );
     await Settings.settings(
-      createInteraction({
+      asChatInput(createInteraction({
         commandName: "settings",
         admin: true,
         subcommandGroup: "username",
         subcommand: "unset",
-      }) as never,
-      db as never,
+      })),
+      asDb(db),
     );
 
     assertEquals(dbCalls, [
@@ -389,8 +402,8 @@ Deno.test("Settings.settings manages language and username settings", async () =
       subcommand: "show",
     });
     await Settings.settings(
-      showLanguage as never,
-      createDb({ getLanguageCode: () => Promise.resolve("de_DE") }) as never,
+      asChatInput(showLanguage),
+      asDb(createDb({ getLanguageCode: () => Promise.resolve("de_DE") })),
     );
     const languageEmbed = embedJsonFromPayload(
       getLastCall(showLanguage, "editReply")?.args[0],
@@ -403,7 +416,7 @@ Deno.test("Settings.settings manages language and username settings", async () =
       subcommandGroup: "username",
       subcommand: "show",
     });
-    await Settings.settings(showUsername as never, db as never);
+    await Settings.settings(asChatInput(showUsername), asDb(db));
     const usernameEmbed = embedJsonFromPayload(
       getLastCall(showUsername, "editReply")?.args[0],
     );
@@ -430,13 +443,13 @@ Deno.test("Settings.settings reports unavailable languages", async () => {
       strings: { language: "missing" },
     });
     await Settings.settings(
-      interaction as never,
-      createDb({
+      asChatInput(interaction),
+      asDb(createDb({
         setLanguage: () => {
           setLanguageCalled = true;
           return Promise.resolve();
         },
-      }) as never,
+      })),
     );
 
     assertEquals(setLanguageCalled, false);
@@ -475,7 +488,7 @@ Deno.test("Settings.settings reset treats absent language as successful reset", 
     },
   });
 
-  await Settings.settings(interaction as never, db as never);
+  await Settings.settings(asChatInput(interaction), asDb(db));
 
   assertEquals(dbCalls, [
     "resetMods",
@@ -500,10 +513,10 @@ Deno.test("Score.score shows existing and missing scores", async () => {
     users: { user: target },
   });
   await Score.score(
-    existing as never,
-    createDb({
+    asChatInput(existing),
+    asDb(createDb({
       getScore: () => Promise.resolve({ position: 2, score: 10 }),
-    }) as never,
+    })),
   );
   const existingEmbed = embedJsonFromPayload(
     getLastCall(existing, "editReply")?.args[0],
@@ -521,8 +534,8 @@ Deno.test("Score.score shows existing and missing scores", async () => {
     },
   });
   await Score.score(
-    missing as never,
-    createDb({ getScore: () => Promise.resolve(null) }) as never,
+    asChatInput(missing),
+    asDb(createDb({ getScore: () => Promise.resolve(null) })),
   );
   const missingEmbed = embedJsonFromPayload(
     getLastCall(missing, "editReply")?.args[0],
@@ -537,7 +550,7 @@ Deno.test("Help.help replies for valid and invalid help types", async () => {
       commandName: "help",
       strings: { type },
     });
-    await Help.help(interaction as never, createDb() as never);
+    await Help.help(asChatInput(interaction), asDb(createDb()));
     const payload = getLastCall(interaction, "editReply")?.args[0];
     const embed = embedJsonFromPayload(payload);
     assertMatch(String(embed.description), /\//);
@@ -547,7 +560,7 @@ Deno.test("Help.help replies for valid and invalid help types", async () => {
     commandName: "help",
     strings: { type: "unknown" },
   });
-  await Help.help(invalid as never, createDb() as never);
+  await Help.help(asChatInput(invalid), asDb(createDb()));
   assertEquals(
     invalid.calls.filter((call) => call.name === "editReply").length,
     1,
@@ -580,7 +593,7 @@ Deno.test("Leaderboard.leaderboard formats top ranks and runner-up table", async
     getUsernameMode: () => Promise.resolve(modelRow({ mode: 4 })),
   });
 
-  await Leaderboard.leaderboard(interaction as never, db as never);
+  await Leaderboard.leaderboard(asChatInput(interaction), asDb(db));
 
   const payload = getLastCall(interaction, "editReply")?.args[0];
   const embed = embedJsonFromPayload(payload) as {
@@ -594,11 +607,11 @@ Deno.test("Leaderboard.leaderboard formats top ranks and runner-up table", async
 Deno.test("Leaderboard.leaderboard handles empty and missing-member boards", async () => {
   const empty = createInteraction({ commandName: "leaderboard" });
   await Leaderboard.leaderboard(
-    empty as never,
-    createDb({
+    asChatInput(empty),
+    asDb(createDb({
       getScores: () => Promise.resolve([]),
       getUsernameMode: () => Promise.resolve(modelRow({ mode: 4 })),
-    }) as never,
+    })),
   );
   const emptyEmbed = embedJsonFromPayload(
     getLastCall(empty, "editReply")?.args[0],
@@ -609,12 +622,12 @@ Deno.test("Leaderboard.leaderboard handles empty and missing-member boards", asy
 
   const missingMember = createInteraction({ commandName: "leaderboard" });
   await Leaderboard.leaderboard(
-    missingMember as never,
-    createDb({
+    asChatInput(missingMember),
+    asDb(createDb({
       getScores: () =>
         Promise.resolve([modelRow({ userId: "missing", score: 4 })]),
       getUsernameMode: () => Promise.resolve(modelRow({ mode: 4 })),
-    }) as never,
+    })),
   );
   assertEquals(getLastCall(missingMember, "editReply") !== undefined, true);
 });
@@ -630,8 +643,8 @@ Deno.test("Settings.settings owner is allowed without administrator permission",
   interaction.memberPermissions = new PermissionsBitField(0n);
 
   await Settings.settings(
-    interaction as never,
-    createDb({ listMods: () => Promise.resolve([]) }) as never,
+    asChatInput(interaction),
+    asDb(createDb({ listMods: () => Promise.resolve([]) })),
   );
 
   assertEquals(getLastCall(interaction, "editReply") !== undefined, true);
@@ -652,7 +665,7 @@ Deno.test("Delay.delay replies for set, unset, show, and invalid subcommands", a
       users: { user },
       integers: { days: 1, hours: 2, minutes: 3, seconds: 4 },
     });
-    await Delay.delay(interaction as never, db as never);
+    await Delay.delay(asChatInput(interaction), asDb(db));
     assertEquals(getLastCall(interaction, "editReply") !== undefined, true);
   }
 
@@ -660,7 +673,7 @@ Deno.test("Delay.delay replies for set, unset, show, and invalid subcommands", a
     commandName: "mod",
     subcommand: "invalid",
   });
-  await Delay.delay(invalid as never, db as never);
+  await Delay.delay(asChatInput(invalid), asDb(db));
   const embed = embedJsonFromPayload(
     getLastCall(invalid, "editReply")?.args[0],
   );
@@ -682,7 +695,7 @@ Deno.test("Timeout.timeout replies for set, unset, show, and invalid subcommands
       users: { user },
       integers: { days: 1, hours: 2, minutes: 3, seconds: 4 },
     });
-    await Timeout.timeout(interaction as never, db as never);
+    await Timeout.timeout(asChatInput(interaction), asDb(db));
     assertEquals(getLastCall(interaction, "editReply") !== undefined, true);
   }
 
@@ -690,7 +703,7 @@ Deno.test("Timeout.timeout replies for set, unset, show, and invalid subcommands
     commandName: "mod",
     subcommand: "invalid",
   });
-  await Timeout.timeout(invalid as never, db as never);
+  await Timeout.timeout(asChatInput(invalid), asDb(db));
   const embed = embedJsonFromPayload(
     getLastCall(invalid, "editReply")?.args[0],
   );
@@ -704,14 +717,14 @@ Deno.test("Championship.championship replies for new and invalid subcommands", a
     subcommand: "new",
   });
 
-  await Championship.championship(create as never, db as never);
+  await Championship.championship(asChatInput(create), asDb(db));
   assertEquals(getLastCall(create, "editReply") !== undefined, true);
 
   const invalid = createInteraction({
     commandName: "mod",
     subcommand: "invalid",
   });
-  await Championship.championship(invalid as never, db as never);
+  await Championship.championship(asChatInput(invalid), asDb(db));
   const embed = embedJsonFromPayload(
     getLastCall(invalid, "editReply")?.args[0],
   );
