@@ -28,7 +28,8 @@ export default class Database {
    */
   constructor() {
     if (
-      Deno.env.has("DATABASE_URL") && Deno.env.get("DATABASE_URL")!.trim() != ""
+      // Get database url, trim it if exists, and convert result to true/false
+      !!Deno.env.get("DATABASE_URL")?.trim()
     ) {
       this.db = new Sequelize(Deno.env.get("DATABASE_URL")!, {
         logging: false,
