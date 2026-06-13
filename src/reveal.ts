@@ -1,3 +1,7 @@
+/**
+ * Implements `/reveal`, allowing moderators to end the current encounter and
+ * show the correct Pokemon names.
+ */
 import {
   ChatInputCommandInteraction,
   GuildMember,
@@ -15,10 +19,19 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Reveal {
+  /**
+   * Reveals the active encounter's answer when invoked by a configured moderator.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to read and clear the active encounter.
+   * @returns A promise that resolves after the reveal reply is edited.
+   */
   static async reveal(interaction: ChatInputCommandInteraction, db: Database) {
     await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let isMod = false;
+    // Moderation can be granted directly to a user or indirectly through any of
+    // their roles, so both paths must be checked before revealing an answer.
     if (await db.isMod(interaction.member as GuildMember | null)) {
       isMod = true;
     } else {
@@ -48,8 +61,9 @@ export default class Reveal {
     if (encounter.length > 0) {
       const pokemonNames: string[] = [];
       let englishIndex = 0;
+      // De-duplicate localized names so repeated language variants do not make
+      // the reveal message noisy.
       for (let i = 0; i < encounter.length; i++) {
-        // console.log(encounter)
         encounter[i].name = encounter[i].getDataValue("name");
         encounter[i].language = encounter[i].getDataValue("language");
         if (!encounter[i].name) continue;
@@ -59,7 +73,7 @@ export default class Reveal {
         }
         if (encounter[i].language === "en") englishIndex = i;
       }
-      // build string to put in between brackets
+      // Build the optional parenthesized list of non-English accepted answers.
       let inBrackets = "";
       for (let i = 0; i < pokemonNames.length; i++) {
         if (i == englishIndex) continue;
@@ -69,7 +83,6 @@ export default class Reveal {
       console.log(
         `Mod requested reveal: ${encounter[englishIndex].name} (${inBrackets})`,
       );
-      // returnEmbed(title, message, image=null)
       await Util.editReply(
         interaction,
         lang.obj["reveal_pokemon_escaped_title"],
@@ -86,7 +99,6 @@ export default class Reveal {
       await db.clearEncounters(interaction.guildId!, interaction.channelId);
       await Lightning.checkLightning(interaction, db);
     } else {
-      // returnEmbed(title, message, image=null)
       await Util.editReply(
         interaction,
         lang.obj["reveal_no_encounter_title"],
@@ -96,6 +108,11 @@ export default class Reveal {
     }
   }
 
+  /**
+   * Builds the Discord slash-command definition for `/reveal`.
+   *
+   * @returns The localized slash-command builder.
+   */
   static getRegisterObject() {
     return new SlashCommandBuilder()
       .setName(enLocalizations.reveal_name)

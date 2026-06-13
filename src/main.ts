@@ -1,3 +1,7 @@
+/**
+ * Starts the Discord bot, routes interactions to command handlers, and handles
+ * the catch modal flow for active Pokemon encounters.
+ */
 import {
   ActionRowBuilder,
   Client,
@@ -37,7 +41,7 @@ const client = new Client({
 const db = new Database();
 
 client.on(Events.ClientReady, () => {
-  console.log(`Logged in as ${client.user?.tag}!`); // Logging
+  console.log(`Logged in as ${client.user?.tag}!`);
 });
 
 client.on(Events.InteractionCreate, async (interaction: Interaction) => {
@@ -53,6 +57,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
   }
   if (interaction.isChatInputCommand()) {
     if (interaction.channel) {
+      // If no channel allowlist exists for this guild, every channel remains usable.
       if (
         (await db.isAllowedChannel(interaction.channel as GuildChannel)) ||
         !(await db.isAnyAllowedChannel(interaction.guildId))
@@ -106,6 +111,8 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
   } else if (interaction.isButton()) {
     if (interaction.customId == "catchBtn") {
       const lang = await Language.getLanguage(interaction.guildId, db);
+      // Discord buttons cannot collect free-form text directly, so the catch
+      // button opens a modal and waits for the same user to submit it.
       const modal = new ModalBuilder()
         .setTitle(lang.obj["catch_this_pokemon"])
         .setCustomId("catchModal")

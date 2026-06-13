@@ -1,3 +1,7 @@
+/**
+ * Defines the `/mod championship` subcommand group. The command registration and
+ * response flow exist while championship creation remains a TODO.
+ */
 import {
   ChatInputCommandInteraction,
   SlashCommandSubcommandGroupBuilder,
@@ -13,6 +17,13 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Championship {
+  /**
+   * Handles `/mod championship` subcommands.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to resolve the guild language.
+   * @returns A promise that resolves after the championship reply is edited.
+   */
   static async championship(
     interaction: ChatInputCommandInteraction,
     db: Database,
@@ -56,6 +67,12 @@ export default class Championship {
     console.log(`TODO: Execute newChampionship Actions for server ${serverId}`);
   }
 
+  /**
+   * Builds the Discord slash-command subcommand group for `/mod championship`.
+   *
+   * @param subcommandgroup The builder supplied by the parent `/mod` command.
+   * @returns The same builder populated with localized championship subcommands.
+   */
   static getRegisterObject(
     subcommandgroup: SlashCommandSubcommandGroupBuilder,
   ): SlashCommandSubcommandGroupBuilder {

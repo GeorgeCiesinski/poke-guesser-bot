@@ -1,3 +1,7 @@
+/**
+ * Registers the bot's localized global slash commands with Discord using the
+ * configured bot token.
+ */
 import { REST, Routes } from "discord.js";
 import Commands from "./commands.ts";
 
@@ -20,6 +24,7 @@ const registerArray = Commands.getRegisterArray();
     );
     const userData = await rest.get(Routes.user());
     const userId: string = userData.id;
+    // Global commands are registered against the bot application's user id.
     const data = await rest.put(Routes.applicationCommands(userId), {
       body: registerArray,
     });

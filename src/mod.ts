@@ -1,3 +1,7 @@
+/**
+ * Implements `/mod`, including moderator-only score actions and delegation to
+ * delay, timeout, and championship subcommand groups.
+ */
 import {
   ChatInputCommandInteraction,
   GuildMember,
@@ -18,10 +22,19 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Mod {
+  /**
+   * Routes moderator subcommands after verifying the invoker has mod access.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to verify mods and update score state.
+   * @returns A promise that resolves after the moderator reply is edited.
+   */
   static async mod(interaction: ChatInputCommandInteraction, db: Database) {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral }); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let isMod = false;
+    // Moderation can be granted directly to a user or indirectly through any of
+    // their roles, so both paths must be checked before applying mod commands.
     if (await db.isMod(interaction.member as GuildMember | null)) {
       isMod = true;
     } else {
@@ -40,7 +53,8 @@ export default class Mod {
       const subcommand = interaction.options.getSubcommand();
       switch (subcommandgroup) {
         case "score": // /mod score ?
-          // See default case
+          // Score is registered as a top-level subcommand, so it is handled in
+          // the default group branch below.
           break;
         case "delay": // /mod delay ?
           await Delay.delay(interaction, db);
@@ -58,6 +72,8 @@ export default class Mod {
                 interaction.user;
               const action = interaction.options.getString("action", false);
               const amount = interaction.options.getInteger("amount", false);
+              // The score action is user-selected because Discord slash commands
+              // cannot express dynamic verbs inside one subcommand name.
               switch (action) {
                 case "add": {
                   try {
@@ -203,6 +219,11 @@ export default class Mod {
     }
   }
 
+  /**
+   * Builds the Discord slash-command definition for `/mod`.
+   *
+   * @returns The localized slash-command builder.
+   */
   static getRegisterObject() {
     return new SlashCommandBuilder()
       .setName(enLocalizations.mod_name)

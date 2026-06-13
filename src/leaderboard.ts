@@ -1,3 +1,7 @@
+/**
+ * Implements the `/leaderboard` command, including localized rank embeds and
+ * overflow table formatting for lower-ranked players.
+ */
 import {
   BaseInteraction,
   ChatInputCommandInteraction,
@@ -17,6 +21,14 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Leaderboard {
+  /**
+   * Displays the guild leaderboard with a champion, elite four, and runner-up
+   * table when enough scores exist.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to fetch scores and username display settings.
+   * @returns A promise that resolves after the leaderboard reply is edited.
+   */
   static async leaderboard(
     interaction: ChatInputCommandInteraction,
     db: Database,
@@ -36,7 +48,8 @@ export default class Leaderboard {
       lang.obj["leaderboard_description"],
       lang,
     ).embed;
-    // Add fields to Embed
+    // The embed reserves the first five ranks for themed fields, filling empty
+    // slots with TBA so new servers still see the full leaderboard structure.
     for (let i: number = 0; i < Math.max(5, scores.length); i++) {
       const userId = scores[i]?.getDataValue("userId");
       const memberObj = userId
@@ -109,9 +122,9 @@ export default class Leaderboard {
           value: lang.obj["leaderboard_position_not_claimed"],
         });
       }
-      // Creates table header for overflow leaderboard
       if (i == 5) {
-        // Get longest username starting from index 5
+        // Runner-up rows are rendered in a code block, so pre-compute the
+        // widest visible username to keep score columns aligned.
         longestUserLength = await Leaderboard.getLongestUsername(
           interaction,
           scores.slice(5),
@@ -161,6 +174,11 @@ export default class Leaderboard {
     return longestUsernameLength;
   }
 
+  /**
+   * Builds the Discord slash-command definition for `/leaderboard`.
+   *
+   * @returns The localized slash-command builder.
+   */
   static getRegisterObject() {
     return new SlashCommandBuilder()
       .setName(enLocalizations.leaderboard_name)
