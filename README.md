@@ -213,8 +213,7 @@ deno task test
 
 ## Deno
 
-This project is written in TypeScript and runs on
-[Deno](https://deno.com/).
+This project is written in TypeScript and runs on [Deno](https://deno.com/).
 
 ## PostgreSQL
 

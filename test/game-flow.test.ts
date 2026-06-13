@@ -696,7 +696,7 @@ Deno.test("Lightning.checkLightning unsets final active round", async () => {
     explore: typeof Lightning.explore;
   }).explore = (_interaction, _db, receivedPreventDefer) => {
     preventDefer = receivedPreventDefer;
-    return Promise.resolve()
+    return Promise.resolve();
   };
 
   try {

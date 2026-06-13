@@ -42,7 +42,7 @@ export default class Lightning {
 
     console.log(
       `Lightning round started: guild=${interaction.guildId}, channel=${interaction.channelId}, loops=${loops}, remainingLoops=${remainingLoops}`,
-    )
+    );
 
     // TODO: I should check permissions / isMod here, but I cannot be arsed currently.
     await db.setLightningLoops(

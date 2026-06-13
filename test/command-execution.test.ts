@@ -17,7 +17,6 @@ import {
   createDb,
   createGuildMember,
   createInteraction,
-  createRole,
   embedJsonFromPayload,
   getLastCall,
   modelRow,
