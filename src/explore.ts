@@ -1,3 +1,7 @@
+/**
+ * Implements `/explore`, which starts a new Pokemon encounter and posts the
+ * catch button for players in the current channel.
+ */
 import {
   ActionRowBuilder,
   AttachmentBuilder,
@@ -19,6 +23,14 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Explore {
+  /**
+   * Starts a new encounter when the user is a configured moderator.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to store encounter names and artwork.
+   * @param preventDefer Set true when called recursively after the reply was already deferred.
+   * @returns A promise that resolves after the encounter reply is sent or denied.
+   */
   static async explore(
     interaction: ChatInputCommandInteraction,
     db: Database,
@@ -27,6 +39,8 @@ export default class Explore {
     if (!preventDefer) await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
     let isMod = false;
+    // Moderation can be granted directly to a user or indirectly through any of
+    // their roles, so both paths must be checked before allowing encounter control.
     if (await db.isMod(interaction.member as GuildMember | null)) {
       isMod = true;
     } else {
@@ -45,6 +59,8 @@ export default class Explore {
       await db.clearEncounters(interaction.guildId!, interaction.channelId);
       await db.unsetArtwork(interaction.guildId!, interaction.channelId);
       const pokemon = await Util.generatePokemon();
+      // Store the numeric PokeAPI id as an acceptable guess in addition to all
+      // localized species names fetched below.
       await db.addEncounter(
         interaction.guildId!,
         interaction.channelId,
@@ -63,11 +79,12 @@ export default class Explore {
             )
           }. Fetching new pokemon.`,
         );
-        this.explore(interaction, db, true); // Attention: Recursive
+        // Some random PokeAPI resources are forms without species names; retry
+        // using the already-deferred interaction.
+        this.explore(interaction, db, true);
         return;
       }
       for (const name of names) {
-        // Sets current pokemon (different languages) names in database
         console.log(
           `Guild: ${interaction.guildId}, Channel: ${interaction.channelId}, Name: ${name.name}, Language: ${name.languageName}`,
         );
@@ -85,7 +102,9 @@ export default class Explore {
         console.log(
           `Warning: front_default sprite for ${pokemon.name} is null. Fetching new pokemon.`,
         );
-        this.explore(interaction, db, true); // Attention: Recursive
+        // Encounters need an image for the guessing prompt, so retry when a
+        // randomly selected resource lacks a front sprite.
+        this.explore(interaction, db, true);
         return;
       }
       const officialArtUrl = sprites.other.official_artwork.front_default;
@@ -139,6 +158,11 @@ export default class Explore {
     }
   }
 
+  /**
+   * Builds the Discord slash-command definition for `/explore`.
+   *
+   * @returns The localized slash-command builder.
+   */
   static getRegisterObject() {
     return new SlashCommandBuilder()
       .setName(enLocalizations.explore_name)

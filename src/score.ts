@@ -1,3 +1,6 @@
+/**
+ * Implements the `/score` command for showing a user's current guild score.
+ */
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import Database from "./data/postgres.ts";
 import Language from "./language.ts";
@@ -10,6 +13,13 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Score {
+  /**
+   * Replies with the selected user's position and score in the current guild.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to fetch the user's score.
+   * @returns A promise that resolves after the score reply is edited.
+   */
   static async score(interaction: ChatInputCommandInteraction, db: Database) {
     await interaction.deferReply(); // PokeBot is thinking
     const lang = await Language.getLanguage(interaction.guildId!, db);
@@ -39,6 +49,11 @@ export default class Score {
     await Util.editReply(interaction, title, description, lang);
   }
 
+  /**
+   * Builds the Discord slash-command definition for `/score`.
+   *
+   * @returns The localized slash-command builder.
+   */
   static getRegisterObject() {
     return new SlashCommandBuilder()
       .setName(enLocalizations.score_name)

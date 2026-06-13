@@ -1,3 +1,7 @@
+/**
+ * Implements `/settings`, including moderator, channel, language, username, and
+ * reset subcommands plus the localized command registration tree.
+ */
 import {
   ChatInputCommandInteraction,
   GuildChannel,
@@ -18,6 +22,13 @@ import deLocalizations from "./languages/slash-commands/de.json" with {
 };
 
 export default class Settings {
+  /**
+   * Handles guild settings changes and reports the result in an ephemeral reply.
+   *
+   * @param interaction The Discord slash-command interaction.
+   * @param db The database used to read and update guild settings.
+   * @returns A promise that resolves after the settings reply is edited.
+   */
   static async settings(
     interaction: ChatInputCommandInteraction,
     db: Database,
@@ -35,6 +46,7 @@ export default class Settings {
         )
       }`,
     );
+    // Server-wide settings are restricted to the owner or Discord administrators.
     if (
       interaction.guild!.ownerId != interaction.user.id /*Is Owner*/ &&
       !interaction.memberPermissions?.has(
@@ -190,6 +202,7 @@ export default class Settings {
             title = lang.obj["settings_mods_show_title"];
             const mods = await db.listMods(interaction.guildId!);
             for (let i = 0; i < mods.length; i++) {
+              // Discord mention syntax differs for users and roles.
               description += `<@${
                 mods[i].getDataValue("isUser")
                   ? mods[i].getDataValue("mentionableId")
@@ -391,14 +404,16 @@ export default class Settings {
           await db.setUsernameMode(interaction.guild!.id, 4);
           try {
             await db.unsetLanguage(interaction.guild!.id);
-          } finally {
-            await Util.editReply(
-              interaction,
-              lang.obj["settings_reset_title_success"],
-              lang.obj["settings_reset_description_success"],
-              lang,
-            );
+          } catch {
+            // Reset succeeds even when the language row was already absent; the
+            // user-facing result should reflect that all settings are now defaults.
           }
+          await Util.editReply(
+            interaction,
+            lang.obj["settings_reset_title_success"],
+            lang.obj["settings_reset_description_success"],
+            lang,
+          );
         } catch (err) {
           await Util.editReply(
             interaction,
@@ -513,6 +528,11 @@ export default class Settings {
     // returnEmbed(title, message, image=null);
   }
 
+  /**
+   * Builds the Discord slash-command definition for `/settings`.
+   *
+   * @returns The localized slash-command builder.
+   */
   static getRegisterObject() {
     return new SlashCommandBuilder()
       .setName(enLocalizations.settings_name)
