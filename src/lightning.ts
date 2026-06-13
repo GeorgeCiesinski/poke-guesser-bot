@@ -37,11 +37,18 @@ export default class Lightning {
     db: Database,
     preventDefer: boolean = false,
   ) {
+    const loops = interaction.options.getInteger("loops")!;
+    const remainingLoops = loops - 1;
+
+    console.log(
+      `Lightning round started: guild=${interaction.guildId}, channel=${interaction.channelId}, loops=${loops}, remainingLoops=${remainingLoops}`,
+    )
+
     // TODO: I should check permissions / isMod here, but I cannot be arsed currently.
     await db.setLightningLoops(
       interaction.guildId!,
       interaction.channelId!,
-      interaction.options.getInteger("loops")! - 1,
+      remainingLoops,
     );
     await Explore.explore(interaction, db, preventDefer);
   }
@@ -62,6 +69,10 @@ export default class Lightning {
       interaction.channelId!,
     );
     if (loops) {
+      console.log(
+        `Lightning round continuing: guild=${interaction.guildId}, channel=${interaction.channelId}, loopsRemainingBefore=${loops}`,
+      );
+
       // Generate the next encounter before decrementing so the stored loop count
       // tracks the number of follow-up encounters still available.
       await Lightning.explore(interaction, db, true);
@@ -73,10 +84,18 @@ export default class Lightning {
           interaction.channelId!,
           loops,
         );
+
+        console.log(
+          `Lightning round loops remaining: guild=${interaction.guildId}, channel=${interaction.channelId}, loopsRemaining=${loops}`,
+        );
       } else {
         await db.unsetLightningLoops(
           interaction.guildId!,
           interaction.channelId!,
+        );
+
+        console.log(
+          `Lightning round ended: guild=${interaction.guildId}, channel=${interaction.channelId}`,
         );
       }
     }
