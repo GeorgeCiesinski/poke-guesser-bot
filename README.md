@@ -68,12 +68,6 @@ Mods can adjust scores with `/mod score`.
 `/mod delay`, `/mod timeout`, and `/mod championship` are registered command
 groups, but their backing behavior is still a TODO in the current codebase.
 
-## Hosted by YOU on Docker
-
-You can clone this repository to run it yourself through Docker Compose so you
-know exactly what this bot is doing. You can also fork this repo and make any
-modifications you want!
-
 ## Multi-language Support
 
 Poké-guesser Bot accepts Pokemon guesses using the localized species names
@@ -211,46 +205,27 @@ deno task test
 
 # Technology
 
-## Deno
-
-This project is written in TypeScript and runs on [Deno](https://deno.com/).
-
-## PostgreSQL
-
-PostgreSQL stores guild settings, active encounters, score data, artwork URLs,
-and lightning round state. The bot connects through Sequelize.
-
-## discord.js
-
-All interactions with Discord are handled with
-[discord.js](https://discord.js.org/#/).
-
-## PokeAPI
-
-This bot would not be possible without [PokeAPI](https://pokeapi.co/). This API
-provides the Pokemon list, localized species names, sprites, and official
-artwork used by Poké-guesser Bot.
+- Written in [TypeScript](https://www.typescriptlang.org/).
+- Runs on [Deno](https://deno.com/).
+- Stores data in [PostgreSQL](https://www.postgresql.org/) using [Sequelize](https://sequelize.org/).
+- Connects to Discord servers with [discord.js](https://discord.js.org/#/).
+- Gets Pokemon data from [PokeAPI](https://pokeapi.co/). 
 
 # Contributions
 
-If you are interested in making a contribution, please read our **Contributions
-Guidelines** located in `docs/CONTRIBUTING.md`.
+New contributors are welcome! Please read [CONTRIBUTING.md](docs/contributing) before making your first contribution.
 
-# Terms of Conduct
+# Code of Conduct
 
-Before participating in this community, please read our **Code of Conduct**
-located in `docs/CODE_OF_CONDUCT.md`.
+All contributors and members of our community are expected to abide by our [CODE_OF_CONDUCT.md](docs/CODE_OF_CONDUCT.md).
 
 # License
 
-[MIT](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/master/LICENSE)
+Written under the [MIT License](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/master/LICENSE).
 
 # Additional Credit
 
-Code Contributions by [Wissididom](https://github.com/Wissididom)
-
-Replit Cover Image by [PIRO4D](https://pixabay.com/users/piro4d-2707530/) from
-[Pixabay](https://pixabay.com)
+This project was co-founded by [GeorgeCiesinski](https://github.com/GeorgeCiesinski) and [Wissididom](https://github.com/Wissididom).
 
 Leaderboard Image by
-[Aurelia Candeloro](https://www.instagram.com/aurelia.borealis)
+[Aurelia Candeloro](https://www.instagram.com/aurelia.borealis).
