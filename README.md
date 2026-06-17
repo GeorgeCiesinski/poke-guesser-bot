@@ -4,39 +4,15 @@ Poké-guesser Bot is a Discord bot that runs a Pokemon guessing game. It posts a
 random Pokemon encounter, lets players guess through a Discord modal, and
 automatically tracks participating users' scores.
 
-# Features
+# Using the Bot
 
-## Bot Roles
-
-The bot has three practical access levels:
-
-- **Admin:** the server owner or a Discord user with Administrator permission.
-  Admins manage bot settings.
-- **Mod:** users or roles added with `/settings mods add`. Mods can start,
-  reveal, and manage game rounds.
-- **Player:** everyone who can use the configured bot channels. Players can
-  catch Pokemon and view scores.
-
-## Commands
-
-The bot currently registers these global slash commands:
-
-- `/help`
-- `/settings`
-- `/leaderboard`
-- `/score`
-- `/explore`
-- `/lightning`
-- `/reveal`
-- `/mod`
-
-### Guessing / Catching
+## Guessing / Catching
 
 Players guess the Pokemon by clicking or tapping the `Catch This Pokémon!`
 button below an encounter message. The button opens a modal where the player
-enters the Pokemon name and submits the guess. ![catch](docs/images/catch.png)
+enters the Pokemon name and submits the guess. catch
 
-### Lightning Round
+## Lightning Round
 
 Mods can start a lightning round with `/lightning start`. A lightning round
 generates one encounter after another for the configured number of loops.
@@ -44,7 +20,7 @@ generates one encounter after another for the configured number of loops.
 The bot automatically posts the next encounter when the current Pokemon is
 caught or revealed.
 
-### Settings
+## Settings
 
 Admins can manage server settings with `/settings`, including:
 
@@ -63,10 +39,31 @@ the top players in the server.
 
 Mods can adjust scores with `/mod score`.
 
-### Moderation Commands
+# Features
 
-`/mod delay`, `/mod timeout`, and `/mod championship` are registered command
-groups, but their backing behavior is still a TODO in the current codebase.
+## Bot Roles & Commands
+
+The bot has three practical access levels:
+
+- **Admin:** the server owner or a Discord user with Administrator permission.
+Admins manage bot settings.
+- **Mod:** users or roles added with `/settings mods add`. Mods can start,
+reveal, and manage game rounds.
+- **Player:** everyone who can use the configured bot channels. Players can
+catch Pokemon and view scores.
+
+It also registers the following global slash commands:
+
+- `/help`
+- `/settings`
+- `/leaderboard`
+- `/score`
+- `/explore`
+- `/lightning`
+- `/reveal`
+- `/mod`
+
+Learn more about available roles and commands by reading the [wiki](https://github.com/GeorgeCiesinski/poke-guesser-bot/wiki).
 
 ## Multi-language Support
 
@@ -76,131 +73,60 @@ with English and German language files.
 
 # Installation
 
+Poké-guesser Bot is easiest to run with Docker Compose. The default
+configuration starts both the Deno bot and PostgreSQL, so most installs only
+need a Discord bot token.
+
+## Prerequisites
+
+- [Docker](https://docs.docker.com/get-started/)
+- [Deno 2.x](https://docs.deno.com/runtime/) for registering slash commands
+
 ## Discord Bot Setup
 
-In order to use Poké-guesser Bot, you need to set up a Discord bot first using
-the Discord Developer Portal.
+Create a Discord bot application before starting the service.
 
-<!-- Keep ordered lists in html format -->
-<ol>
-    <li>
-        Log in to the <a href="https://discord.com/developers/applications">Discord Developer Portal</a>.
-    </li>
-    <li>
-        Follow <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot">these instructions</a> to set up the Discord bot. Save the token from this step for later.
-    </li>
-    <li>
-        Create the <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links">bot invite link</a>, but select the permissions shown below before using the invite link:
-        <img src="docs/images/bot-4.png" alt="bot-4">
-    </li>
-</ol>
 
-## Create the .env and docker.env files
 
-<ol>
-    <li>
-        Clone or download the repo.
-    </li>
-    <li>
-        Create a <code>.env</code> file if it does not exist. Copy the contents of <code>example.env</code> into <code>.env</code>.
-    </li>
-    <li>
-        Add the Discord token to <code>.env</code>.
-        <ul>
-            <li><strong>TOKEN:</strong> The Discord bot token from the previous setup steps.</li>
-        </ul>
-    </li>
-    <li>
-        Add the PostgreSQL database configuration to <code>.env</code>. There are two supported options:
-        <ol>
-            <li>
-                Use a database URL:
-                <br><code>DATABASE_URL=postgres://user:pass@example.com:5432/dbname</code>
-            </li>
-            <li>
-                Or configure the separate PostgreSQL fields:
-                <ul>
-                    <li><strong>POSTGRES_HOST:</strong> Postgres host. Leave as <code>db</code> when using Docker Compose.</li>
-                    <li><strong>POSTGRES_USER:</strong> Postgres user.</li>
-                    <li><strong>POSTGRES_PASSWORD:</strong> Postgres password.</li>
-                    <li><strong>POSTGRES_PORT:</strong> Postgres port. Defaults to <code>5432</code>.</li>
-                    <li><strong>POSTGRES_DB:</strong> Postgres database name. Defaults to <code>pokebot</code>.</li>
-                </ul>
-            </li>
-        </ol>
-    </li>
-    <li>
-        If you run with Docker Compose, copy the same values into <code>docker.env</code>. The Compose file uses <code>docker.env</code> for both the bot and Postgres services.
-    </li>
-</ol>
+1. Log in to the [Discord Developer Portal](https://discord.com/developers/applications).
+2. Follow [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot) to set up the Discord bot. Save the token from this step for later.
+3. Create the [bot invite link](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links), but select the permissions shown below before using the invite link:
 
-## Adding Slash Commands
+## Configure Environment Files
+
+Copy the example environment into the files used by Deno and Docker Compose:
+
+```sh
+cp example.env .env
+cp example.env docker.env
+```
+
+Set `TOKEN` in both files to the Discord bot token from the previous step. For
+the recommended Docker setup, leave the default PostgreSQL values as-is.
+
+## Register Slash Commands
 
 The bot uses global Discord slash commands, which need to be registered before
-the commands appear in Discord.
+the commands appear in Discord. Global commands can take a few minutes to show
+up after registration.
 
-<ol>
-    <li>Install Deno 2.x if it is not already installed.</li>
-    <li>While still in the project directory, run <code>deno install</code> to cache dependencies.</li>
-    <li>Run <code>deno run --env -ERN src/setupCommands.ts</code> to register slash commands for the bot with Discord.</li>
-</ol>
+```sh
+deno install
+deno run --env -ERN src/setupCommands.ts
+```
 
 ## Running the Bot
 
-This bot runs locally or in Docker with Deno and PostgreSQL. Sensitive
-configuration is loaded from environment variables.
-
-### Run in Docker
-
-**Important:** _You must have already set up a Discord bot on the Discord
-Developer Portal. If you haven't, follow the instructions in
-[this](#discord-bot-setup) section first._
-
-<ol>
-    <li>
-        <a href="https://docs.docker.com/get-started/">Set up Docker</a> if you haven't already.
-    </li>
-    <li>
-        Create <code>docker.env</code> using the values described above.
-    </li>
-    <li>
-        Run the bot and Postgres with Docker Compose:
-        <br><code>docker compose up -d</code><br>
-    </li>
-</ol>
-
-### Run Locally
-
-You can also run the bot directly with Deno, but PostgreSQL must be running and
-reachable from your local environment.
-
-<ol>
-    <li>
-        Install <a href="https://docs.deno.com/runtime/">Deno 2.x</a>.
-    </li>
-    <li>
-        Set up PostgreSQL and configure <code>.env</code> with either <code>DATABASE_URL</code> or the separate <code>POSTGRES_*</code> variables.
-    </li>
-    <li>
-        Cache dependencies:
-        <br><code>deno install</code>
-    </li>
-    <li>
-        Start the bot:
-        <br><code>deno task start</code>
-    </li>
-    <li>
-        For development with file watching, run:
-        <br><code>deno task dev</code>
-    </li>
-</ol>
-
-## Development
-
-Run the test suite with:
+Start the Deno bot and PostgreSQL with Docker Compose:
 
 ```sh
-deno task test
+docker compose up -d
+```
+
+To stop the bot:
+
+```sh
+docker compose down
 ```
 
 # Technology
@@ -209,7 +135,7 @@ deno task test
 - Runs on [Deno](https://deno.com/).
 - Stores data in [PostgreSQL](https://www.postgresql.org/) using [Sequelize](https://sequelize.org/).
 - Connects to Discord servers with [discord.js](https://discord.js.org/#/).
-- Gets Pokemon data from [PokeAPI](https://pokeapi.co/). 
+- Gets Pokemon data from [PokeAPI](https://pokeapi.co/).
 
 # Contributions
 
