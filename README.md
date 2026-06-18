@@ -86,11 +86,11 @@ need a Discord bot token.
 
 Create a Discord bot application before starting the service.
 
-
-
 1. Log in to the [Discord Developer Portal](https://discord.com/developers/applications).
 2. Follow [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot) to set up the Discord bot. Save the token from this step for later.
 3. Create the [bot invite link](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links), but select the permissions shown below before using the invite link:
+
+![Bot Permissions](/docs/images/bot-permissions.png)
 
 ## Configure Environment Files
 

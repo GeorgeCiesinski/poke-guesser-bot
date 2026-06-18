@@ -43,6 +43,14 @@ deno task dev
 
 The recommended runtime setup for using the bot is Docker Compose. Local Deno commands are primarily used for development, tests, linting, formatting, and slash command registration.
 
+## Logs
+
+The bot outputs logs such as pokemon encounters and lightning rounds. You can view the logs with:
+
+```sh
+docker compose logs -f
+```
+
 ## Tests And Quality Checks
 
 Run these checks before opening a pull request:
