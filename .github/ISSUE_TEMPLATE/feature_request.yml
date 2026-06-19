@@ -1,0 +1,75 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem you are trying to solve and how you would like the bot to behave.
+
+        For larger changes, open an issue for discussion before starting a pull request. See the [contributing guide](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/develop/docs/CONTRIBUTING.md).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What is hard, missing, or frustrating today? Who benefits from the change?
+      placeholder: |
+        Our server runs short tournaments every weekend. When a championship ends, mods have to screenshot `/leaderboard` because there is no permanent record of the winner.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should the bot behave? Mention slash commands, buttons, settings, or messages if relevant.
+      placeholder: |
+        When `/championship new` ends a round, post a final summary embed with 1st–3rd place and total catches, then clear the leaderboard.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. Other ways to solve this, or reasons you rejected them.
+      placeholder: |
+        We could pin `/leaderboard` output manually, but it is easy to miss and does not show runner-ups clearly.
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Likely scope
+      description: Check everything that might be affected.
+      options:
+        - label: New or changed slash command
+        - label: Catch, lightning, or explore gameplay
+        - label: Settings, mods, or permissions
+        - label: Language / localization (English or German)
+        - label: Database or score persistence
+        - label: README or documentation
+        - label: I am willing to open a pull request for this
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example interaction
+      description: Optional. Show what a mod or player would do and what they should see.
+      placeholder: |
+        **Mod:** `/championship new`
+        **Bot:** Posts final leaderboard embed, announces the winner, then resets scores for the next round.
+
+        **Player:** `/score show`
+        **Bot:** Shows updated score after the change.
+
+  - type: textarea
+    id: links
+    attributes:
+      label: Useful links
+      description: Optional. Related issues, mockups, Discord API docs, PokeAPI references, etc.
+      placeholder: |
+        - Related issue: #123
+        - Discord docs: https://discord.com/developers/docs/...

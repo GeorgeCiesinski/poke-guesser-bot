@@ -1,0 +1,130 @@
+name: Bug Report
+description: Something isn't working as expected
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please search [existing issues](https://github.com/GeorgeCiesinski/poke-guesser-bot/issues) first.
+
+        **Do not post bot tokens, `.env` contents, or database passwords.**
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Summary
+      description: One or two sentences describing the bug.
+      placeholder: |
+        After catching a Pokemon during a lightning round, the bot does not post the next encounter.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the Discord actions and slash commands that trigger the bug.
+      placeholder: |
+        1. Invite the bot to a test server with no channel restrictions
+        2. Run `/explore` to post an encounter
+        3. Click **Catch This Pokémon!** and submit a correct guess
+        4. Run `/lightning start` with loops set to `3`
+        5. Catch the first Pokemon and wait for the next encounter
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: |
+        The bot should automatically post the next encounter after each catch until all loops finish.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: |
+        The round stops after the first catch. No error message appears in the channel.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: command
+    attributes:
+      label: Related command or interaction
+      description: Pick the closest match, or choose **Other** and name it in your summary.
+      options:
+        - Not sure / multiple
+        - Catch button (modal guess)
+        - /explore
+        - /lightning
+        - /reveal
+        - /leaderboard
+        - /score
+        - /settings
+        - /mod
+        - /championship
+        - /help
+        - Other (describe in summary)
+
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: How are you running the bot?
+      options:
+        - Docker Compose
+        - Deno locally (`deno task dev`)
+        - Other (describe below)
+
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Branch, tag, or commit SHA if you know it.
+      placeholder: e.g. develop @ a1b2c3d
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Server / bot configuration
+      description: Anything that might affect behavior. Delete lines that do not apply.
+      placeholder: |
+        - Bot language: English (or German)
+        - Allowed channels: #pokemon-guesser only (or none configured)
+        - Hosting OS: Ubuntu 22.04 / macOS / etc.
+      value: |
+        - Bot language:
+        - Allowed channels:
+        - Hosting OS:
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or error output
+      description: Paste output from `docker compose logs` or your Deno console. Redact tokens and secrets.
+      render: shell
+      placeholder: |
+        Paste relevant log lines here. Include stack traces if the bot crashed.
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Optional. Drag images into this field or paste Discord screenshots.
+      placeholder: Attach screenshots of the broken embed, modal, or error message.
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      placeholder: |
+        Related issues, workarounds you tried, or anything else that might help.
