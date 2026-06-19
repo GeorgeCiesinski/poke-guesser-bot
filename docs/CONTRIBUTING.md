@@ -35,23 +35,17 @@ Install [Deno 2.x](https://docs.deno.com/runtime/) before working on the project
 deno install
 ```
 
-To run the bot locally in watch mode, configure your environment as described in the README and run:
+### Run Locally
+
+Run the bot locally with the below command:
 
 ```sh
 deno task dev
 ```
 
-The recommended runtime setup for using the bot is Docker Compose. Local Deno commands are primarily used for development, tests, linting, formatting, and slash command registration.
+**Note:** This does not spin up a database, so you need to configure this in `.env`.
 
-## Logs
-
-The bot outputs logs such as pokemon encounters and lightning rounds. You can view the logs with:
-
-```sh
-docker compose logs -f
-```
-
-## Tests And Quality Checks
+### Tests And Quality Checks
 
 Run these checks before opening a pull request:
 
@@ -64,6 +58,44 @@ deno task test
 New features should include focused unit tests when practical. Bug fixes should include a regression test when the issue can be reproduced in tests. Existing tests live in [`../test`](../test).
 
 If tests are not practical for a change, explain why in the pull request and describe how you manually verified the behavior.
+
+## Docker
+
+The recommended runtime setup for using the bot is Docker Compose. Local Deno commands are primarily used for development, tests, linting, formatting, and slash command registration.
+
+### Start Docker
+
+The first time you start docker, you need to include the `--build` flag: 
+
+```sh
+docker compose up -d --build
+```
+
+Subsequently, you can start the bot with:
+
+```sh
+docker compose up -d
+```
+
+### Stop Docker
+
+```sh
+docker compose down
+```
+
+### Restart Docker
+
+```sh
+docker compose restart
+```
+
+### Docker Compose Logs
+
+The bot outputs logs such as pokemon encounters and lightning rounds. You can view the logs with:
+
+```sh
+docker compose logs -f
+```
 
 ## Pull Requests
 
