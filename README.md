@@ -1,24 +1,28 @@
 # Poké-guesser Bot
 
-Poké-guesser Bot is a Discord bot that runs a Pokemon guessing game. It posts a
-random Pokemon encounter, lets players guess through a Discord modal, and
-automatically tracks participating users' scores.
+Poké-guesser Bot is a Discord bot that runs a Pokemon guessing game. It posts a random Pokemon encounter, lets players guess through a Discord modal, and automatically tracks participating users' scores.
 
 # Using the Bot
 
-## Guessing / Catching
+## Exploring & Catching
 
-Players guess the Pokemon by clicking or tapping the `Catch This Pokémon!`
-button below an encounter message. The button opens a modal where the player
-enters the Pokemon name and submits the guess. catch
+Mods can explore with `/explore`.
+
+![explore](docs/images/explore.png)
+
+Players guess the Pokemon by clicking or tapping the `Catch This Pokémon!` button below an encounter message. The button opens a modal where the player enters the Pokemon name and submits the guess. 
+
+![catch](docs/images/catch.png)
+
+A successful catch results in a high resolution image and score increase.
+
+![caught](docs/images/caught.png)
 
 ## Lightning Round
 
-Mods can start a lightning round with `/lightning start`. A lightning round
-generates one encounter after another for the configured number of loops.
+Mods can start a lightning round with `/lightning start`. A lightning round generates one encounter after another for the configured number of loops.
 
-The bot automatically posts the next encounter when the current Pokemon is
-caught or revealed.
+The bot automatically posts the next encounter when the current Pokemon is caught or revealed.
 
 ## Settings
 
@@ -29,13 +33,11 @@ Admins can manage server settings with `/settings`, including:
 - preferred bot language
 - username display format
 
-If no channels are configured, the bot can listen and reply in every channel.
-Once channels are configured, commands are only allowed in those channels.
+If no channels are configured, the bot can listen and reply in every channel. Once channels are configured, commands are only allowed in those channels.
 
 ### Leaderboard And Scores
 
-Players can use `/score show` to see a user's score and `/leaderboard` to show
-the top players in the server.
+Players can use `/score show` to see a user's score and `/leaderboard` to show the top players in the server.
 
 Mods can adjust scores with `/mod score`.
 
@@ -45,12 +47,9 @@ Mods can adjust scores with `/mod score`.
 
 The bot has three practical access levels:
 
-- **Admin:** the server owner or a Discord user with Administrator permission.
-Admins manage bot settings.
-- **Mod:** users or roles added with `/settings mods add`. Mods can start,
-reveal, and manage game rounds.
-- **Player:** everyone who can use the configured bot channels. Players can
-catch Pokemon and view scores.
+- **Admin:** the server owner or a Discord user with Administrator permission. Admins manage bot settings.
+- **Mod:** users or roles added with `/settings mods add`. Mods can start, reveal, and manage game rounds.
+- **Player:** everyone who can use the configured bot channels. Players can catch Pokemon and view scores.
 
 It also registers the following global slash commands:
 
@@ -67,15 +66,11 @@ Learn more about available roles and commands by reading the [wiki](https://gith
 
 ## Multi-language Support
 
-Poké-guesser Bot accepts Pokemon guesses using the localized species names
-returned by PokeAPI. Bot text and localized slash command names currently ship
-with English and German language files.
+Poké-guesser Bot accepts Pokemon guesses using the localized species names returned by PokeAPI. Bot text and localized slash command names currently ship with English and German language files.
 
 # Installation
 
-Poké-guesser Bot is easiest to run with Docker Compose. The default
-configuration starts both the Deno bot and PostgreSQL, so most installs only
-need a Discord bot token.
+Poké-guesser Bot is easiest to run with Docker Compose. The default configuration starts both the Deno bot and PostgreSQL, so most installs only need a Discord bot token.
 
 ## Prerequisites
 
@@ -101,14 +96,11 @@ cp example.env .env
 cp example.env docker.env
 ```
 
-Set `TOKEN` in both files to the Discord bot token from the previous step. For
-the recommended Docker setup, leave the default PostgreSQL values as-is.
+Set `TOKEN` in both files to the Discord bot token from the previous step. For the recommended Docker setup, leave the default PostgreSQL values as-is.
 
 ## Register Slash Commands
 
-The bot uses global Discord slash commands, which need to be registered before
-the commands appear in Discord. Global commands can take a few minutes to show
-up after registration.
+The bot uses global Discord slash commands, which need to be registered before the commands appear in Discord. Global commands can take a few minutes to show up after registration.
 
 ```sh
 deno install
