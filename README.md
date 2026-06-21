@@ -82,10 +82,13 @@ Poké-guesser Bot is easiest to run with Docker Compose. The default configurati
 Create a Discord bot application before starting the service.
 
 1. Log in to the [Discord Developer Portal](https://discord.com/developers/applications).
-2. Follow [these instructions](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot) to set up the Discord bot. Save the token from this step for later.
-3. Create the [bot invite link](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links), but select the permissions shown below before using the invite link:
+2. Follow [these instructions](/developers/quick-start/getting-started#what-are-scopes-and-permissions) to set up the Discord bot. Save the token from this step for later.
 
-![Bot Permissions](/docs/images/bot-permissions.png)
+### Bot permissions
+
+The bot requires the following permissions:
+
+- 
 
 ## Configure Environment Files
 
@@ -136,6 +139,11 @@ New contributors are welcome! Please read [CONTRIBUTING.md](docs/contributing) b
 # Code of Conduct
 
 All contributors and members of our community are expected to abide by our [CODE_OF_CONDUCT.md](docs/CODE_OF_CONDUCT.md).
+
+# Legal
+
+- [Terms of Service](docs/TERMS_OF_SERVICE.md)
+- [Privacy Policy](docs/PRIVACY_POLICY.md)
 
 # License
 
