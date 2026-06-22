@@ -82,13 +82,25 @@ Poké-guesser Bot is easiest to run with Docker Compose. The default configurati
 Create a Discord bot application before starting the service.
 
 1. Log in to the [Discord Developer Portal](https://discord.com/developers/applications).
-2. Follow [these instructions](/developers/quick-start/getting-started#what-are-scopes-and-permissions) to set up the Discord bot. Save the token from this step for later.
+2. Follow [these instructions](/developers/quick-start/getting-started#what-are-scopes-and-permissions) to set up the Discord bot. 
+
+**Note:** Save the token from this step for later.
 
 ### Bot permissions
 
-The bot requires the following permissions:
+The bot requires the following **Text Permissions**:
 
-- 
+- Send Messages
+- Send Messages in Threads
+- Manage Messages
+- Pin Messages
+- Embed Links
+- Attach Files
+- Read Message History
+- Mention everyone
+- Use External Emojis
+- Use External Stickers
+- Add Reactions
 
 ## Configure Environment Files
 
@@ -147,7 +159,7 @@ All contributors and members of our community are expected to abide by our [CODE
 
 # License
 
-Written under the [MIT License](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/master/LICENSE).
+- [MIT License](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/master/LICENSE).
 
 # Additional Credit
 
