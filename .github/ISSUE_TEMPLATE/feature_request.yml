@@ -9,7 +9,7 @@ body:
       value: |
         Describe the problem you are trying to solve and how you would like the bot to behave.
 
-        For larger changes, open an issue for discussion before starting a pull request. See the [contributing guide](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/develop/docs/CONTRIBUTING.md).
+        For larger changes, open an issue before starting a pull request. See the [contributing guide](https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/develop/docs/CONTRIBUTING.md).
 
   - type: textarea
     id: problem

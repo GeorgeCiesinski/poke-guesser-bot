@@ -99,7 +99,7 @@ body:
       description: Anything that might affect behavior. Delete lines that do not apply.
       placeholder: |
         - Bot language: English (or German)
-        - Allowed channels: #pokemon-guesser only (or none configured)
+        - Allowed channels (Channel IDs if possible): #pokemon-guesser only (or none configured)
         - Hosting OS: Ubuntu 22.04 / macOS / etc.
       value: |
         - Bot language:

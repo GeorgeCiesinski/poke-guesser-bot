@@ -29,7 +29,9 @@ Do not open code changes directly against `main` or `master`. Pull requests shou
 
 ## Development Setup
 
-Install [Deno 2.x](https://docs.deno.com/runtime/) before working on the project. From the repository root, cache dependencies with:
+Install [Deno 2.x](https://docs.deno.com/runtime/) before working on the project.
+
+From the repository root, install dependencies with:
 
 ```sh
 deno install
@@ -43,7 +45,7 @@ Run the bot locally with the below command:
 deno task dev
 ```
 
-**Note:** This does not spin up a database, so you need to configure this in `.env`.
+**Note:** Running the bot locally does not create or spin up a Postgres database. You will need to set up your own database and add the configuration to `.env`.
 
 ### Tests And Quality Checks
 
@@ -65,16 +67,16 @@ The recommended runtime setup for using the bot is Docker Compose. Local Deno co
 
 ### Start Docker
 
-The first time you start docker, you need to include the `--build` flag: 
-
-```sh
-docker compose up -d --build
-```
-
-Subsequently, you can start the bot with:
+You can start docker with:
 
 ```sh
 docker compose up -d
+```
+
+**Note:** On first start, and whenever you change the code, you will need to include the `--build` flag:
+
+```sh
+docker compose up -d --build
 ```
 
 ### Stop Docker
@@ -99,7 +101,13 @@ docker compose logs -f
 
 ## Pull Requests
 
-Open pull requests into the `develop` branch. In the pull request description, include:
+Open pull requests into the `develop` branch:
+
+```
+gh pr create --base develop
+```
+
+In the pull request description, include:
 
 - What changed and why.
 - Any related issue.

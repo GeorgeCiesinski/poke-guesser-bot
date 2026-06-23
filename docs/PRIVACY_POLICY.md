@@ -72,11 +72,11 @@ Guess text is used to evaluate the current encounter and is not designed to be r
 
 The Bot communicates with services outside your Discord server:
 
-| Service | Purpose | Data involved |
-|---|---|---|
-| **Discord** | Commands, messages, modals, permissions | Discord IDs, interaction content, and metadata required by the Discord API |
-| **PokeAPI** | Pokémon species names and sprite or artwork URLs | Pokémon identifiers and API requests; no Discord user data is sent to PokeAPI by design |
-| **PostgreSQL** | Persistent storage | The data listed in Section 2, stored on infrastructure controlled by the operator |
+| Service        | Purpose                                          | Data involved                                                                           |
+| -------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| **Discord**    | Commands, messages, modals, permissions          | Discord IDs, interaction content, and metadata required by the Discord API              |
+| **PokeAPI**    | Pokémon species names and sprite or artwork URLs | Pokémon identifiers and API requests; no Discord user data is sent to PokeAPI by design |
+| **PostgreSQL** | Persistent storage                               | The data listed in Section 2, stored on infrastructure controlled by the operator       |
 
 Each third-party service has its own privacy practices. Discord's policies apply to your use of Discord itself. PokeAPI is an independent open-source API project and is not operated by the Poke Guesser Bot maintainers.
 
