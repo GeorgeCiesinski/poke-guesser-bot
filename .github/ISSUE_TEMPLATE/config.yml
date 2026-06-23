@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/GeorgeCiesinski/poke-guesser-bot/security/advisories/new
+    about: Report a security issue privately — do not open a public issue
+  - name: Contributing guide
+    url: https://github.com/GeorgeCiesinski/poke-guesser-bot/blob/develop/docs/CONTRIBUTING.md
+    about: How to fork, branch, test, and open pull requests
