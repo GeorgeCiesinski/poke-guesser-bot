@@ -9,5 +9,8 @@
     "discord.js": "npm:discord.js@^14.26.4",
     "pg": "npm:pg@^8.21.0",
     "sequelize": "npm:sequelize@^6.37.8"
+  },
+  "fmt": {
+    "proseWrap": "preserve"
   }
 }
