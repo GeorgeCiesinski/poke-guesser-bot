@@ -8,15 +8,21 @@ Poké-guesser Bot is a Discord bot that runs a Pokemon guessing game. It posts a
 
 Mods can explore with `/explore`.
 
-explore
+<p align="center">
+  <img src="docs/images/explore.png" alt="Explore" width="600">
+</p>
 
 Players guess the Pokemon by clicking or tapping the `Catch This Pokémon!` button below an encounter message. The button opens a modal where the player enters the Pokemon name and submits the guess.
 
-catch
+<p align="center">
+  <img src="docs/images/catch.png" alt="Catch" width="500">
+</p>
 
 A successful catch results in a high resolution image and score increase.
 
-caught
+<p align="center">
+  <img src="docs/images/caught.png" alt="Caught" width="400">
+</p>
 
 ## Lightning Round
 
