@@ -3,3 +3,4 @@ docker.env
 node_modules/
 build/
 *.js
+data/
