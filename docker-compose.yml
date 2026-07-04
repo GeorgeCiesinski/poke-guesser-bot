@@ -10,7 +10,7 @@ services:
       - default
     volumes:
       - ${PWD}/docker-sql-init.sql:/docker-entrypoint-initdb.d/init.sql
-      - database:/var/lib/postgresql/data
+      - ./data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
@@ -28,7 +28,5 @@ services:
       - ./docker.env
     networks:
       - default
-volumes:
-  database:
 networks:
   default:
