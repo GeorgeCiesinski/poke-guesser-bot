@@ -6,8 +6,8 @@
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.19",
-    "discord.js": "npm:discord.js@^14.26.4",
-    "pg": "npm:pg@^8.22.0",
+    "discord.js": "npm:discord.js@^14.28.1",
+    "pg": "npm:pg@^8.23.1",
     "sequelize": "npm:sequelize@^6.37.8"
   },
   "fmt": {
