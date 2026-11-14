@@ -1,8 +1,7 @@
----
 name: Build
 
 permissions:
-  "packages": "write"
+  packages: "write"
 
 on:
   push:
