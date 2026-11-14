@@ -1,0 +1,7 @@
+On Source:
+sudo tar -czf /tmp/data.tar.gz -C /home/username/poke-guesser-bot data
+sudo chown username:username /tmp/data.tar.gz
+scp /tmp/data.tar.gz username@server2:/tmp/
+
+On Destination:
+sudo tar -xzf /tmp/data.tar.gz -C /home/username/poke-guesser-bot/
