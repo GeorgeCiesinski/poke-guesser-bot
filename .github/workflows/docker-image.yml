@@ -1,5 +1,8 @@
 name: Docker Image CI
 
+permissions:
+  contents: "read"
+
 on:
   push:
     branches: ["master", "main", "develop"]
@@ -13,7 +16,9 @@ jobs:
       COMPOSE_FILE: .ci/docker-compose.yml
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Build the Docker image
         run: docker compose build --no-cache
       - name: Test the Docker image
